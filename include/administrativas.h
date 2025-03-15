@@ -1,0 +1,6 @@
+#ifndef ADMINISTRATIVOS_H
+#define ADMINISTRATIVOS_H
+
+
+
+#endif
