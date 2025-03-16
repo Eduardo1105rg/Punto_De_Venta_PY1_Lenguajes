@@ -1,25 +1,42 @@
 #ifndef PRODUCTO_H
 #define PRODUCTO_H
 
+struct NodoProducto;
+
 typedef struct Productos
 {
+    char *IdProducto;
+    char *Nombre;
     char *IdFamilia;
-    char *Descripcon;
+    float Costo;
+    float Precio;
+    int Cantidad;
 
 } Productos;
 
 
 typedef struct NodoProducto {
 
-    Productos familia;
+    Productos producto;
 
-    NodoProducto *siguiente;
+    struct NodoProducto *siguiente;
 
 } NodoProducto;
 
 
-int cargarProductosDesdeArchivo(char * nombreArchivo);
+int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaProductos);
 
-void guardarProductosEnDB();
+void guardarProductosEnDB(NodoProducto* lista_productos);
+
+
+// Lo relacionado con la lista dinamica para familia:
+
+NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad);
+
+void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad);
+
+void imprimirListaNodosProducto(NodoProducto* head);
+
+void liberarListaProducto(NodoProducto* head);
 
 #endif

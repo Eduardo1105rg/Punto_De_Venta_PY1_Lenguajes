@@ -21,19 +21,20 @@ typedef struct NodoFamilia {
 
 } NodoFamilia;
 
+
 int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamilias);
 
-void guardarFamiliasEnDB();
+void guardarFamiliasEnDB(NodoFamilia* head);
 
 
 // Lo relacionado con la lista dinamica para familia:
 
-NodoFamilia* crearNodo(const char *id, const char *descripcion);
+NodoFamilia* crearNodoFamilia(const char *id, const char *descripcion);
 
-void imprimirListaNodos(NodoFamilia* head);
+void imprimirListaNodosFamilia(NodoFamilia* head);
 
-void insertarElementoAlFinal(NodoFamilia** head, const char *id, const char *descripcion);
+void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const char *descripcion);
 
-void liberarLista(NodoFamilia* head);
+void liberarListaFamilia(NodoFamilia* head);
 
 #endif

@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- #include "../include/familia.h"
+
+#include "../include/familia.h"
 #include "../include/manipularArchivos.h"
 
 
@@ -9,7 +10,7 @@
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
-NodoFamilia* crearNodo(const char *id, const char *descripcion) {
+NodoFamilia* crearNodoFamilia(const char *id, const char *descripcion) {
     NodoFamilia* nuevoNodo = (NodoFamilia*)malloc(sizeof(NodoFamilia));
 
     if (nuevoNodo == NULL) {
@@ -37,17 +38,16 @@ NodoFamilia* crearNodo(const char *id, const char *descripcion) {
     return nuevoNodo;
 }
 
-
-void insertarelementoAlInicio(NodoFamilia** head, const char *id, const char *descripcion) {
-    NodoFamilia* nuevoNodo = crearNodo(id, descripcion);
+void insertarelementoAlInicioFamilia(NodoFamilia** head, const char *id, const char *descripcion) {
+    NodoFamilia* nuevoNodo = crearNodoFamilia(id, descripcion);
     nuevoNodo->siguiente = *head;
     *head = nuevoNodo;
     return;
 }
 
-void insertarElementoAlFinal(NodoFamilia** head, const char *id, const char *descripcion) {
+void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const char *descripcion) {
 
-    NodoFamilia * nuevoNddo = crearNodo(id, descripcion);
+    NodoFamilia * nuevoNddo = crearNodoFamilia(id, descripcion);
     if (*head == NULL) {
         *head = nuevoNddo;
         return;
@@ -62,8 +62,7 @@ void insertarElementoAlFinal(NodoFamilia** head, const char *id, const char *des
     return;
 }
 
-
-void eliminarPorId(NodoFamilia** head, char * id) {
+void eliminarPorIdFamilia(NodoFamilia** head, char * id) {
 
     NodoFamilia* actual = *head;
     NodoFamilia* anterior = NULL;
@@ -90,8 +89,7 @@ void eliminarPorId(NodoFamilia** head, char * id) {
     return;
 }
 
-
-int buscarPorId(NodoFamilia* head, const char* id) {
+int buscarPorIdFamilia(NodoFamilia* head, const char* id) {
     NodoFamilia* actual = head;
 
     while (actual != NULL)
@@ -105,23 +103,19 @@ int buscarPorId(NodoFamilia* head, const char* id) {
     return 0;
 }
 
-
-
-void imprimirListaNodos(NodoFamilia* head) {
+void imprimirListaNodosFamilia(NodoFamilia* head) {
     NodoFamilia *actual = head;
 
     while (actual != NULL)
     {
-        printf("Datos del elementos de la lista:");
+        printf("Datos del elementos de la lista:\n");
         printf("Id: %s, \nDescripcion: %s \n\n", actual->familia.IdFamilia, actual->familia.Descripcion);
         actual = actual->siguiente;
     }
     return;
 }
 
-
-
-void liberarLista(NodoFamilia* head) {
+void liberarListaFamilia(NodoFamilia* head) {
     NodoFamilia *actual;
     while (head != NULL)
     {
@@ -136,8 +130,7 @@ void liberarLista(NodoFamilia* head) {
 }
 
 
-
-
+// ==============Este seria el apartado para cargar los datos de una familia des un archivo y su guardado en la base de datos.
 int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamilias) {
     FILE *archivo = fopen(nombreArchivo, "r");
 
@@ -158,7 +151,7 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
         
         //printf("Elementos de la lista: %s ---- %s", lista_palabras[0], lista_palabras[1]);
 
-        insertarElementoAlFinal(listaDeFamilias, lista_palabras[0], lista_palabras[1]);
+        insertarElementoAlFinalFamilia(listaDeFamilias, lista_palabras[0], lista_palabras[1]);
 
         //imprimir_lista_palabras(lista_palabras, num_palabras, num_linea);
 
@@ -177,27 +170,37 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
 }
 
 
-void guardarFamiliasEnDB(NodoFamilia** head) {
+void guardarFamiliasEnDB(NodoFamilia* head) {
 
-    NodoFamilia *actul = head;
-    while (actul != NULL)
+    NodoFamilia *actual = head;
+    while (actual != NULL)
     {
+
+        printf("Pass...");
 
         char *id_familia;
         char *descripcion;
 
-        id_familia = (char *)malloc((strlen(actul->familia.IdFamilia) + 1) * sizeof(char));
-        descripcion = (char *)malloc((strlen(actul->familia.Descripcion) + 1) * sizeof(char));
+        id_familia = (char *)malloc((strlen(actual->familia.IdFamilia) + 1) * sizeof(char));
+        descripcion = (char *)malloc((strlen(actual->familia.Descripcion) + 1) * sizeof(char));
 
         if (id_familia == NULL || descripcion == NULL) {
             printf("Error al asignar memoria para las cadenas.\n");
             //free(nuevoNodo); // Liberar la memoria del nodo si falla
+            free(id_familia);
+            free(descripcion);
             exit(1);
         }
-        strcpy(id_familia, actul->familia.IdFamilia);
-        strcpy(descripcion, actul->familia.Descripcion);    
+        strcpy(id_familia, actual->familia.IdFamilia);
+        strcpy(descripcion, actual->familia.Descripcion);    
         //actual->familia.IdFamilia
         //actual->familia.Descripcion
+
+        free(id_familia);
+        free(descripcion);
+
+        actual = actual->siguiente;
+
     }
     return;
 }
