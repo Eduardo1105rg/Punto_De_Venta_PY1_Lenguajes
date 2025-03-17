@@ -5,6 +5,12 @@
 #include "../include/familia.h"
 #include "../include/manipularArchivos.h"
 
+#include <mysql/mysql.h>
+#define HOST "172.22.112.1"
+#define PORT 3307
+#define USERNAME "root"
+#define PASSWORD "root"
+#define DATABASE "puntoVenta"
 
 // ================ Funciones para lo que seria la creacion de la lista de familias.
 
@@ -35,6 +41,7 @@ NodoFamilia* crearNodoFamilia(const char *id, const char *descripcion) {
 
 
     //newNodo->familia.IdFamilia[alFinalDelString] = '\0';
+    nuevoNodo->siguiente = NULL; //cambio realizado
     return nuevoNodo;
 }
 
@@ -47,9 +54,21 @@ void insertarelementoAlInicioFamilia(NodoFamilia** head, const char *id, const c
 
 void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const char *descripcion) {
 
-    NodoFamilia * nuevoNddo = crearNodoFamilia(id, descripcion);
+    //Cambio 
+    if (head == NULL) {
+        printf("Error: El puntero 'head' es NULL.\n");
+        return;
+    }
+
+    NodoFamilia * nuevoNodo = crearNodoFamilia(id, descripcion);
+
+    if (nuevoNodo == NULL) {
+        printf("Error al crear un nuevo nodo.\n");
+        return;
+    }    
+
     if (*head == NULL) {
-        *head = nuevoNddo;
+        *head = nuevoNodo;
         return;
     }
 
@@ -58,7 +77,7 @@ void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const ch
     {
         actual = actual->siguiente;
     }
-    actual->siguiente = nuevoNddo;
+    actual->siguiente = nuevoNodo;
     return;
 }
 
@@ -145,22 +164,39 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
     {
         num_linea++;
         char *linea = leer_lineas(archivo, num_linea);
+        if (linea == NULL) {
+            printf("Error: leer_lineas devolvio NULL en linea %d\n", num_linea);
+            continue;
+        }
 
         int num_palabras;
         char** lista_palabras = separar_cadenas(linea, &num_palabras);
-        
+        if (lista_palabras == NULL) {
+            printf("Error: `separar_cadenas` devolvio NULL en la linea %d\n", num_linea);
+            free(linea);
+            continue;
+        }
         //printf("Elementos de la lista: %s ---- %s", lista_palabras[0], lista_palabras[1]);
 
         insertarElementoAlFinalFamilia(listaDeFamilias, lista_palabras[0], lista_palabras[1]);
 
         //imprimir_lista_palabras(lista_palabras, num_palabras, num_linea);
 
+        if (num_palabras < 2 || lista_palabras[0] == NULL || lista_palabras[1] == NULL) {
+            printf("Error en la linea %d: No hay suficientes elementos\n", num_linea);
+            free(linea);
+            continue;
+        }
+
         for (int i = 0; i < num_palabras; i++) {
-            free(lista_palabras[i]);
+            if (lista_palabras[i] == NULL) {
+                printf("Advertencia: `lista_palabras[%d]` es NULL, no se liberará\n", i);
+            } else {
+                printf("Liberando memoria de: %s\n", lista_palabras[i]);
+                free(lista_palabras[i]);
+            }
         }
         free(lista_palabras);
-
-
         free(linea);
     }
     
@@ -170,7 +206,46 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
 }
 
 
-void guardarFamiliasEnDB(NodoFamilia* head) {
+void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descripcion) {
+    // Verificamos que nada sea nulo
+    if (idFamilia == NULL || descripcion == NULL) {
+        printf("Error: idFamilia o descripcion no pueden ser NULL.\n");
+        return;
+    }
+
+    //Esto es para ver lo que tenia jsjsj
+    printf("IdFamilia: %s\n", idFamilia);
+    printf("Descripcion: %s\n", descripcion);
+    int textoFijo = strlen("INSERT INTO FamiliaProductos(IdFamilia, Descripcion) VALUES ('', '');");
+    int consultaTamano = strlen(idFamilia) + strlen(descripcion) + textoFijo; 
+    char* consulta = malloc((consultaTamano + 1) * sizeof(char)); //Hacemos el calculo de la memoria
+
+    if (consulta == NULL) {
+        printf("Error: No se pudo asignar memoria para la consulta.\n");
+        return;
+    }
+
+    // aqui lo que hacemos es primero guardar el string en consulta, con el tamaño calculado anteriormente, y lo que hago
+    //es agregarle los valores que necesita la consulta
+    snprintf(consulta, consultaTamano, "INSERT INTO FamiliaProductos(IdFamilia, Descripcion) VALUES ('%s', '%s');", idFamilia, descripcion);
+
+    // para corroborar si esta bien hecha la consulta
+    printf("Consulta generada: %s\n", consulta);
+
+    // Ejecutamos la consulta
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+
+    printf("Producto agregado correctamente.\n");
+    free(consulta);
+    return;
+}
+
+
+void guardarFamiliasEnDB(MYSQL *conexion, NodoFamilia* head) {
 
     NodoFamilia *actual = head;
     while (actual != NULL)
@@ -196,6 +271,8 @@ void guardarFamiliasEnDB(NodoFamilia* head) {
         //actual->familia.IdFamilia
         //actual->familia.Descripcion
 
+        agregarFamilias(conexion, id_familia, descripcion);
+
         free(id_familia);
         free(descripcion);
 
@@ -204,3 +281,18 @@ void guardarFamiliasEnDB(NodoFamilia* head) {
     }
     return;
 }
+
+// int conectar(MYSQL **conexion) {
+//     int error;
+
+//     *conexion = mysql_init(NULL);  // Inicializamos la estructura de conexión
+//     if (mysql_real_connect(*conexion, HOST, USERNAME, PASSWORD, DATABASE, PORT, NULL, 0) != NULL) {
+//         printf("Se estableció la conexión con la base de datos\n");
+//         error = 0;
+//     } else {
+//         printf("Error al conectarse a la base de datos: %s\n", mysql_error(*conexion));
+//         error = 1;
+//     }
+
+//     return error;
+// }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mysql/mysql.h>
 
 #include "../include/cargaStock.h"
 #include "../include/manipularArchivos.h"
@@ -36,6 +37,7 @@ NodoCargaStock* crearNodoCargaStock(const char *idProducto, const int cantidad) 
     nuevoNodo->stockCargado.Cantidad = cantidad;
 
     //newNodo->familia.IdFamilia[alFinalDelString] = '\0';
+    nuevoNodo->siguiente = NULL; //cambio realizado
     return nuevoNodo;
 }
 
@@ -172,7 +174,7 @@ int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaSto
 }
 
 
-void guardarStockEnDB(NodoCargaStock* head) {
+void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
 
     NodoCargaStock *actual = head;
     while (actual != NULL)

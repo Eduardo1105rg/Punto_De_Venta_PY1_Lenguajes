@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "familia.h": "c"
+        "familia.h": "c",
+        "cargastock.h": "c",
+        "mysql.h": "c"
     }
 }

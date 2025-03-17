@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mysql/mysql.h>
 
 #include "../include/producto.h"
 #include "../include/manipularArchivos.h"
@@ -43,6 +44,7 @@ NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, cons
     nuevoNodo->producto.Cantidad = cantidad;
 
     // Se retorna el nodo recien creado.
+    nuevoNodo->siguiente = NULL; //cambio realizado
     return nuevoNodo;
 }
 
@@ -193,7 +195,7 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
 }
 
 
-void guardarProductosEnDB(NodoProducto* head) {
+void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
 
     NodoProducto *actual = head;
     while (actual != NULL)

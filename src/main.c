@@ -2,6 +2,10 @@
 #include "../include/familia.h"
 #include "../include/producto.h"
 #include "../include/cargaStock.h"
+#include "../include/db.h"
+
+#include <mysql/mysql.h>
+
 
 
 
@@ -12,6 +16,8 @@
 
 int main() {
 
+    MYSQL *conexion = NULL;
+
     // Lista de familias.
     NodoFamilia *listaDeFamilias = NULL;
 
@@ -21,6 +27,10 @@ int main() {
     //Imprimimos los datos guardados en la lista.
     imprimirListaNodosFamilia(listaDeFamilias);
 
+    if (conectar(&conexion) != 0) {
+        return 1; 
+    }
+  
     // Los intentamos almacenar en la base de datos.
     //guardarFamiliasEnDB(listaDeFamilias);
 
@@ -52,6 +62,8 @@ int main() {
     imprimirListaNodosCargaStock(lista_carga_stock);
 
     liberarListaCargaStock(lista_carga_stock);
+
+
 
 
     return 0;

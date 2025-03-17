@@ -1,6 +1,7 @@
 #ifndef FAMILIA_H
 #define FAMILIA_H
 
+#include <mysql/mysql.h>
 
 struct NodoFamilia;
 
@@ -24,7 +25,9 @@ typedef struct NodoFamilia {
 
 int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamilias);
 
-void guardarFamiliasEnDB(NodoFamilia* head);
+void guardarFamiliasEnDB(MYSQL *conexion, NodoFamilia* head);
+
+// int conectar(MYSQL **conexion);
 
 
 // Lo relacionado con la lista dinamica para familia:
