@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "../include/familia.h"
 #include "../include/producto.h"
+#include "../include/cargaStock.h"
+
 
 
 
@@ -39,6 +41,18 @@ int main() {
 
     // Liberamos la memoria asignada a la lista.
     liberarListaProducto(listaProductos);
+
+
+
+    // Cargar estock de productos desde txt
+    NodoCargaStock *lista_carga_stock = NULL;
+
+    cargarStockDesdeArchivo("data/stock.txt", &lista_carga_stock);
+
+    imprimirListaNodosCargaStock(lista_carga_stock);
+
+    liberarListaCargaStock(lista_carga_stock);
+
 
     return 0;
 }
