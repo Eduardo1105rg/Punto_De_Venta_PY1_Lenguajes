@@ -1,0 +1,5 @@
+Prod1,Atún,Enlatados,500.3,655.4,45
+Prod2,Arroz,Granos básicos,500.3,655.4,45
+Prod3,Lentejas,Granos básicos,500.3,655.4,45
+Prod4,Gabanzos,Granos básicos,500.3,655.4,45
+Prod5,Frijoles,Granos básicos,500.3,655.4,45
