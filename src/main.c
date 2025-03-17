@@ -31,6 +31,8 @@ int main() {
         return 1; 
     }
   
+    guardarFamiliasEnDB(conexion, listaDeFamilias);
+
     // Los intentamos almacenar en la base de datos.
     //guardarFamiliasEnDB(listaDeFamilias);
 

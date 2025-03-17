@@ -4,7 +4,7 @@
 #include "../include/db.h"
 
 #include <mysql/mysql.h>
-#define HOST "172.22.112.1"
+#define HOST "172.27.138.252"
 #define PORT 3307
 #define USERNAME "root"
 #define PASSWORD "root"
