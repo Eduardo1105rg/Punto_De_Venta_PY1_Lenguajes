@@ -32,7 +32,7 @@ int main() {
     }
   
     // Los intentamos almacenar en la base de datos.
-    //guardarFamiliasEnDB(listaDeFamilias);
+    guardarFamiliasEnDB(conexion,listaDeFamilias);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaFamilia(listaDeFamilias);

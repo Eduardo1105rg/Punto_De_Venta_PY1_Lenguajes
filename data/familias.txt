@@ -1,2 +1,17 @@
 Fam1,Enlatados
-Fam2,Granos Básicos
+Fam2,Granos basicos
+Fam3,Electrodomesticos
+Fam4,Armas
+Fam5,Gaseosas
+Fam6,Jugos Naturales
+Fam7,Muebles
+Fam8,Calzado Deportivo
+Fam9,Joyeria
+Fam10,Snacks
+Fam11,Peluches
+Fam12,Maquillaje
+Fam13,Cremas
+Fam14,Aseo personal
+Fam15,Juguetes
+Fam16,Congelados
+Fam17,Utensilios Cocina
