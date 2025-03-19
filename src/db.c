@@ -4,7 +4,7 @@
 #include "../include/db.h"
 
 #include <mysql/mysql.h>
-#define HOST "172.27.138.252"
+#define HOST "192.168.50.136"  //172.27.138.252 172.26.219.236
 #define PORT 3307
 #define USERNAME "root"
 #define PASSWORD "root"
@@ -15,6 +15,7 @@ int conectar(MYSQL **conexion) {
     int error;
 
     *conexion = mysql_init(NULL);  // Inicializamos la estructura de conexión
+    printf("hola");
     if (mysql_real_connect(*conexion, HOST, USERNAME, PASSWORD, DATABASE, PORT, NULL, 0) != NULL) {
         printf("Se estableció la conexión con la base de datos\n");
         error = 0;

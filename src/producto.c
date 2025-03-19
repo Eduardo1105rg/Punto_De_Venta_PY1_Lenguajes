@@ -195,6 +195,35 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
 }
 
 
+
+void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nombre, const char *id_familia, float costo, float precio, int cantidad) {
+    // Verificamos que nada sea nulo
+    printf("soy idProducto: %s\n",id_familia);
+    if (id_producto == NULL || nombre == NULL || id_familia == NULL) {
+        printf("Error: Ningún campo puede ser nulo\n");
+        return;
+    }
+
+    //asprintf me da la memoria necesaria para la consulta
+    char *consulta = NULL;
+    int largoConsulta = asprintf(&consulta, "INSERT INTO Productos(IdProducto, Nombre, IdFamilia, Costo, Precio, Cantidad) VALUES ('%s', '%s', '%s', '%f', '%f', '%d');",
+             id_producto, nombre, id_familia, costo, precio, cantidad);
+
+
+    // Ejecutamos la consulta
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+
+    printf("Producto agregado correctamente.\n");
+    free(consulta);
+    return;
+}
+
+
+
 void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
 
     NodoProducto *actual = head;
@@ -228,6 +257,8 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
         float costo = actual->producto.Costo;
         float precio = actual->producto.Precio;
         int cantidad = actual->producto.Cantidad;
+
+        agregarProductos(conexion,id_producto,nombre,id_familia,costo,precio,cantidad);
 
         // Aqui iria el resto de la logica para guardar en la base de datos.
         free(id_producto);

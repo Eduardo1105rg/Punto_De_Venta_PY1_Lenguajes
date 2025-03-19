@@ -173,6 +173,24 @@ int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaSto
     return 0;
 }
 
+void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
+
+    printf("%d\n",cantidad);
+    printf("%s\n",id_producto);
+    printf("SOY YO");
+    if (id_producto == NULL || cantidad == 0) {
+        printf("Error: Por favor ingrese datos distintos de nullo o una cantidad mayor a cero\n");
+        return;
+    }
+    char *consulta;
+    int largo = asprintf(&consulta, "update Productos set Cantidad = %d where IdProducto = '%s'", cantidad, id_producto);
+
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+}
 
 void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
 
@@ -184,6 +202,7 @@ void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
 
         char *id_producto;
         int cantidad;
+        printf("Soy la cantidad %d:" ,cantidad );
 
         id_producto = (char *)malloc((strlen(actual->stockCargado.IdProducto) + 1) * sizeof(char));
 
@@ -194,6 +213,8 @@ void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
             exit(1);
         }
         strcpy(id_producto, actual->stockCargado.IdProducto);
+
+        agregarStock(conexion,id_producto,cantidad);
         //actual->familia.IdFamilia
         //actual->familia.Descripcion
 
