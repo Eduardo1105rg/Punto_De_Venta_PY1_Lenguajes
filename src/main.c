@@ -1,18 +1,22 @@
 #include <stdio.h>
+#include <mysql/mysql.h>
+
 #include "../include/familia.h"
 #include "../include/producto.h"
 #include "../include/cargaStock.h"
 #include "../include/db.h"
-
-#include <mysql/mysql.h>
-
-
-
+#include "../include/menu.h"
 
 
 // Comando para ejecutar desde c, se deben de compilar todos los archivos .c
 // gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c
 //./punto_de_venta
+
+
+// Comando de compilacion actual con lo de la base de datos:
+// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c -lmysqlclient
+//./punto_de_venta
+
 
 int main() {
 

@@ -1,0 +1,12 @@
+>> Archivo para giardar los datos de los puersto y usuarios que se usan para conectarse a la base de datos desde cada computadora.
+
+
+========== >> Eduardo << ============
+>> PC
+#define HOST "172.22.112.1"
+#define PORT 3307
+#define USERNAME "root"
+#define PASSWORD "root"
+#define DATABASE "puntoVenta"
+
+========== >> Bryan << ============

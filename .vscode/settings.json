@@ -2,6 +2,9 @@
     "files.associations": {
         "familia.h": "c",
         "cargastock.h": "c",
-        "mysql.h": "c"
+        "mysql.h": "c",
+        "generales.h": "c",
+        "db.h": "c",
+        "producto.h": "c"
     }
 }
