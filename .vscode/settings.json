@@ -5,6 +5,7 @@
         "mysql.h": "c",
         "generales.h": "c",
         "db.h": "c",
-        "producto.h": "c"
+        "producto.h": "c",
+        "manipulararchivos.h": "c"
     }
 }

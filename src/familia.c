@@ -1,16 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mysql/mysql.h>
 
 #include "../include/familia.h"
 #include "../include/manipularArchivos.h"
-
-#include <mysql/mysql.h>
-#define HOST "192.168.50.136"
-#define PORT 3307
-#define USERNAME "root"
-#define PASSWORD "root"
-#define DATABASE "puntoVenta"
 
 // ================ Funciones para lo que seria la creacion de la lista de familias.
 
