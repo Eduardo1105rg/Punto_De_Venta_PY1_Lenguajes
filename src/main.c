@@ -29,12 +29,16 @@ int main() {
     cargarFamiliasDesdeArchivo("data/familias.txt", &listaDeFamilias);
 
     //Imprimimos los datos guardados en la lista.
-    imprimirListaNodosFamilia(listaDeFamilias);
-
+    //imprimirListaNodosFamilia(listaDeFamilias);
+    printf("Aqui");
     if (conectar(&conexion) != 0) {
+        
         return 1; 
     }
+    printf("Se logro conectar");
   
+    guardarFamiliasEnDB(conexion, listaDeFamilias);
+
     // Los intentamos almacenar en la base de datos.
     guardarFamiliasEnDB(conexion,listaDeFamilias);
 
@@ -51,7 +55,7 @@ int main() {
     imprimirListaNodosProducto(listaProductos);
 
     // Los intentamos almacenar en la base de datos.
-    //guardarProductosEnDB(listaProductos);
+    guardarProductosEnDB(conexion,listaProductos);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaProducto(listaProductos);
@@ -64,6 +68,8 @@ int main() {
     cargarStockDesdeArchivo("data/stock.txt", &lista_carga_stock);
 
     imprimirListaNodosCargaStock(lista_carga_stock);
+
+    guardarStockEnDB(conexion,lista_carga_stock);
 
     liberarListaCargaStock(lista_carga_stock);
 

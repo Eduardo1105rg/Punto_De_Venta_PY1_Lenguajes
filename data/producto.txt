@@ -1,5 +1,51 @@
-Prod1,Atún,Enlatados,500.3,655.4,45
-Prod2,Arroz,Granos básicos,500.3,655.4,45
-Prod3,Lentejas,Granos básicos,500.3,655.4,45
-Prod4,Gabanzos,Granos básicos,500.3,655.4,45
-Prod5,Frijoles,Granos básicos,500.3,655.4,45
+Prod1,AtunSuli,Fam1,500.0,655.4,45
+Prod2,Sardinas,Fam1,600.0,750.5,30
+Prod3,Spam,Fam1,1050.0,1350.0,50
+Prod4,ArrozPelon5kg,Fam2,6500.0,7500.0,30
+Prod5,FrijolesSuli2kg,Fam2,1000.0,1350.0,60
+Prod6,AvenaQuacker1kg,Fam2,1250.5,1500.3,40
+Prod7,OllaMultiuso,Fam3,30000.0,41990.2,20
+Prod8,FreidoraDeAire,Fam3,40000.3,99900.1,45
+Prod9,Licuadora,Fam3,30000.4,75000.2,15
+Prod10,Glock17,Fam4,100000.0,250000.1,25
+Prod11,AR-15,Fam4,1000000.3,1250000.7,30
+Prod12,P90,Fam4,350000.3,750000.2,15
+Prod13,CocaCola3L,Fam5,2500.0,3000.0,70
+Prod14,Sprite3L,Fam5,2300.0,2600.0,70
+Prod15,Pepsi3L,Fam5,2000.0,2300.0,70
+Prod16,JugoNaranja2L,Fam6,1200.0,1500.0,30
+Prod17,JugoPiña2L,Fam6,1500.0,2000.0,20
+Prod18,JugoMandarina2L,Fam6,1000.0,1500.0,18
+Prod19,CamaKing,Fam7,300000.7,450000.6,15
+Prod20,Ropero4Puertas,Fam7,100000.3,150000.4,10
+Prod21,EscritorioNantes,Fam7,30000.1,99990.2,15
+Prod22,AirJordan4RM,Fam8,50000.1,100000.4,20
+Prod23,NikeMercurial,Fam8,25000.3,80000.1,25
+Prod24,NikeBlazer,Fam8,40000.2,100000.5,30
+Prod25,AnilloOro10K,Fam9,100000.7,450000.8,25
+Prod26,EsclavaOro18K,Fam9,1200000.1,2000000.0,32
+Prod27,TobilleraOro10k,Fam9,20000.0,50000.1,15
+Prod28,RanchitaQueos,Fam10,100.0,150.0,100
+Prod29,Popis,Fam10,150.0,350.0,150
+Prod30,Quesitos,Fam10,125.0,250.0,120
+Prod31,Minion,Fam11,1000.0,5000.0,30
+Prod32,Pikachu,Fam11,1000.0,5000.0,30
+Prod33,Furina,Fam11,1000.0,5000.0,30
+Prod34,Corrector,Fam12,1000.0,1500.0,10
+Prod35,BasePolvo,Fam12,1500.0,3000.0,10
+Prod36,Delineador,Fam12,1000.0,2000.0,15
+Prod37,CremaHidratante,Fam13,2500.0,6000.0,20
+Prod38,CremaReafirmante,Fam13,1500.0,3500.0,15
+Prod39,CremaNutritiva,Fam13,2000.00,5000.0,20
+Prod40,Jabon,Fam14,500.0,1500.0,70
+Prod41,Champu,Fam14,1000.0,2000.0,150
+Prod42,Desodorante,Fam14,1500.0,3500.0,200
+Prod43,Barbie,Fam15,2500.0,10000.0,60
+Prod44,Carros,Fam15,100.0,250.0,200
+Prod45,Plasticina,Fam15,100.0,500.0,250
+Prod46,Moras,Fam16,1250.0,3400.0,30
+Prod47,Fresas,Fam16,1250.0,3000.0,25
+Prod48,Tilapias,Fam16,2000.0,4000.0,30
+Prod49,Cucharas,Fam17 Cocina,300.0,600.0,75
+Prod50,Tenedores,Fam17 Cocina,400.0,850.0,80
+Prod51,Cuchillos,Fam17 Cocina,500.0,1000.0,100
