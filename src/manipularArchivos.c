@@ -49,11 +49,16 @@ char** separar_cadenas(char* cadena, int* num_palabras) {
 
     while (*cadena != '\0') {
 
+    //    if (*cadena == '\r' || *cadena == '\n' || *cadena == ' ') { posible solución al error de dejar datos al final 
+        //    cadena++; de una cadena
+        //    continue
+       // }
+
         if (*cadena == ',') {
 
             palabra[indice_palabra] = '\0';
 
-            // Revisar eñ espacio de la lista de palbaras
+            // Revisar el espacio de la lista de palbaras
             if (indice_lista >= tamano_lista) {
                 tamano_lista *= 2;
                 char** nueva_lista = (char **)realloc(lista_palabras, tamano_lista * sizeof(char*));
