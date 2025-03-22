@@ -27,3 +27,9 @@ int conectar(MYSQL **conexion) {
     return error;
 }
 
+
+void cerrarConexion(MYSQL *conexion) {
+    mysql_close(conexion);
+    printf("Conexión cerrada.\n");
+}
+

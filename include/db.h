@@ -4,5 +4,6 @@
 
 int conectar(MYSQL **conexion);
 
+void cerrarConexion(MYSQL *conexion);
 
 #endif

@@ -90,36 +90,38 @@ select
     p.Nombre,
 	(p.precio -(p.precio *0.13)) as PrecioSinIva,
     p.Cantidad
+    fp.Descripcion AS DescripcionFamilia
 from Productos as p
-	
+JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
 -- select * from verCatalogo Este es para ver la consulta
 
 
 
--- drop procedure verCatalogoFiltro
+-- drop procedure verCatalogoFiltro;
 -- Este procedimiento almacenado lo que hace es revisar una descripcion(Nombre del producto),
 -- con el que hacemos una union por medio del id de la familia y del id del producto por la pk y fk
 -- que luego comparamos las descripciones en el where y si estan son correctas nos devuelve el select
 -- de aquellos productos que cumplan la condición
-delimiter $$
-use puntoVenta$$
-create procedure verCatalogoFiltro(
-	in descripcion varchar(40)
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE verCatalogoFiltro(
+    IN descripcion VARCHAR(40)
 )
-begin
-	select
-		 p.IdProducto,
-		 p.Nombre,
-		 (p.Precio -(p.precio * 0.13)) as PrecioSinIva,
-		 p.cantidad
-	from 
-		Productos p
-	Join
-		FamiliaProductos as fp on p.IdFamilia = fp.IdFamilia
-    where
-		fp.Descripcion = descripcion;
-end $$
-delimiter ;
+BEGIN
+    SELECT
+        p.IdProducto,
+        p.Nombre,
+        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Cantidad,
+        fp.Descripcion AS DescripcionFamilia
+    FROM 
+        Productos p
+    JOIN
+        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
+    WHERE
+        fp.Descripcion = descripcion;
+END $$
+DELIMITER ;
 
 
 -- call verCatalogoFiltro('Armas'); un ejemplo de prueba

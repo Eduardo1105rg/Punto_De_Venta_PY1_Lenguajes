@@ -6,6 +6,8 @@
 #include "../include/cargaStock.h"
 #include "../include/db.h"
 #include "../include/menu.h"
+#include "../include/consultaCatalogo.h"
+
 
 
 // Comando para ejecutar desde c, se deben de compilar todos los archivos .c
@@ -40,7 +42,7 @@ int main() {
     guardarFamiliasEnDB(conexion, listaDeFamilias);
 
     // Los intentamos almacenar en la base de datos.
-    guardarFamiliasEnDB(conexion,listaDeFamilias);
+    //guardarFamiliasEnDB(conexion,listaDeFamilias);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaFamilia(listaDeFamilias);
@@ -55,7 +57,7 @@ int main() {
     imprimirListaNodosProducto(listaProductos);
 
     // Los intentamos almacenar en la base de datos.
-    guardarProductosEnDB(conexion,listaProductos);
+    //guardarProductosEnDB(conexion,listaProductos);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaProducto(listaProductos);
@@ -69,12 +71,21 @@ int main() {
 
     imprimirListaNodosCargaStock(lista_carga_stock);
 
-    guardarStockEnDB(conexion,lista_carga_stock);
+    //guardarStockEnDB(conexion,lista_carga_stock);
 
     liberarListaCargaStock(lista_carga_stock);
 
 
 
+    // Para lo de ver el inventario...
+
+    // consultarCatalogo(conexion);
+
+    // consultarCatalogoPorFamilia(conexion, "Enlatados");
+
+
+    // Pruebas del menu..
+    menu_principal();
 
     return 0;
 }

@@ -9,6 +9,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/**
+ * 
+ * Nombre: leerCaracteresDeFormadinamica
+ * 
+ * Descipcion: Una funcion para que en una cadena que se pasa como parametro de pueda guardar una cadena de 
+ * caracteres de forma dinamica, la funcion expande conforme necesita la cantidad de memeoria,
+ * asignada a una variable.
+ * 
+ * Entradas: char ** cadena
+ * 
+ * Salidas: No posee
+ * 
+ */
+void leerCaracteresDeFormadinamica(char** cadena) {
+
+    int tamano = 1;
+    char caracter;
+    int indice = 0;
+
+    *cadena = (char *)malloc(tamano * sizeof(char)); // estos sirve para asignarle memoria por primera vez a la cadena.
+
+    while ((caracter = getchar()) != '\n' && caracter != EOF) {
+        (*cadena)[indice++] = caracter;
+
+        // En caso de que se ocupe as tamaño en la memoria en la cadena, se la vuelven a asignar
+        if (indice >= tamano) {
+            tamano *= 2;
+            char *nuevaCadena = (char *)realloc(*cadena, tamano * sizeof(char)); // Le vuelve a reasignar memoria a la cadena.
+
+            if (nuevaCadena == NULL) {
+                printf("Error al reasignar memoria.\n");
+                free(*cadena);
+                return;
+            }
+            *cadena = nuevaCadena;
+        }   
+    }
+    (*cadena)[indice] = '\0'; // Terminar la cadena
+    return;
+}
+
+
 /**
  * 
  * Nombre: separar_cadenas
