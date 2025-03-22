@@ -40,4 +40,6 @@ void imprimirListaNodosProducto(NodoProducto* head);
 
 void liberarListaProducto( NodoProducto* head);
 
+void eliminarProducto(MYSQL *conexion, const char *idProducto);
+
 #endif

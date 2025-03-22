@@ -270,3 +270,11 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
     }
     return;
 }
+
+
+
+void eliminarProducto(MYSQL *conexion, const char *idProducto) {
+
+
+    return;
+}

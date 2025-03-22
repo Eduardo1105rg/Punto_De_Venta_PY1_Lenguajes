@@ -6,6 +6,7 @@
 // Include de archivos del programa.
 #include "../include/administrativas.h"
 #include "../include/familia.h"
+#include "../include/producto.h"
 #include "../include/db.h"
 #include "../include/manipularArchivos.h"
 
@@ -46,6 +47,117 @@ void incluir_familia_de_productos() {
 }
 
 
+void menu_agregar_eliminar_productos() {
+    MYSQL *conexion = NULL;
+    if (conectar(&conexion) != 0) {
+        
+        return; 
+    }
+
+    char opcion;
+    do {
+        printf("\nRegistro de productos... \n");
+        printf("Selecciona una de las siguientes opciones para continuar...\n");
+
+        printf(">> A) Registrar nuevo lote. \n");
+        printf(">> B) Eliminar producto.\n");
+        printf(">> S) Volver al menu de opciones generales.\n");
+
+
+        printf("Ingrese la letra de la consulta a realizar.: ");
+        scanf(" %c", &opcion); 
+        getchar(); 
+
+        switch (opcion) {
+            // ========== Consulta de catalogo.
+            case 'a' :
+                char *rutasArchivo1;
+                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/familias.txt): ");
+                leerCaracteresDeFormadinamica(&rutasArchivo1);
+                printf("\n");
+                
+                NodoProducto *listaProductos = NULL;
+
+                // Primero se cargan los datos desde el archivo y se almacenan en la lista.
+                cargarProductosDesdeArchivo(rutasArchivo1, &listaProductos);
+            
+                //Imprimimos los datos guardados en la lista.
+                imprimirListaNodosProducto(listaProductos);
+            
+                // Los intentamos almacenar en la base de datos.
+                //guardarProductosEnDB(conexion,listaProductos);
+            
+                // Liberamos la memoria asignada a la lista.
+                liberarListaProducto(listaProductos);
+
+                break;
+            case 'A':
+                char *rutasArchivo2;
+                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/familias.txt): ");
+                leerCaracteresDeFormadinamica(&rutasArchivo1);
+                printf("\n");
+                
+                NodoProducto *listaProductos = NULL;
+
+                // Primero se cargan los datos desde el archivo y se almacenan en la lista.
+                cargarProductosDesdeArchivo(rutasArchivo2, &listaProductos);
+            
+                //Imprimimos los datos guardados en la lista.
+                imprimirListaNodosProducto(listaProductos);
+            
+                // Los intentamos almacenar en la base de datos.
+                //guardarProductosEnDB(conexion,listaProductos);
+            
+                // Liberamos la memoria asignada a la lista.
+                liberarListaProducto(listaProductos);
+
+
+                break;
+
+            // ========== Consulta de catalogo por la descripcion de la familia.
+            case 'b':
+                 
+                // Solicitar 
+                char *id_producto1;
+                printf("\nIngresa la descripcion de la familia a buscar: ");
+                leerCaracteresDeFormadinamica(&id_producto1);
+                printf("\n");
+                eliminarProducto(conexion, id_producto1);
+                free(id_producto1);
+                break;
+
+            case 'B':
+
+                char *id_producto2;
+                printf("\nIngresa la descripcion de la familia a buscar: ");
+                leerCaracteresDeFormadinamica(&id_producto2);
+                printf("\n");
+                eliminarProducto(conexion, id_producto2);
+                free(id_producto2);
+
+                break;
+
+      
+
+            // ========== Salir del menu.
+            case 's':
+                printf("Saliendo de la seccion de opciones generales...\n");
+                break;
+            case 'S':
+                printf("Saliendo de la seccion de opciones generales...\n");
+                break;
+
+            default:
+                printf("Opción no válida, intenta de nuevo.\n");
+        }
+    } while (opcion != 's');
+
+    cerrarConexion(conexion);
+    
+    return;
+}
+
+
 
 
 void menu_principal_administrativos() {
@@ -79,10 +191,12 @@ void menu_principal_administrativos() {
 
             // ========== Registro de productos.
             case 'b':
-                
+                menu_agregar_eliminar_productos();
                 break;
 
             case 'B':
+                menu_agregar_eliminar_productos();
+
                 break;
 
             // ========== Cargar inventario.
