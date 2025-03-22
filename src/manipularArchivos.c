@@ -8,7 +8,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <ctype.h>
 
 /**
  * 
@@ -30,6 +30,10 @@ void leerCaracteresDeFormadinamica(char** cadena) {
     int indice = 0;
 
     *cadena = (char *)malloc(tamano * sizeof(char)); // estos sirve para asignarle memoria por primera vez a la cadena.
+    if (cadena == NULL) {
+        printf("Error al asignar memoria a la cadena.\n");
+        exit(1);
+    }
 
     while ((caracter = getchar()) != '\n' && caracter != EOF) {
         (*cadena)[indice++] = caracter;
@@ -49,6 +53,51 @@ void leerCaracteresDeFormadinamica(char** cadena) {
     }
     (*cadena)[indice] = '\0'; // Terminar la cadena
     return;
+}
+
+
+int leerNumeroDinamico() {
+    char *cadena = NULL; // Esta es la cadena.
+    int tamano = 1;
+    char caracter;
+    int indice = 0;
+    int numero;
+    char *endptr;
+
+    // Reservar memoria inicial
+    cadena = (char *)malloc(tamano * sizeof(char));
+    if (cadena == NULL) {
+        printf("Error al asignar memoria.\n");
+        exit(1);
+    }
+
+    while ((caracter = getchar()) != '\n' && caracter != EOF) {
+        cadena[indice++] = caracter;
+
+        if (indice >= tamano) {
+            tamano *= 2;
+            char *nuevaCadena = (char *)realloc(cadena, tamano * sizeof(char));
+            if (nuevaCadena == NULL) {
+                printf("Error al reasignar memoria.\n");
+                free(cadena);
+                exit(1);
+            }
+            cadena = nuevaCadena;
+        }
+    }
+    cadena[indice] = '\0'; // Final
+
+    // Validar y convertir la entrada a número
+    numero = strtol(cadena, &endptr, 10);
+
+    if (*endptr != '\0') {
+        printf("Entrada no válida, se detectaron caracteres noi validos.\n");
+        free(cadena);
+        //return leerNumeroDinamico(); // Reintentar si la entrada no es válida
+    }
+
+    free(cadena); // Liberar la memoria de la cadena
+    return numero;
 }
 
 
@@ -92,10 +141,11 @@ char** separar_cadenas(char* cadena, int* num_palabras) {
 
     while (*cadena != '\0') {
 
-    //    if (*cadena == '\r' || *cadena == '\n' || *cadena == ' ') { posible solución al error de dejar datos al final 
-        //    cadena++; de una cadena
-        //    continue
-       // }
+        // Validar los caracteres que nos estan dando problemas.
+       if (*cadena == '\r' || *cadena == '\n' || *cadena == '\t') { //posible solución al error de dejar datos al final 
+           cadena++; 
+           continue;
+       }
 
         if (*cadena == ',') {
 
