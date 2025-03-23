@@ -235,11 +235,9 @@ void mostrar_cotizacion(NodoCotizacionDetalle* head) {
     return;
 }
 
-
 void mostrar_cotizacionID(MYSQL *conexion, int id) {
-
     char *consulta = NULL;
-    int largoConsulta = asprintf(&consulta, "call mostrarDetalleCotizacion('%d')",id);
+    int largoConsulta = asprintf(&consulta, "call mostrarDetalleCotizacion('%d')", id);
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consulta);
@@ -255,8 +253,7 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
 
     MYSQL_ROW fila;
 
-
-
+    char* nombres[100]; 
     printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
     printf("| Fila       | ID Producto  | Nombre               | Descripcion       | Precio      | Cantidad   |\n");
     printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
@@ -265,18 +262,57 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
     while ((fila = mysql_fetch_row(resultado)) != NULL) {
         printf("| %-10d | %-12s | %-20s | %-17s | %-11.2f | %-10d |\n", 
                filaNum, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
+        nombres[filaNum - 1] = strdup(fila[1]); 
         filaNum++;
     }
 
     printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
 
-    mysql_free_result(resultado);
 
+    while (mysql_next_result(conexion) == 0) {
+        MYSQL_RES *res = mysql_store_result(conexion);
+        mysql_free_result(res);
+    }
+    
 
-    return;
+    printf("Si desea agregar productos escriba 1, si quiere eliminar escriba 2: ");
+    int modifica2 = 0;
+    scanf("%d", &modifica2);
+
+    if (modifica2 == 1) {
+        printf("Estas agregando productos, escribe el nombre del producto\n");
+    } else if (modifica2 == 2) {
+        printf("Estas eliminando productos, escribe el número de fila a eliminar:\n");
+        int modifica3 = 0;
+        scanf("%d", &modifica3);
+        if (modifica3 > 0 && modifica3 <= filaNum) {
+            printf("%d\n", modifica3);
+            printf("%s\n", nombres[modifica3 - 1]);
+            char *consulta2 = NULL;
+            int largoConsulta2 = asprintf(&consulta2, "call eliminarLineaDetalle('%s')", nombres[modifica3 - 1]);
+            if (mysql_query(conexion, consulta2)) {
+                printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                free(consulta2);
+                return;
+            }
+            printf("Toda la línea fue eliminada correctamente.\n");
+            free(nombres[modifica3 - 1]); 
+            nombres[modifica3 - 1] = NULL;
+            free(consulta2);
+        } else {
+            printf("Número de fila inválido.\n");
+        }
+    } else {
+        printf("Opción inválida.\n");
+    }
+
+    for (int i = 0; i < filaNum - 1; i++) {
+        if(nombres[i] != NULL) {
+            free(nombres[i]);
+
+        }
+    }
 }
-
-
 
 
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {

@@ -342,19 +342,8 @@ void menu_principal_generales() {
                 int modifica = 0;
                 scanf("%d", &modifica);
                 mostrar_cotizacionID(conexion,modifica);
-                printf("Si desea agregar productos escriba 1 si quiere eliminar 2")
-                int modifica2 = 0;
-                scanf("%d", &modifica2);
-                if (modifica2 == 1) {
-                    // podriamos mostrar catalogo
-                    printf("Estas agregando productos, escribe el nombre del producto\n");
-                    //agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
 
-
-                } else {
-                    printf("Estas eliminando productos, escriba el nombre del producto a eliminar\n");
-
-                }
+                
 
                 //Ok necesito ver si a esa lista de productos como es que queda guardada
                 //mostrar_cotizacion(lista_productos_en_cotizacion);
