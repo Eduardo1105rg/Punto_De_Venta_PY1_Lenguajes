@@ -123,14 +123,43 @@ BEGIN
 END $$
 DELIMITER ;
 
--- call verCatalogoFiltro('Armas'); un ejemplo de prueba
 
+-- call verCatalogoFiltro('Armas'); un ejemplo de prueba
 
 -- Esto se hace porque los archivos que vienen importados desde el txt vienen sucios o sea con un salto de linea o caracter de finalizacion
 -- set SQL_SAFE_UPDATES = 0;
 -- update FamiliaProductos
 -- set Descripcion = trim(REPLACE(REPLACE(Descripcion, CHAR(13), ''), CHAR(10), ''));
 -- set SQL_SAFE_UPDATES = 1;
+
+    
+    
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE obtenerProductoPorID(
+    IN idProdu VARCHAR(40)
+)
+BEGIN
+    SELECT
+        p.IdProducto,
+        p.Nombre,
+        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Cantidad,
+        fp.Descripcion AS DescripcionFamilia
+    FROM 
+        Productos p
+    JOIN
+        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
+    WHERE
+        p.IdProducto = idProdu;
+END $$
+DELIMITER ;
+
+
+-- CALL obtenerProductoPorID('Prod1');
+
+
 
 DELIMITER $$
 use puntoVenta$$
@@ -157,6 +186,7 @@ DELIMITER ;
 
 
 
+<<<<<<< HEAD
 -- drop procedure eliminarLineaDetalle
 DELIMITER $$
 use puntoVenta$$
@@ -229,3 +259,5 @@ begin
 	end if;
 end$$
 delimiter;
+=======
+>>>>>>> origin/Eduardo
