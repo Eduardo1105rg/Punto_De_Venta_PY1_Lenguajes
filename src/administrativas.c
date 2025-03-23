@@ -157,7 +157,11 @@ void menu_agregar_eliminar_productos() {
     return;
 }
 
+void menu_modificar_stock() {
 
+    
+
+}
 
 
 void menu_principal_administrativos() {

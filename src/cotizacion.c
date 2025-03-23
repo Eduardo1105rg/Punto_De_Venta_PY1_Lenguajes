@@ -260,8 +260,7 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
 
     int filaNum = 1;
     while ((fila = mysql_fetch_row(resultado)) != NULL) {
-        printf("| %-10d | %-12s | %-20s | %-17s | %-11.2f | %-10d |\n", 
-               filaNum, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
+        printf("| %-10d | %-12s | %-20s | %-17s | %-11.2f | %-10d |\n", filaNum, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
         nombres[filaNum - 1] = strdup(fila[1]); 
         filaNum++;
     }
@@ -330,38 +329,6 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
         return;
     }
 
-    // Obtener los resultados
-    // resultado = mysql_store_result(conexion);
-    // if (resultado == NULL) {
-    //     printf("Error al obtener los resultados: %s\n", mysql_error(conexion));
-    //     return;
-    // }
-
-    // Procesar los resultados
-    // fila = mysql_fetch_row(resultado);
-
-    // if (fila) {
-    //     const char *nombreProducto = fila[1];
-    //     const char *descripcion = fila[4];
-    //     int precio = atoi(fila[2]); 
-
-
-    //     // Revisar si no hay otro elementos con este id
-
-    //     // if ( buscarPorIdCotizacionDetalle(coti) )
-
-
-    //     // Validar que la cantidad del producto no sea menor a la solicitada... Pendiente
-
-        
-    //     // Agregar el producto a la cotización
-    //     insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
-
-    //     printf("Producto agregado a la cotización: %s\n", idProducto);
-    // } else {
-    //     printf("El producto con ID '%s' no fue encontrado.\n", idProducto);
-    // }
-
     do {
         resultado = mysql_store_result(conexion);
         if (resultado) {
@@ -372,19 +339,18 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
                 const char *nombreProducto = fila[1];
                 const char *descripcion = fila[4];
                 int precio = atoi(fila[2]);
-                printf("Pass1");
+                
                 // Revisar si no hay otro elemento con este ID
                 int cantProducto = buscarPorIdCotizacionDetalle(*head, idProducto);
-                printf("Pass2");
+                
 
                 if (cantProducto != 0) {
-                    printf("Pass4");
+                    
 
                     // Este es para combinar las cantodades de producto exitentes...
                     modificarValoresNodoCotizacionDetalle(head, idProducto, cantidad);
 
                 } else {
-                    printf("Pass5");
 
                     // Agregar el producto a la cotización
                     insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
@@ -405,7 +371,39 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 }
 
 
-void buscar_cotizacion(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idCotizacion) {
+void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion) {
+    MYSQL_RES *resultado;
+    MYSQL_ROW fila;
+
+    char *consulta = NULL;
+    int largoConsulta = asprintf(&consulta, "call mostrarDetalleCotizacion('%d')", idCotizacion);
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+
+    // registrar los datos del detalle de la cotizacion.
+    do {
+        resultado = mysql_store_result(conexion);
+        if (resultado) {
+            while ((fila = mysql_fetch_row(resultado)) != NULL) {
+
+                // fila[0]: Id Prodcuto.
+                // fila[1]: Nombre producto.
+                // fila[2]: Descripcion.
+                // fila[3]: Precio.
+                // fila[4]: Cantidad.
+                
+                // Crear la lista de nodos con los datos de la cotizacion.
+                insertarElementoAlFinalCotizacionDetalle(head, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
+
+            }
+            mysql_free_result(resultado); // Liberar este conjunto de resultados
+        }
+    } while (mysql_next_result(conexion) == 0); // Mover al siguiente conjunto de resultados
+    
+    free(consulta);
 
     return;
 }
