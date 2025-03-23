@@ -97,19 +97,19 @@ void menu_agregar_eliminar_productos() {
                 leerCaracteresDeFormadinamica(&rutasArchivo1);
                 printf("\n");
                 
-                NodoProducto *listaProductos = NULL;
+                NodoProducto *listaProductos2 = NULL;
 
                 // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-                cargarProductosDesdeArchivo(rutasArchivo2, &listaProductos);
+                cargarProductosDesdeArchivo(rutasArchivo2, &listaProductos2);
             
                 //Imprimimos los datos guardados en la lista.
-                imprimirListaNodosProducto(listaProductos);
+                imprimirListaNodosProducto(listaProductos2);
             
                 // Los intentamos almacenar en la base de datos.
                 //guardarProductosEnDB(conexion,listaProductos);
             
                 // Liberamos la memoria asignada a la lista.
-                liberarListaProducto(listaProductos);
+                liberarListaProducto(listaProductos2);
 
 
                 break;
@@ -119,7 +119,7 @@ void menu_agregar_eliminar_productos() {
                  
                 // Solicitar 
                 char *id_producto1;
-                printf("\nIngresa la descripcion de la familia a buscar: ");
+                printf("\nIngresa el nombre del producto a eliminar: ");
                 leerCaracteresDeFormadinamica(&id_producto1);
                 printf("\n");
                 eliminarProducto(conexion, id_producto1);
@@ -129,7 +129,7 @@ void menu_agregar_eliminar_productos() {
             case 'B':
 
                 char *id_producto2;
-                printf("\nIngresa la descripcion de la familia a buscar: ");
+                printf("\nIngresa el nombre del producto a eliminar: ");
                 leerCaracteresDeFormadinamica(&id_producto2);
                 printf("\n");
                 eliminarProducto(conexion, id_producto2);
@@ -242,3 +242,4 @@ void menu_principal_administrativos() {
 
     return;
 }
+

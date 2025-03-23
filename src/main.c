@@ -20,6 +20,10 @@
 //./punto_de_venta
 
 
+// Actual.
+// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c  -lmysqlclient
+
+
 int main() {
 
     MYSQL *conexion = NULL;
@@ -79,7 +83,7 @@ int main() {
 
     // Para lo de ver el inventario...
 
-    // consultarCatalogo(conexion);
+    //consultarCatalogo(conexion, 2);
 
     // consultarCatalogoPorFamilia(conexion, "Enlatados");
 
@@ -87,5 +91,7 @@ int main() {
     // Pruebas del menu..
   //  menu_principal();
 
+
+    //eliminarProducto(conexion, "Prod1");
     return 0;
 }

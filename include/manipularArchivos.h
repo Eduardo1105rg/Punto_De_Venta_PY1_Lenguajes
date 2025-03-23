@@ -11,4 +11,6 @@ void imprimir_lista_palabras(char** listaPalabras, int numPalabras, int num_line
 
 void leerCaracteresDeFormadinamica(char** cadena);
 
+int leerNumeroDinamico();
+
 #endif
