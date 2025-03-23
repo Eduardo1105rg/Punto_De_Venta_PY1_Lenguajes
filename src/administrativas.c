@@ -76,19 +76,19 @@ void menu_agregar_eliminar_productos() {
                 leerCaracteresDeFormadinamica(&rutasArchivo1);
                 printf("\n");
                 
-                NodoProducto *listaProductos = NULL;
+                NodoProducto *listaProductos1 = NULL;
 
                 // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-                cargarProductosDesdeArchivo(rutasArchivo1, &listaProductos);
+                cargarProductosDesdeArchivo(rutasArchivo1, &listaProductos1);
             
                 //Imprimimos los datos guardados en la lista.
-                imprimirListaNodosProducto(listaProductos);
+                imprimirListaNodosProducto(listaProductos1);
             
                 // Los intentamos almacenar en la base de datos.
                 //guardarProductosEnDB(conexion,listaProductos);
             
                 // Liberamos la memoria asignada a la lista.
-                liberarListaProducto(listaProductos);
+                liberarListaProducto(listaProductos1);
 
                 break;
             case 'A':

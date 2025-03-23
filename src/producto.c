@@ -72,31 +72,21 @@ void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto
     return;
 }
 
-void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
+void eliminarPorIdProducto(MYSQL *conexion, char * idProducto) {
 
-    NodoProducto* actual = *head;
-    NodoProducto* anterior = NULL;
 
-    while (actual != NULL && strcmp(actual->producto.IdProducto, idProducto) != 0)
-    {
-        anterior = actual;
-        actual = actual->siguiente;
-    }
-
-    if (actual == NULL) {
-        printf("La familia con el indice %s no ha sido encontrada.", idProducto);
+    if (idProducto == NULL) {
+        printf("Error: Por favor ingrese datos distintos de nullo\n");
         return;
     }
-
-    if (anterior == NULL)
-    {
-        *head = actual->siguiente;
-    } else {
-        anterior->siguiente = actual->siguiente;
+    char *consulta;
+    int largo = asprintf(&consulta, "call eliminarProducto('%s')", idProducto);
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
     }
     
-    free(actual);
-    return;
 }
 
 int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {

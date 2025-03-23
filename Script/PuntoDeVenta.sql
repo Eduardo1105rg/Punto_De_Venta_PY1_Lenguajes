@@ -132,7 +132,29 @@ DELIMITER ;
 -- update FamiliaProductos
 -- set Descripcion = trim(REPLACE(REPLACE(Descripcion, CHAR(13), ''), CHAR(10), ''));
 -- set SQL_SAFE_UPDATES = 1;
+use puntoVenta;
 
-    
-    
+ drop procedure eliminarProducto
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE eliminarProducto(
+    IN nombre VARCHAR(40)
+)
+BEGIN
+    delete FROM 
+		Productos p
+    WHERE
+        p.Nombre = nombre;
+END $$
+DELIMITER ;
+
+
+set SQL_SAFE_UPDATES = 0;
+set SQL_SAFE_UPDATES = 1;
+use puntoVenta;
+call eliminarProducto('AtunSuli');
+
+
+
+
 
