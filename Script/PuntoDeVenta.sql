@@ -123,7 +123,6 @@ BEGIN
 END $$
 DELIMITER ;
 
-
 -- call verCatalogoFiltro('Armas'); un ejemplo de prueba
 
 
@@ -158,6 +157,65 @@ DELIMITER ;
 -- set Descripcion = trim(REPLACE(REPLACE(Descripcion, CHAR(13), ''), CHAR(10), ''));
 -- set SQL_SAFE_UPDATES = 1;
 
-    
-    
+DELIMITER $$
+use puntoVenta$$
+create procedure mostrarDetalleCotizacion(
+    in IdCotizacion int
+)
+begin
+    select
+        cd.IdProducto,
+        p.Nombre,
+        fp.Descripcion,
+        cd.PrecioXunidad,
+        cd.Cantidad
+    from 
+        CotizacionDetalle cd
+    join
+        Productos p on cd.IdProducto = p.IdProducto
+    join
+        FamiliaProductos fp on p.IdFamilia = fp.IdFamilia
+    where 
+        cd.IdCotizacion = IdCotizacion;
+end $$
+DELIMITER ;
+
+
+
+-- drop procedure eliminarLineaDetalle
+DELIMITER $$
+use puntoVenta$$
+CREATE PROCEDURE eliminarLineaDetalle(
+	in nombreProdu varchar(20)
+)
+begin
+	delete from CotizacionDetalle cd where IdProducto in (
+		select IdProducto from Productos
+        where Nombre = nombreProdu
+    ); 
+end $$
+DELIMITER ;
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE obtenerProductoPorID(
+    IN idProdu VARCHAR(40)
+)
+BEGIN
+    SELECT
+        p.IdProducto,
+        p.Nombre,
+        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Cantidad,
+        fp.Descripcion AS DescripcionFamilia
+    FROM 
+        Productos p
+    JOIN
+        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
+    WHERE
+        p.IdProducto = idProdu;
+END $$
+DELIMITER ;
+
 
