@@ -32,14 +32,14 @@ create table Productos(
 
 
 create table Cotizacion (
-	IdCotizacion varchar(15) primary key,
+	IdCotizacion int auto_increment primary key ,
     Cliente varchar(30),
     EstadoCotizacion varchar(30)
 
 );
 
 create table CotizacionDetalle (
-	IdCotizacion varchar(15),
+	IdCotizacion int,
     IdProducto varchar(10),
     Cantidad int,
     PrecioXunidad float,
@@ -194,3 +194,38 @@ END $$
 DELIMITER ;
 
 
+-- Verifica si hay suficiente cantidad en stock antes de realizar la cotizacion
+-- delimiter $$
+-- create trigger verificaInventario
+-- before insert on CotizacionDetalle
+-- for each row 
+-- begin
+--	declare cantidadDisponible int;
+--    select cantidad into cantidadDisponible from Productos
+--    where IdProducto = new.IdProducto;
+    
+--    if new.Cantidad > cantidadDisponible then
+--		signal sqlstate '45000' 
+--        set MESSAGE_TEXT = 'Error: No hay suficientes productos en stock';
+--	end if;
+-- end$$
+-- delimiter;
+
+
+
+delimiter $$
+create trigger actualizadorInventario
+before update on Productos
+for each row 
+begin
+	declare cantidadTotal int;
+    set cantidadTotal = new.Cantidad + old.Cantidad;
+    
+    if cantidadTotal < 0 then
+		signal sqlstate '45000' 
+        set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
+	else
+        set new.Cantidad = cantidadTotal;
+	end if;
+end$$
+delimiter;
