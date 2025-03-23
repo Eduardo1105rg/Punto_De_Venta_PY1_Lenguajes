@@ -50,6 +50,6 @@ void mostrar_cotizacionID(MYSQL *conexion, int id);
 
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad);
 
-void buscar_cotizacion(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idCotizacion);
+void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion);
 
 #endif

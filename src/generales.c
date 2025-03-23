@@ -106,7 +106,7 @@ void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
     }
 }
 
-void crearCotizacion(MYSQL *conexion) {
+void crearCotizacion(MYSQL *conexion, const char * nombreCliente) {
     char *consulta = NULL;
     int largoConsulta = asprintf(&consulta, "INSERT INTO Cotizacion(IdCotizacion, EstadoCotizacion) VALUES ('%d', '%s');",
         cantidadCotizaciones, estadoCotizacion);
@@ -246,15 +246,27 @@ void menu_cotizacion() {
 
             // ========== Guardar la cotizacion realizada.
             case 'd':
-                imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-                crearCotizacion(conexion);
+                mostrar_cotizacion(lista_productos_en_cotizacion);
+
+                char *nombre_cliente1;
+                printf("\nIngresa el nombre del cliente para la cotizacion: ");
+                leerCaracteresDeFormadinamica(&nombre_cliente1);
+                printf("\n");
+
+                crearCotizacion(conexion, nombre_cliente1);
                 enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
                 printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
-                
+
             case 'D':
-                imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-                crearCotizacion(conexion);
+                mostrar_cotizacion(lista_productos_en_cotizacion);
+
+                char *nombre_cliente2;
+                printf("\nIngresa el nombre del cliente para la cotizacion: ");
+                leerCaracteresDeFormadinamica(&nombre_cliente2);
+                printf("\n");
+
+                crearCotizacion(conexion, nombre_cliente2);
                 enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
                 printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
@@ -291,6 +303,168 @@ void menu_cotizacion() {
     liberarListaCotizacionDetalle(lista_productos_en_cotizacion);
 
     return;
+}
+
+
+
+void menu_modificar_cotizacion() {
+
+    MYSQL *conexion = NULL;
+    if (conectar(&conexion) != 0) {
+        
+        return; 
+    }
+
+    NodoCotizacionDetalle *lista_productos_en_cotizacion = NULL;
+
+    printf("Por favor escriba el identificador de la cotizacion a modificar:");
+    int identificadorCotizacion = 0;
+    scanf("%d", &identificadorCotizacion);
+    printf("\n");
+    optener_datos_cotizacion_por_id(conexion, &lista_productos_en_cotizacion, identificadorCotizacion);
+
+    char opcion;
+    do {
+        printf("\nModificar cotizacion... \n");
+
+        mostrar_cotizacion(lista_productos_en_cotizacion);
+
+
+        printf("Selecciona una de las siguientes opciones para continuar...\n");
+
+        printf(">> A) Ver catalogo de productos. \n");
+        printf(">> B) Agregar productos.\n");
+        printf(">> C) Eliminar producto.\n");
+        printf(">> D) Guardar cambios.\n");
+        printf(">> S) Volver al menu anterior (No se guardan los cambios).\n");
+
+
+        printf("Ingrese la letra de la accion a realizar: ");
+        scanf(" %c", &opcion); 
+        getchar(); 
+
+        switch (opcion) {
+            // ========== Consulta de catalogo.
+            case 'a' :
+            
+                menu_consulta_catalogo();
+                break;
+            case 'A':
+                menu_consulta_catalogo();
+                break;
+
+            // ========== Agregar un nuevo producto a la cotizacion.
+            case 'b':
+                 
+                // Solicitar 
+                char *id_producto1;
+                printf("\nIngresa el id del producto a agregar: ");
+                leerCaracteresDeFormadinamica(&id_producto1);
+                printf("\n");
+
+
+                printf("\nIngresa la cantidad del producto que desea agregar: ");
+                int cantidad_producto1 = leerNumeroDinamico();
+                printf("\n");
+                //printf("Pass0");
+                agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
+
+                free(id_producto1);
+                break;
+
+            case 'B':
+
+                // Solicitar el id del producto.
+                char *id_producto2;
+                printf("\nIngresa el id del producto a agregar: ");
+                leerCaracteresDeFormadinamica(&id_producto2);
+                printf("\n");
+
+                //Solicitar la cantidad del producto.
+                printf("\nIngresa la cantidad del producto que desea agregar: ");
+                int cantidad_producto2 = leerNumeroDinamico();
+                printf("\n");
+
+                agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto2, cantidad_producto2);
+
+                free(id_producto1);
+
+                break;
+
+            // ========== Eliminar un producto de la cotizacion.
+            case 'c':
+
+                //char *id_producto_a_eliminar1;
+                printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
+                // leerCaracteresDeFormadinamica(&id_producto_a_eliminar1);
+                int num_fila_eliminar1 = leerNumeroDinamico();
+
+                printf("\n");
+
+                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar1);
+                //eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar1);
+
+                //free(id_producto_a_eliminar1);
+
+                break;
+            case 'C':
+
+                printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
+                int num_fila_eliminar2 = leerNumeroDinamico();
+                printf("\n");
+
+                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
+
+                break;
+
+            // ========== Guardar la cotizacion realizada.
+            case 'd':
+                // imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+                // crearCotizacion(conexion);
+                // enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+                // printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                break;
+
+            case 'D':
+                // imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+                // crearCotizacion(conexion);
+                // enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+                // printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                break;
+
+            // ========== Salir del menu.
+            case 's': 
+                char op1;
+                printf("Advertencia: Si sales en este momento no se guardaran los cambios en la cotizacion.\n");
+                printf("Si desea salir vuelva a escribir S\n");
+                scanf("%c",&op1);
+                if(op1 == 'S' || op1 == 's'){
+                    printf("Volviendo a la seccion anterior...\n");
+                    return;
+                }
+                break;
+            case 'S':
+            char op2;
+            printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
+            printf("Si desea salir vuelva a escribir S\n");
+            scanf("%c",&op2);
+            if(op2 == 'S' || op2 == 's'){
+                printf("Volviendo a la seccion anterior...\n");
+                return;
+            }
+            break;
+
+            default:
+                printf("Opción no válida, intenta de nuevo.\n");
+        }
+    } while (opcion != 's');
+
+    cerrarConexion(conexion);
+    
+    liberarListaCotizacionDetalle(lista_productos_en_cotizacion);
+
+    return;
+
 }
 
 
@@ -339,29 +513,32 @@ void menu_principal_generales() {
 
             // ========== Modificar cotización.
             case 'c' :
-                printf("Por favor escriba el identificador de la cotizacion a modificar:\n");
-                int modifica = 0;
-                scanf("%d", &modifica);
-                mostrar_cotizacionID(conexion,modifica);
-                printf("Si desea agregar productos escriba 1 si quiere eliminar 2")
-                int modifica2 = 0;
-                scanf("%d", &modifica2);
-                if (modifica2 == 1) {
-                    // podriamos mostrar catalogo
-                    printf("Estas agregando productos, escribe el nombre del producto\n");
-                    //agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
+
+                menu_modificar_cotizacion();
+
+                // printf("Por favor escriba el identificador de la cotizacion a modificar:\n");
+                // int modifica = 0;
+                // scanf("%d", &modifica);
+                // mostrar_cotizacionID(conexion,modifica);
+                // printf("Si desea agregar productos escriba 1 si quiere eliminar 2")
+                // int modifica2 = 0;
+                // scanf("%d", &modifica2);
+                // if (modifica2 == 1) {
+                //     // podriamos mostrar catalogo
+                //     printf("Estas agregando productos, escribe el nombre del producto\n");
+                //     //agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
 
 
-                } else {
-                    printf("Estas eliminando productos, escriba el nombre del producto a eliminar\n");
+                // } else {
+                //     printf("Estas eliminando productos, escriba el nombre del producto a eliminar\n");
 
-                }
+                // }
                 //Ok necesito ver si a esa lista de productos como es que queda guardada
                 //mostrar_cotizacion(lista_productos_en_cotizacion);
                 
                 break;
             case 'C':
-                
+                menu_modificar_cotizacion();
                 break;
 
             // ========== Facturar.
