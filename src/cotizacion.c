@@ -62,15 +62,21 @@ void insertarElementoAlFinalCotizacionDetalle(NodoCotizacionDetalle** head, cons
     }    
 
     if (*head == NULL) {
+
+        nuevoNodo->detallesCotizacion.NumeroFila = 1;
         *head = nuevoNodo;
         return;
     }
 
+    int numeroFila = 2;
     NodoCotizacionDetalle* actual = *head;
     while (actual->siguiente != NULL)
     {
         actual = actual->siguiente;
+        numeroFila++;
     }
+    nuevoNodo->detallesCotizacion.NumeroFila = numeroFila;
+
     actual->siguiente = nuevoNodo;
     return;
 }
@@ -102,13 +108,47 @@ void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id) {
     return;
 }
 
+void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFila) {
+
+    NodoCotizacionDetalle* actual = *head;
+    NodoCotizacionDetalle* anterior = NULL;
+
+    while (actual != NULL && actual->detallesCotizacion.NumeroFila != numFila)
+    {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    if (actual == NULL) {
+        printf("El producto con el indice %i no ha sido encontrado.", numFila);
+        return;
+    }
+
+    if (anterior == NULL)
+    {
+        *head = actual->siguiente;
+    } else {
+        anterior->siguiente = actual->siguiente;
+    }
+    
+    free(actual);
+    return;
+
+}
+
+
 int buscarPorIdCotizacionDetalle(NodoCotizacionDetalle* head, const char* id) {
+
+    if (head == NULL) {
+        return 0;
+    }
+
     NodoCotizacionDetalle* actual = head;
 
     while (actual != NULL)
     {
         if (strcmp(actual->detallesCotizacion.IdProducto, id) == 0) {
-            return 1;
+            return actual->detallesCotizacion.cantidad;
         }
         actual = actual->siguiente;
     }
@@ -127,6 +167,29 @@ void imprimirListaNodosCotizacionDetalle(NodoCotizacionDetalle* head) {
     }
     return;
 }
+
+void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const char * id, const int cantidad) {
+
+    if (head == NULL) {
+        return;
+    }
+    NodoCotizacionDetalle* actual = *head;
+    while (actual != NULL)
+    {
+
+        // Buscamos el id que coincida y modificamos la cantidad.
+        if (strcmp(actual->detallesCotizacion.IdProducto, id) == 0 ) {
+
+            actual->detallesCotizacion.cantidad += cantidad;
+            return;
+        }
+        actual = actual->siguiente;
+    }
+
+    return;
+
+}
+
 
 void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head) {
     NodoCotizacionDetalle *actual;
@@ -156,18 +219,18 @@ void mostrar_cotizacion(NodoCotizacionDetalle* head) {
 
     NodoCotizacionDetalle *actual = head;
 
-    printf("+--------------+----------------------+-------------------+-------------+-----------+\n");
-    printf("| ID Producto  | Nombre               | Descripcion       | Precio      | Cantidad  |\n");
-    printf("+--------------+----------------------+-------------------+-------------+-----------+\n");
+    printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+    printf("| Fila       | ID Producto  | Nombre               | Descripcion       | Precio      | Cantidad   |\n");
+    printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
 
     while (actual != NULL)
     {
-        printf("| %-12s | %-20s | %-19s | %-15.2f | %-10i |\n", actual->detallesCotizacion.IdProducto, actual->detallesCotizacion.NombreProducto, actual->detallesCotizacion.Descripcion, actual->detallesCotizacion.precio, actual->detallesCotizacion.cantidad);
+        printf("| %-10i | %-12s | %-20s | %-17s | %-11.2f | %-10i |\n", actual->detallesCotizacion.NumeroFila, actual->detallesCotizacion.IdProducto, actual->detallesCotizacion.NombreProducto, actual->detallesCotizacion.Descripcion, actual->detallesCotizacion.precio, actual->detallesCotizacion.cantidad);
         
         actual = actual->siguiente;
     }
 
-    printf("+--------------+----------------------+-------------------+-------------+-----------+\n\n");
+    printf("+------------+--------------+----------------------+-------------------+-------------+-------------+\n\n");
 
     return;
 }
@@ -224,19 +287,32 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
         resultado = mysql_store_result(conexion);
         if (resultado) {
             while ((fila = mysql_fetch_row(resultado)) != NULL) {
+
+
+
                 const char *nombreProducto = fila[1];
                 const char *descripcion = fila[4];
                 int precio = atoi(fila[2]);
+                printf("Pass1");
+                // Revisar si no hay otro elemento con este ID
+                int cantProducto = buscarPorIdCotizacionDetalle(*head, idProducto);
+                printf("Pass2");
 
-                // Revisar si no hay otro elemento con este ID (opcional)
-                // if (buscarPorIdCotizacionDetalle(head, idProducto)) { return; }
+                if (cantProducto != 0) {
+                    printf("Pass4");
 
-                // Validar cantidad pendiente...
+                    // Este es para combinar las cantodades de producto exitentes...
+                    modificarValoresNodoCotizacionDetalle(head, idProducto, cantidad);
 
-                // Agregar el producto a la cotización
-                insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
+                } else {
+                    printf("Pass5");
 
-                printf("Producto agregado a la cotización: %s\n", idProducto);
+                    // Agregar el producto a la cotización
+                    insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
+
+                    printf("Producto agregado a la cotización: %s\n", idProducto);
+                }
+
             }
             mysql_free_result(resultado); // Liberar este conjunto de resultados
         }

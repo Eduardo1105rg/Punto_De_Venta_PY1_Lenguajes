@@ -11,6 +11,7 @@ typedef struct CotizacionDetalle
     char *IdProducto;
     char *NombreProducto;
     char *Descripcion;  // Esto es de la familia, la descripcion de esta.
+    int NumeroFila;
     float precio;
     int cantidad;
 
@@ -35,6 +36,10 @@ void insertarElementoAlFinalCotizacionDetalle(NodoCotizacionDetalle** head, cons
 void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head);
 
 void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id);
+
+void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFila);
+
+void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const char * id, const int cantidad);
 
 
 

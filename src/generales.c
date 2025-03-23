@@ -145,7 +145,7 @@ void menu_cotizacion() {
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
                 int cantidad_producto1 = leerNumeroDinamico();
                 printf("\n");
-
+                printf("Pass0");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
 
                 free(id_producto1);
@@ -173,26 +173,26 @@ void menu_cotizacion() {
             // ========== Eliminar un producto de la cotizacion.
             case 'c':
 
-                char *id_producto_a_eliminar1;
-                printf("\nIngresa el id del producto que desea eliminar: ");
-                leerCaracteresDeFormadinamica(&id_producto_a_eliminar1);
+                //char *id_producto_a_eliminar1;
+                printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
+                // leerCaracteresDeFormadinamica(&id_producto_a_eliminar1);
+                int num_fila_eliminar1 = leerNumeroDinamico();
+
                 printf("\n");
 
+                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar1);
+                //eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar1);
 
-                eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar1);
-
-                free(id_producto_a_eliminar1);
+                //free(id_producto_a_eliminar1);
 
                 break;
             case 'C':
-                char *id_producto_a_eliminar2;
-                printf("\nIngresa el id del producto que desea eliminar: ");
-                leerCaracteresDeFormadinamica(&id_producto_a_eliminar2);
+
+                printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
+                int num_fila_eliminar2 = leerNumeroDinamico();
                 printf("\n");
 
-                eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar2);
-
-                free(id_producto_a_eliminar2);
+                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
 
                 break;
 
@@ -201,6 +201,7 @@ void menu_cotizacion() {
                 break;
             case 'D':
                 break;
+
             // ========== Salir del menu.
             case 's': // En esta parte hay que agregar algo para que  no se salga de una vez. hay que avisarle al usuario que si sale con S no se guarda la cotizacion.
                 printf("Volviendo a la seccion anterior...\n");
