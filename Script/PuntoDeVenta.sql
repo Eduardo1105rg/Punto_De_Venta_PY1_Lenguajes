@@ -127,6 +127,31 @@ DELIMITER ;
 -- call verCatalogoFiltro('Armas'); un ejemplo de prueba
 
 
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE obtenerProductoPorID(
+    IN idProdu VARCHAR(40)
+)
+BEGIN
+    SELECT
+        p.IdProducto,
+        p.Nombre,
+        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Cantidad,
+        fp.Descripcion AS DescripcionFamilia
+    FROM 
+        Productos p
+    JOIN
+        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
+    WHERE
+        p.IdProducto = idProdu;
+END $$
+DELIMITER ;
+
+
+-- CALL obtenerProductoPorID('Prod1');
+
+
 -- Esto se hace porque los archivos que vienen importados desde el txt vienen sucios o sea con un salto de linea o caracter de finalizacion
 -- set SQL_SAFE_UPDATES = 0;
 -- update FamiliaProductos

@@ -193,7 +193,7 @@ void menu_cotizacion() {
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
                 int cantidad_producto1 = leerNumeroDinamico();
                 printf("\n");
-                printf("Pass0");
+                //printf("Pass0");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
 
                 free(id_producto1);
@@ -246,16 +246,17 @@ void menu_cotizacion() {
 
             // ========== Guardar la cotizacion realizada.
             case 'd':
-            imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-            crearCotizacion(conexion);
-            enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
-            printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+                crearCotizacion(conexion);
+                enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+                printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
+                
             case 'D':
-            imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-            crearCotizacion(conexion);
-            enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
-            printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+                crearCotizacion(conexion);
+                enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+                printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
 
             // ========== Salir del menu.
