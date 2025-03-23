@@ -61,7 +61,7 @@ int main() {
     imprimirListaNodosProducto(listaProductos);
 
     // Los intentamos almacenar en la base de datos.
-    guardarProductosEnDB(conexion,listaProductos);
+    //guardarProductosEnDB(conexion,listaProductos);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaProducto(listaProductos);
@@ -89,7 +89,7 @@ int main() {
 
 
     // Pruebas del menu..
-  //  menu_principal();
+    menu_principal();
 
 
     //eliminarProducto(conexion, "Prod1");
