@@ -30,8 +30,10 @@ create table Productos(
     constraint fk_IDFamilia foreign key (IdFamilia) references FamiliaProductos(IdFamilia)
 );
 
+
 create table Cotizacion (
 	IdCotizacion varchar(15) primary key,
+    Cliente varchar(30),
     EstadoCotizacion varchar(30)
 
 );
@@ -123,70 +125,6 @@ DELIMITER ;
 
 
 -- call verCatalogoFiltro('Armas'); un ejemplo de prueba
-
-
-DELIMITER $$
-USE puntoVenta$$
-CREATE PROCEDURE obtenerProductoPorID(
-    IN idProdu VARCHAR(40)
-)
-BEGIN
-    SELECT
-        p.IdProducto,
-        p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
-        p.Cantidad,
-        fp.Descripcion AS DescripcionFamilia
-    FROM 
-        Productos p
-    JOIN
-        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
-    WHERE
-        p.IdProducto = idProdu;
-END $$
-DELIMITER ;
--- drop procedure mostrarDetalleCotizacion;
-DELIMITER $$
-USE puntoVenta$$
-create procedure mostrarDetalleCotizacion(
-	in IdCotizacion int
-)
-begin
-	select
-		cd.IdProducto,
-		p.Nombre,
-        fp.Descripcion,
-        cd.PrecioXunidad,
-        cd.Cantidad
-	from 
-        CotizacionDetalle cd
-    join
-        Productos p ON cd.IdProducto = p.IdProducto
-    join
-        FamiliaProductos fp ON p.IdFamilia = fp.IdFamilia
-    where 
-		cd.IdCotizacion = IdCotizacion;
-end $$
-	DELIMITER ;
--- call mostrarDetalleCotizacion(1)
-
-
--- Esta es para eliminar una linea de la cotizacion solo se pone el nombre del producto y se elimina
--- drop procedure eliminarLineaDetalle
-DELIMITER $$
-USE puntoVenta$$
-create procedure eliminarLineaDetalle(
-	in nombreProdu varchar(20)
-)
-begin
-	delete from CotizacionDetalle cd where IdProducto in (
-		select IdProducto from Productos
-        where Nombre = nombreProdu
-    ); 
-end $$
-	DELIMITER ;
-
--- call eliminarLineaDetalle('Sardinas')
 
 
 -- Esto se hace porque los archivos que vienen importados desde el txt vienen sucios o sea con un salto de linea o caracter de finalizacion

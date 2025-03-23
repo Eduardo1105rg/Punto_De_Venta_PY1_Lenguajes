@@ -11,7 +11,8 @@
 #include "../include/cotizacion.h"
 
 
-
+int cantidadCotizaciones = 1;
+const char *estadoCotizacion = "Pago pendiente";
 
 /**
  * 
@@ -90,6 +91,53 @@ void menu_consulta_catalogo() {
     
     return;
 }
+
+void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
+    NodoCotizacionDetalle *actual = lista;
+    while (actual != NULL) {
+        printf("IdProducto: %s\n", actual->detallesCotizacion.IdProducto);
+        printf("NombreProducto: %s\n", actual->detallesCotizacion.NombreProducto);
+        printf("Descripcion: %s\n", actual->detallesCotizacion.Descripcion);
+        printf("NumeroFila: %d\n", actual->detallesCotizacion.NumeroFila);
+        printf("Precio: %.2f\n", actual->detallesCotizacion.precio);
+        printf("Cantidad: %d\n", actual->detallesCotizacion.cantidad);
+        printf("-------------------------\n");
+        actual = actual->siguiente;
+    }
+}
+
+void crearCotizacion(MYSQL *conexion) {
+    char *consulta = NULL;
+    int largoConsulta = asprintf(&consulta, "INSERT INTO Cotizacion(IdCotizacion, EstadoCotizacion) VALUES ('%d', '%s');",
+        cantidadCotizaciones, estadoCotizacion);
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+}
+
+
+void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista) {
+    NodoCotizacionDetalle *actual = lista;
+    char *consulta = NULL;
+    while(actual != NULL) {
+        const char *idProdu = actual->detallesCotizacion.IdProducto;
+        int cantidadProductos = actual->detallesCotizacion.cantidad;
+        float precioProducto = actual->detallesCotizacion.precio;
+        int largoConsulta = asprintf(&consulta, "INSERT INTO CotizacionDetalle(IdCotizacion, IdProducto, Cantidad, PrecioXunidad) VALUES ('%d', '%s', '%d', '%f');",
+            cantidadCotizaciones, idProdu, cantidadProductos, precioProducto);
+        if (mysql_query(conexion,consulta)) {
+            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+            free(consulta);
+            return;
+        }
+        free(consulta);
+        actual = actual->siguiente;
+    }
+    
+}
+
 
 
 void menu_cotizacion() {
@@ -198,17 +246,39 @@ void menu_cotizacion() {
 
             // ========== Guardar la cotizacion realizada.
             case 'd':
+            imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+            crearCotizacion(conexion);
+            enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+            printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
             case 'D':
+            imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
+            crearCotizacion(conexion);
+            enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+            printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
 
             // ========== Salir del menu.
-            case 's': // En esta parte hay que agregar algo para que  no se salga de una vez. hay que avisarle al usuario que si sale con S no se guarda la cotizacion.
-                printf("Volviendo a la seccion anterior...\n");
+            case 's': 
+                char op1;
+                printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
+                printf("Si desea salir vuelva a escribir S\n");
+                scanf("%c",&op1);
+                if(op1 == 'S' || op1 == 's'){
+                    printf("Volviendo a la seccion anterior...\n");
+                    return;
+                }
                 break;
             case 'S':
+            char op2;
+            printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
+            printf("Si desea salir vuelva a escribir S\n");
+            scanf("%c",&op2);
+            if(op2 == 'S' || op2 == 's'){
                 printf("Volviendo a la seccion anterior...\n");
-                break;
+                return;
+            }
+            break;
 
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
@@ -226,6 +296,11 @@ void menu_cotizacion() {
 
 /* ============================ Menu principal de la seccion ==========================*/
 void menu_principal_generales() {
+    MYSQL *conexion = NULL;
+    if (conectar(&conexion) != 0) {
+        
+        return; 
+    }
 
     char opcion;
     do {
@@ -263,6 +338,26 @@ void menu_principal_generales() {
 
             // ========== Modificar cotización.
             case 'c' :
+                printf("Por favor escriba el identificador de la cotizacion a modificar:\n");
+                int modifica = 0;
+                scanf("%d", &modifica);
+                mostrar_cotizacionID(conexion,modifica);
+                printf("Si desea agregar productos escriba 1 si quiere eliminar 2")
+                int modifica2 = 0;
+                scanf("%d", &modifica2);
+                if (modifica2 == 1) {
+                    // podriamos mostrar catalogo
+                    printf("Estas agregando productos, escribe el nombre del producto\n");
+                    //agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
+
+
+                } else {
+                    printf("Estas eliminando productos, escriba el nombre del producto a eliminar\n");
+
+                }
+
+                //Ok necesito ver si a esa lista de productos como es que queda guardada
+                //mostrar_cotizacion(lista_productos_en_cotizacion);
                 
                 break;
             case 'C':

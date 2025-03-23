@@ -212,7 +212,7 @@ void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head) {
 void mostrar_cotizacion(NodoCotizacionDetalle* head) {
 
     if (head == NULL) {
-        printf("Actualemente esta cotizacion, no tiene productos para mostrar.\n");
+        printf("Actualmente esta cotizacion, no tiene productos para mostrar.\n");
         return;
     }
 
@@ -234,6 +234,49 @@ void mostrar_cotizacion(NodoCotizacionDetalle* head) {
 
     return;
 }
+
+
+void mostrar_cotizacionID(MYSQL *conexion, int id) {
+
+    char *consulta = NULL;
+    int largoConsulta = asprintf(&consulta, "call mostrarDetalleCotizacion('%d')",id);
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    if (resultado == NULL) {
+        printf("Error al obtener los resultados: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    MYSQL_ROW fila;
+
+
+
+    printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+    printf("| Fila       | ID Producto  | Nombre               | Descripcion       | Precio      | Cantidad   |\n");
+    printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+
+    int filaNum = 1;
+    while ((fila = mysql_fetch_row(resultado)) != NULL) {
+        printf("| %-10d | %-12s | %-20s | %-17s | %-11.2f | %-10d |\n", 
+               filaNum, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
+        filaNum++;
+    }
+
+    printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+
+    mysql_free_result(resultado);
+
+
+    return;
+}
+
+
 
 
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {

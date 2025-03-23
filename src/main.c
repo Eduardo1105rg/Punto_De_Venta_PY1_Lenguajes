@@ -61,7 +61,7 @@ int main() {
     imprimirListaNodosProducto(listaProductos);
 
     // Los intentamos almacenar en la base de datos.
-    //guardarProductosEnDB(conexion,listaProductos);
+    guardarProductosEnDB(conexion,listaProductos);
 
     // Liberamos la memoria asignada a la lista.
     liberarListaProducto(listaProductos);
@@ -75,7 +75,7 @@ int main() {
 
     imprimirListaNodosCargaStock(lista_carga_stock);
 
-    //guardarStockEnDB(conexion,lista_carga_stock);
+    guardarStockEnDB(conexion,lista_carga_stock);
 
     liberarListaCargaStock(lista_carga_stock);
 
@@ -83,7 +83,7 @@ int main() {
 
     // Para lo de ver el inventario...
 
-    //consultarCatalogo(conexion, 2);
+    consultarCatalogo(conexion, 2);
 
     // consultarCatalogoPorFamilia(conexion, "Enlatados");
 

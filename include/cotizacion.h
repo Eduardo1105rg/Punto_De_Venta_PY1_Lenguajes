@@ -46,6 +46,8 @@ void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const c
 // Apartados especificos..
 void mostrar_cotizacion(NodoCotizacionDetalle* head);
 
+void mostrar_cotizacionID(MYSQL *conexion, int id);
+
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad);
 
 void buscar_cotizacion(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idCotizacion);
