@@ -9,4 +9,11 @@
 #define PASSWORD "root"
 #define DATABASE "puntoVenta"
 
+>> Laptop
+#define HOST "127.0.0.1"
+#define PORT 3306
+#define USERNAME "edu"
+#define PASSWORD "Edurg#101105"
+#define DATABASE "puntoVenta"
+
 ========== >> Bryan << ============
