@@ -7,6 +7,9 @@ create table Negocio(
     HorarioAtencion varchar(40) not null,
     NumSecuencial int not null
 );
+insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
+values
+("Los tilines company","85425308","3002398412","Lunes a domingo de 7am a 10pm",1);
 
 create table Usuario( 
 	NombreUsuario varchar(30),
@@ -50,7 +53,7 @@ create table CotizacionDetalle (
 
 create table Factura(
 	IdFactura varchar(15) primary key,
-    IdCotizacion varchar(15) unique not null,
+    IdCotizacion int unique not null,
 	fechaHora datetime not null,
     SubTotal float not null,
     Impuesto float not null,
@@ -89,7 +92,7 @@ select
 	p.IdProducto,
     p.Nombre,
 	(p.precio -(p.precio *0.13)) as PrecioSinIva,
-    p.Cantidad
+    p.Cantidad,
     fp.Descripcion AS DescripcionFamilia
 from Productos as p
 JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
@@ -134,11 +137,10 @@ DELIMITER ;
 
     
     
-
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE obtenerProductoPorID(
-    IN idProdu VARCHAR(40)
+    IN idProdu varchar(20)
 )
 BEGIN
     SELECT
@@ -186,7 +188,6 @@ DELIMITER ;
 
 
 
-<<<<<<< HEAD
 -- drop procedure eliminarLineaDetalle
 DELIMITER $$
 use puntoVenta$$
@@ -242,8 +243,24 @@ DELIMITER ;
 -- delimiter;
 
 
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE eliminarDetalleCotizacion(
+    IN idProdu VARCHAR(40),
+    in idCot int
+)
+BEGIN
+    delete from CotizacionDetalle  
+    where IdProducto = idProdu and IdCotizacion = idCot;
+END $$
+DELIMITER ;
+call eliminarDetalleCotizacion("Prod1",1)
+
+
+
 
 delimiter $$
+USE puntoVenta$$
 create trigger actualizadorInventario
 before update on Productos
 for each row 
@@ -259,5 +276,3 @@ begin
 	end if;
 end$$
 delimiter;
-=======
->>>>>>> origin/Eduardo

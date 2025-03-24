@@ -106,36 +106,54 @@ void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
     }
 }
 
-void crearCotizacion(MYSQL *conexion, const char * nombreCliente) {
+void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizacion) {
+    printf("Entre aquí\n");
     char *consulta = NULL;
-    int largoConsulta = asprintf(&consulta, "INSERT INTO Cotizacion(IdCotizacion, EstadoCotizacion) VALUES ('%d', '%s');",
-        cantidadCotizaciones, estadoCotizacion);
+
+    // Insertar la cotización con estado 'Pendiente'
+    int largoConsulta = asprintf(&consulta, 
+        "INSERT INTO Cotizacion (EstadoCotizacion, Cliente) VALUES ('Pendiente', '%s');", 
+        nombreCliente);
+
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consulta);
         return;
     }
+
+    // Obtener el ID generado automáticamente
+    *idCotizacion = mysql_insert_id(conexion);
+    printf("El ID de tu cotización es: %d\n", *idCotizacion);
+
+    free(consulta);
 }
 
+void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion) {
+    printf("Entre aquí\n");
 
-void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista) {
     NodoCotizacionDetalle *actual = lista;
     char *consulta = NULL;
-    while(actual != NULL) {
+
+    while (actual != NULL) {
         const char *idProdu = actual->detallesCotizacion.IdProducto;
         int cantidadProductos = actual->detallesCotizacion.cantidad;
         float precioProducto = actual->detallesCotizacion.precio;
-        int largoConsulta = asprintf(&consulta, "INSERT INTO CotizacionDetalle(IdCotizacion, IdProducto, Cantidad, PrecioXunidad) VALUES ('%d', '%s', '%d', '%f');",
-            cantidadCotizaciones, idProdu, cantidadProductos, precioProducto);
-        if (mysql_query(conexion,consulta)) {
+
+        // Insertar los detalles de la cotización
+        int largoConsulta = asprintf(&consulta, 
+            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto, Cantidad, PrecioXunidad) "
+            "VALUES ('%d', '%s', '%d', '%f');", 
+            idCotizacion, idProdu, cantidadProductos, precioProducto);
+
+        if (mysql_query(conexion, consulta)) {
             printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
             free(consulta);
             return;
         }
+
         free(consulta);
         actual = actual->siguiente;
     }
-    
 }
 
 
@@ -252,10 +270,10 @@ void menu_cotizacion() {
                 printf("\nIngresa el nombre del cliente para la cotizacion: ");
                 leerCaracteresDeFormadinamica(&nombre_cliente1);
                 printf("\n");
-
-                crearCotizacion(conexion, nombre_cliente1);
-                enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
-                printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                int idCotizacion;
+                crearCotizacion(conexion, nombre_cliente1, &idCotizacion);
+                enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion );
+                //printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
 
             case 'D':
@@ -265,9 +283,9 @@ void menu_cotizacion() {
                 printf("\nIngresa el nombre del cliente para la cotizacion: ");
                 leerCaracteresDeFormadinamica(&nombre_cliente2);
                 printf("\n");
-
-                crearCotizacion(conexion, nombre_cliente2);
-                enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
+                int idCotizacion2;
+                crearCotizacion(conexion, nombre_cliente2,&idCotizacion2);
+                enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion2);
                 printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
 
@@ -368,6 +386,9 @@ void menu_modificar_cotizacion() {
                 printf("\n");
                 //printf("Pass0");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
+                int guarda = 1;
+
+
 
                 free(id_producto1);
                 break;
@@ -387,7 +408,7 @@ void menu_modificar_cotizacion() {
 
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto2, cantidad_producto2);
 
-                free(id_producto1);
+                free(id_producto2);
 
                 break;
 
@@ -417,19 +438,81 @@ void menu_modificar_cotizacion() {
 
                 break;
 
-            // ========== Guardar la cotizacion realizada.
+
             case 'd':
-                // imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-                // crearCotizacion(conexion);
-                // enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
-                // printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                if(guarda == 1) {
+                    char * consulta3 = NULL;
+                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                    while (actual != NULL) { 
+                        char *IdProd = actual->detallesCotizacion.IdProducto;
+                        int cantidadProdu = actual->detallesCotizacion.cantidad;
+                        float precio = actual->detallesCotizacion.precio;
+
+                        printf("%d",identificadorCotizacion);                    
+                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                        
+                        int largoConsulta = asprintf(&consulta3, 
+                            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
+                            identificadorCotizacion, IdProd, cantidadProdu, precio);
+                    
+                        if (mysql_query(conexion, consulta3)) {
+                            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                            free(consulta3);
+                            return;
+                        }
+                        free(consulta3);                     
+                        actual = actual->siguiente; 
+                    }
+                
+
+                }else { 
+                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                    while (actual != NULL) { 
+                        char *IdProd = actual->detallesCotizacion.IdProducto;  
+                        printf("%d",identificadorCotizacion);                    
+                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                        
+                        eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
+                        
+                        actual = actual->siguiente; 
+                    }
+                }
                 break;
 
             case 'D':
-                // imprimirListaCotizacionDetalle(lista_productos_en_cotizacion);
-                // crearCotizacion(conexion);
-                // enviarCotizacionDB(conexion,lista_productos_en_cotizacion);
-                // printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+            if(guarda == 1) {
+                char * consulta3 = NULL;
+                NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                while (actual != NULL) { 
+                    char *IdProd = actual->detallesCotizacion.IdProducto;
+                    int cantidadProdu = actual->detallesCotizacion.cantidad;
+                    float precio = actual->detallesCotizacion.precio;                   
+                    int largoConsulta = asprintf(&consulta3, 
+                        "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
+                        identificadorCotizacion, IdProd, cantidadProdu, precio);
+                
+                    if (mysql_query(conexion, consulta3)) {
+                        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                        free(consulta3);
+                        return;
+                    }
+                    free(consulta3);                    
+                    actual = actual->siguiente; 
+                }
+            
+
+            }else { 
+                NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                while (actual != NULL) { 
+                    char *IdProd = actual->detallesCotizacion.IdProducto;  
+                    printf("%d",identificadorCotizacion);                    
+                    printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                    
+                    eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
+                    
+                    actual = actual->siguiente; 
+                }
+            }
                 break;
 
             // ========== Salir del menu.

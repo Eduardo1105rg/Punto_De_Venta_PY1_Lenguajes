@@ -314,7 +314,23 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
 }
 
 
+void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
+    char *consulta2 = NULL;
+    printf("%s",IdProd);
+    printf("%d",idCot);
+    int largoConsulta2 = asprintf(&consulta2, "call eliminarDetalleCotizacion('%s','%d')", IdProd,idCot);
+    if (mysql_query(conexion, consulta2)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta2);
+        return;
+    }
+    free(consulta2);
+}
+
+
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {
+    printf("%s",idProducto);
+    printf("%d",cantidad);
 
     MYSQL_RES *resultado;
     MYSQL_ROW fila;
