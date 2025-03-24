@@ -468,6 +468,26 @@ void menu_modificar_cotizacion() {
 }
 
 
+void menu_crear_factura() {
+
+    while (1) {
+        printf("\nIngresa el codigo de la cotizacion a facturar: ");
+        int cantidad_producto1 = leerNumeroDinamico();
+        printf("\n");
+
+
+        char *nombre_cliente;
+        printf("\nIngresa el nombre del cliente para la facturacion: ");
+        leerCaracteresDeFormadinamica(&nombre_cliente);
+        printf("\n");
+
+        
+
+
+    }
+
+}
+
 
 /* ============================ Menu principal de la seccion ==========================*/
 void menu_principal_generales() {
