@@ -5,7 +5,7 @@ create table Negocio(
     Telefono varchar(8) not null,
     CedulaJuridica varchar(14) not null primary key,
     HorarioAtencion varchar(40) not null,
-    NumSecuencial int not null
+    NumSecuencial int auto_increment not null
 );
 insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
 values
@@ -254,7 +254,56 @@ BEGIN
     where IdProducto = idProdu and IdCotizacion = idCot;
 END $$
 DELIMITER ;
-call eliminarDetalleCotizacion("Prod1",1)
+-- call eliminarDetalleCotizacion("Prod1",1)
+
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE facturaFin(
+    in idCot int,
+    IN Cliente VARCHAR(40)
+)
+BEGIN
+	select 
+    p.Nombre, 
+    cd.Cantidad, 
+    cd.PrecioXunidad,
+    (cd.Cantidad * cd.PrecioXunidad) as subtotal,
+    (cd.Cantidad * cd.PrecioXunidad * 0.13) as impuesto,
+    ((cd.Cantidad * cd.PrecioXunidad) + (cd.Cantidad * cd.PrecioXunidad * 0.13)) as total
+    from 
+		CotizacionDetalle cd
+    join
+		Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+	join
+        Productos as p on cd.IdProducto = p.IdProducto
+    where c.Cliente = Cliente and cd.IdCotizacion = idCot;
+END $$
+DELIMITER ;
+
+-- call facturaFin(1,'Edutec');
+-- Este seria en caso de querer solo mostrar los totales
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE facturaFinDinero(
+    in idCot int,
+    IN Cliente VARCHAR(40)
+)
+BEGIN
+	select 
+        SUM(cd.Cantidad * cd.PrecioXunidad) AS SubtotalFinal,  
+        SUM(cd.Cantidad * cd.PrecioXunidad * 0.13) AS ImpuestoFinal,  
+        SUM((cd.Cantidad * cd.PrecioXunidad) + (cd.Cantidad * cd.PrecioXunidad * 0.13)) AS TotalFinal  
+    from 
+		CotizacionDetalle cd
+    join
+		Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+	join
+        Productos as p on cd.IdProducto = p.IdProducto
+    where c.Cliente = Cliente and cd.IdCotizacion = idCot;
+END $$
+DELIMITER ;
 
 
 

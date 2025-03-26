@@ -325,6 +325,148 @@ void menu_cotizacion() {
 
 
 
+void menu_facturacion() {
+    char *nombreClienteF = NULL;
+    int numCotizacionF = 0;
+    MYSQL *conexion = NULL;
+
+    if (conectar(&conexion) != 0) {
+        return;
+    }
+
+    nombreClienteF = (char *)malloc(100 * sizeof(char));
+    if (nombreClienteF == NULL) {
+        printf("Error al asignar memoria.\n");
+        return;
+    }
+
+    printf("Antes de darle su factura por favor escribanos su numero de cotizacion\n");
+    printf("y si es muy amable el nombre de la persona que cotizo\n");
+    scanf("%d", &numCotizacionF);
+    getchar(); 
+    scanf("%s", nombreClienteF);
+
+    char *temp = realloc(nombreClienteF, (strlen(nombreClienteF) + 1) * sizeof(char));
+    if (temp == NULL) {
+        printf("Error al reasignar memoria para nombreClienteF.\n");
+        free(nombreClienteF);
+        return;
+    }
+    nombreClienteF = temp;
+
+    char *consultaF = NULL;
+    int largoConsultaF = asprintf(&consultaF, "select NumSecuencial, NombreLocal, CedulaJuridica, Telefono from Negocio");
+
+    if (mysql_query(conexion, consultaF)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaF);
+        return;
+    }
+    free(consultaF);
+
+    MYSQL_RES *resultado2 = mysql_store_result(conexion);
+    if (resultado2 == NULL) {
+        printf("No se obtuvieron resultados: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    MYSQL_ROW fila;
+    while ((fila = mysql_fetch_row(resultado2)) != NULL) {
+        char *empresaNombre = fila[1];   
+        char *fechaEmision = "25/3/2025";    
+        char *identificadorF = fila[0];
+        char *cedulaJuridica = fila[2];  
+        char *telefonoEmpresa = fila[3]; 
+
+        printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+        printf("|                                       %-57s |\n", empresaNombre); 
+        printf("| Fecha de emisión: %-77s |\n", fechaEmision);
+        printf("| Identificador: %-80s |\n", identificadorF);
+        printf("| Cédula jurídica: %-78s |\n", cedulaJuridica);
+        printf("| Teléfono: %-85s |\n", telefonoEmpresa);
+        printf("| Cliente: %-86s |\n", nombreClienteF);
+        printf("|                                       %-57s |\n", "Productos"); 
+
+        break;
+    }
+
+    char *consultaF2 = NULL;
+    int largoConsultaF2 = asprintf(&consultaF2, "call facturaFin('%d', '%s')", numCotizacionF, nombreClienteF);
+
+    if (mysql_query(conexion, consultaF2)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaF2);
+        return;
+    }
+    free(consultaF2);
+
+    MYSQL_RES *resultado3 = mysql_store_result(conexion);
+    if (resultado3 == NULL) {
+        printf("No se obtuvieron resultados: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    MYSQL_ROW fila2;
+    while ((fila2 = mysql_fetch_row(resultado3)) != NULL) {
+        char *Producto = fila2[0];   
+        char *Cantidad = fila2[1];    
+        char *PrecioXUnidad = fila2[2];
+        char *subtotal = fila2[3];  
+        char *Impuesto = fila2[4]; 
+        char *Total = fila2[5];
+        printf("| Producto: %-85s |\n", Producto);
+        printf("| Cantidad: %-85s |\n", Cantidad);
+        printf("| Precio X Unidad: %-78s |\n", PrecioXUnidad);
+        printf("| subtotal: %-85s |\n", subtotal);
+        printf("| Impuesto: %-85s |\n", Impuesto);
+        printf("| Total: %-88s |\n", Total);
+        printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+    }
+
+
+    while (mysql_next_result(conexion) == 0) {
+        MYSQL_RES *res = mysql_store_result(conexion);
+        mysql_free_result(res);
+    }
+
+    char *consultaF3 = NULL;
+    int largoConsultaF3 = asprintf(&consultaF3, "call facturaFinDinero('%d', '%s')", numCotizacionF, nombreClienteF);
+
+    if (mysql_query(conexion, consultaF3)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaF3);
+        return;
+    }
+    free(consultaF3);
+
+    MYSQL_RES *resultado4 = mysql_store_result(conexion);
+    if (resultado4 == NULL) {
+        printf("No se obtuvieron resultados: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    MYSQL_ROW fila3;
+    while ((fila3 = mysql_fetch_row(resultado4)) != NULL) {
+        char *subototalF = fila3[0];   
+        char *impuestoF = fila3[1];    
+        char *TotalF = fila3[2];
+        printf("|                                       %-57s |\n", "Final factura"); 
+        printf("| Subtotal final: %-79s |\n", subototalF);
+        printf("| Impuesto final: %-79s |\n", impuestoF);
+        printf("| Total final: %-82s |\n", TotalF);
+        printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
+        break;
+    }
+
+
+
+
+
+    free(nombreClienteF);
+    return;
+}
+
+
 void menu_modificar_cotizacion() {
 
     MYSQL *conexion = NULL;
@@ -626,10 +768,12 @@ void menu_principal_generales() {
 
             // ========== Facturar.
             case 'd':
-                
+                menu_facturacion();
+                //Aquiva 
                 break;
 
             case 'D':
+                menu_facturacion();
                 break;      
 
             // ========== Salir del menu.
