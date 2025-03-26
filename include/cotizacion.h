@@ -52,4 +52,5 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 
 void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion);
 
+void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot);
 #endif

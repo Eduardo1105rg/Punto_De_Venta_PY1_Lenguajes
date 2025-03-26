@@ -5,8 +5,11 @@ create table Negocio(
     Telefono varchar(8) not null,
     CedulaJuridica varchar(14) not null primary key,
     HorarioAtencion varchar(40) not null,
-    NumSecuencial int not null
+    NumSecuencial int auto_increment not null
 );
+insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
+values
+("Los tilines company","85425308","3002398412","Lunes a domingo de 7am a 10pm",1);
 
 create table Usuario( 
 	NombreUsuario varchar(30),
@@ -32,14 +35,14 @@ create table Productos(
 
 
 create table Cotizacion (
-	IdCotizacion varchar(15) primary key,
+	IdCotizacion int auto_increment primary key ,
     Cliente varchar(30),
     EstadoCotizacion varchar(30)
 
 );
 
 create table CotizacionDetalle (
-	IdCotizacion varchar(15),
+	IdCotizacion int,
     IdProducto varchar(10),
     Cantidad int,
     PrecioXunidad float,
@@ -50,7 +53,7 @@ create table CotizacionDetalle (
 
 create table Factura(
 	IdFactura varchar(15) primary key,
-    IdCotizacion varchar(15) unique not null,
+    IdCotizacion int unique not null,
 	fechaHora datetime not null,
     SubTotal float not null,
     Impuesto float not null,
@@ -90,7 +93,7 @@ select
 	p.IdProducto,
     p.Nombre,
 	(p.precio -(p.precio *0.13)) as PrecioSinIva,
-    p.Cantidad
+    p.Cantidad,
     fp.Descripcion AS DescripcionFamilia
 from Productos as p
 JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
@@ -135,11 +138,10 @@ DELIMITER ;
 
     
     
-
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE obtenerProductoPorID(
-    IN idProdu VARCHAR(40)
+    IN idProdu varchar(20)
 )
 BEGIN
     SELECT
@@ -187,3 +189,140 @@ DELIMITER ;
 
 
 
+-- drop procedure eliminarLineaDetalle
+DELIMITER $$
+use puntoVenta$$
+CREATE PROCEDURE eliminarLineaDetalle(
+	in nombreProdu varchar(20)
+)
+begin
+	delete from CotizacionDetalle cd where IdProducto in (
+		select IdProducto from Productos
+        where Nombre = nombreProdu
+    ); 
+end $$
+DELIMITER ;
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE obtenerProductoPorID(
+    IN idProdu VARCHAR(40)
+)
+BEGIN
+    SELECT
+        p.IdProducto,
+        p.Nombre,
+        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Cantidad,
+        fp.Descripcion AS DescripcionFamilia
+    FROM 
+        Productos p
+    JOIN
+        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
+    WHERE
+        p.IdProducto = idProdu;
+END $$
+DELIMITER ;
+
+
+-- Verifica si hay suficiente cantidad en stock antes de realizar la cotizacion
+-- delimiter $$
+-- create trigger verificaInventario
+-- before insert on CotizacionDetalle
+-- for each row 
+-- begin
+--	declare cantidadDisponible int;
+--    select cantidad into cantidadDisponible from Productos
+--    where IdProducto = new.IdProducto;
+    
+--    if new.Cantidad > cantidadDisponible then
+--		signal sqlstate '45000' 
+--        set MESSAGE_TEXT = 'Error: No hay suficientes productos en stock';
+--	end if;
+-- end$$
+-- delimiter;
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE eliminarDetalleCotizacion(
+    IN idProdu VARCHAR(40),
+    in idCot int
+)
+BEGIN
+    delete from CotizacionDetalle  
+    where IdProducto = idProdu and IdCotizacion = idCot;
+END $$
+DELIMITER ;
+-- call eliminarDetalleCotizacion("Prod1",1)
+
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE facturaFin(
+    in idCot int,
+    IN Cliente VARCHAR(40)
+)
+BEGIN
+	select 
+    p.Nombre, 
+    cd.Cantidad, 
+    cd.PrecioXunidad,
+    (cd.Cantidad * cd.PrecioXunidad) as subtotal,
+    (cd.Cantidad * cd.PrecioXunidad * 0.13) as impuesto,
+    ((cd.Cantidad * cd.PrecioXunidad) + (cd.Cantidad * cd.PrecioXunidad * 0.13)) as total
+    from 
+		CotizacionDetalle cd
+    join
+		Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+	join
+        Productos as p on cd.IdProducto = p.IdProducto
+    where c.Cliente = Cliente and cd.IdCotizacion = idCot;
+END $$
+DELIMITER ;
+
+-- call facturaFin(1,'Edutec');
+-- Este seria en caso de querer solo mostrar los totales
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE facturaFinDinero(
+    in idCot int,
+    IN Cliente VARCHAR(40)
+)
+BEGIN
+	select 
+        SUM(cd.Cantidad * cd.PrecioXunidad) AS SubtotalFinal,  
+        SUM(cd.Cantidad * cd.PrecioXunidad * 0.13) AS ImpuestoFinal,  
+        SUM((cd.Cantidad * cd.PrecioXunidad) + (cd.Cantidad * cd.PrecioXunidad * 0.13)) AS TotalFinal  
+    from 
+		CotizacionDetalle cd
+    join
+		Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+	join
+        Productos as p on cd.IdProducto = p.IdProducto
+    where c.Cliente = Cliente and cd.IdCotizacion = idCot;
+END $$
+DELIMITER ;
+
+
+
+
+delimiter $$
+USE puntoVenta$$
+create trigger actualizadorInventario
+before update on Productos
+for each row 
+begin
+	declare cantidadTotal int;
+    set cantidadTotal = new.Cantidad + old.Cantidad;
+    
+    if cantidadTotal < 0 then
+		signal sqlstate '45000' 
+        set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
+	else
+        set new.Cantidad = cantidadTotal;
+	end if;
+end$$
+delimiter;
