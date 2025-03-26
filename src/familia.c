@@ -224,11 +224,12 @@ void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descrip
     snprintf(consulta, consultaTamano, "INSERT INTO FamiliaProductos(IdFamilia, Descripcion) VALUES ('%s', '%s');", idFamilia, descripcion);
 
     // para corroborar si esta bien hecha la consulta
-    printf("Consulta generada: %s\n", consulta);
+    //printf("Consulta generada: %s\n", consulta);
 
     // Ejecutamos la consulta
     if (mysql_query(conexion, consulta)) {
-        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        printf("%s\n", mysql_error(conexion));
+        printf("No se pudo agregar %s pues esta familia ya se encuentra registrada\n", idFamilia);
         free(consulta);
         return;
     }

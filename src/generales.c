@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mysql/mysql.h>
+#include <time.h>
+
 
 // Include de archivos del programa.
 #include "../include/generales.h"
@@ -323,9 +325,50 @@ void menu_cotizacion() {
     return;
 }
 
+void crearFactura(MYSQL *conexion, int numCotizacion,char nombreCliente, datetime fechaHora) {
+
+    char *consulta = NULL;
+    int largoConsultaF2 = asprintf(&consulta, "call facturaFin('%d', '%s')", numCotizacion, nombreCliente);
+    if(mysql_query(conexion, consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+
+    }
+    free(consulta);
+    MYSQL_RES *resultado2 = mysql_store_result(conexion);
+
+    char *consulta2 = NULL;
+    int largoConsultaF3 = asprintf(&consulta2, "insert into Factura(IdCotizacion,fechaHora,SubTotal,
+        Impuesto,Total) values('%d','%d','%f','%f','%f')", numCotizacion, fechaHora, resultado2[0],resultado2[1], resultado2[2]);
+    if(mysql_query(conexion, consulta2)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+
+    }
+
+    
+
+
+}
 
 
 void menu_facturacion() {
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+
+    //Funcion que habiamos hecho en el portafolio para obtener la fecha y hora actual
+    char fechaHora[70];
+    char *formato = "%Y-%m-%d %H:%M:%S";
+    int escritos = strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+    if (escritos != 0) {
+        printf("Fecha y hora: %s", fechaHora);
+    
+    } else {
+        printf("No se formateo bien la fecha");
+    }
+
     char *nombreClienteF = NULL;
     int numCotizacionF = 0;
     MYSQL *conexion = NULL;
@@ -354,6 +397,17 @@ void menu_facturacion() {
     }
     nombreClienteF = temp;
 
+
+    char *consultaFC = NULL;
+    int largoConsultaFC = asprintf(&consultaFC, "update Cotizacion set EstadoCotizacion = '%s' where IdCotizacion = '%d'", "Facturado",numCotizacionF);
+    if (mysql_query(conexion, consultaFC)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaFC);
+        return;
+    }
+    free(consultaFC);
+
+
     char *consultaF = NULL;
     int largoConsultaF = asprintf(&consultaF, "select NumSecuencial, NombreLocal, CedulaJuridica, Telefono from Negocio");
 
@@ -371,16 +425,16 @@ void menu_facturacion() {
     }
 
     MYSQL_ROW fila;
+    //crearFactura()
     while ((fila = mysql_fetch_row(resultado2)) != NULL) {
         char *empresaNombre = fila[1];   
-        char *fechaEmision = "25/3/2025";    
-        char *identificadorF = fila[0];
+        char *identificadorF = fila[0]; //Esto hay que cambiarlo esta mal debo asociarle el de la factura o lo voy asignando manual
         char *cedulaJuridica = fila[2];  
         char *telefonoEmpresa = fila[3]; 
 
         printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
         printf("|                                       %-57s |\n", empresaNombre); 
-        printf("| Fecha de emisión: %-77s |\n", fechaEmision);
+        printf("| Fecha de emisión: %-77s |\n", fechaHora);
         printf("| Identificador: %-80s |\n", identificadorF);
         printf("| Cédula jurídica: %-78s |\n", cedulaJuridica);
         printf("| Teléfono: %-85s |\n", telefonoEmpresa);

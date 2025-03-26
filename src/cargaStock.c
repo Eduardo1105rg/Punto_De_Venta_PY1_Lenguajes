@@ -174,10 +174,6 @@ int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaSto
 }
 
 void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
-
-    printf("%d\n",cantidad);
-    printf("%s\n",id_producto);
-    printf("SOY YO");
     if (id_producto == NULL || cantidad == 0) {
         printf("Error: Por favor ingrese datos distintos de nullo o una cantidad mayor a cero\n");
         return;
@@ -187,6 +183,7 @@ void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
 
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        printf("No se pudo agregar el %s pues su cantidad %d excede el stock dejandolo en negativo", id_producto, cantidad);
         free(consulta);
         return;
     }
@@ -198,11 +195,9 @@ void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
     while (actual != NULL)
     {
 
-        printf("Pass...");
 
         char *id_producto;
-        int cantidad;
-        printf("Soy la cantidad %d:" ,cantidad );
+        int cantidad = 0;
 
         id_producto = (char *)malloc((strlen(actual->stockCargado.IdProducto) + 1) * sizeof(char));
 
@@ -212,8 +207,8 @@ void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
             free(id_producto);
             exit(1);
         }
+        cantidad = actual->stockCargado.Cantidad;
         strcpy(id_producto, actual->stockCargado.IdProducto);
-
         agregarStock(conexion,id_producto,cantidad);
         //actual->familia.IdFamilia
         //actual->familia.Descripcion
