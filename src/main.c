@@ -36,36 +36,36 @@ int main() {
     printf("Se logro conectar");
 
     // Lista de familias.
-     NodoFamilia *listaDeFamilias = NULL;
+    //NodoFamilia *listaDeFamilias = NULL;
 
     // // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-     cargarFamiliasDesdeArchivo("data/familias.txt", &listaDeFamilias);
+    //cargarFamiliasDesdeArchivo("data/familias.txt", &listaDeFamilias);
 
     //Imprimimos los datos guardados en la lista.
-    imprimirListaNodosFamilia(listaDeFamilias);
+    // imprimirListaNodosFamilia(listaDeFamilias);
   
-     guardarFamiliasEnDB(conexion, listaDeFamilias);
+    // guardarFamiliasEnDB(conexion, listaDeFamilias);
 
     // // Los intentamos almacenar en la base de datos.
-    guardarFamiliasEnDB(conexion,listaDeFamilias);
+    //guardarFamiliasEnDB(conexion,listaDeFamilias);
 
     // // Liberamos la memoria asignada a la lista.
-     liberarListaFamilia(listaDeFamilias);
+    //liberarListaFamilia(listaDeFamilias);
 
     // Lista de productos.
-     NodoProducto *listaProductos = NULL;
+    //NodoProducto *listaProductos = NULL;
 
     // // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-     cargarProductosDesdeArchivo("data/producto.txt", &listaProductos);
+    //cargarProductosDesdeArchivo("data/producto.txt", &listaProductos);
 
     // //Imprimimos los datos guardados en la lista.
     // imprimirListaNodosProducto(listaProductos);
 
     // // Los intentamos almacenar en la base de datos.
-     guardarProductosEnDB(conexion,listaProductos);
+    //guardarProductosEnDB(conexion,listaProductos);
 
     // // Liberamos la memoria asignada a la lista.
-     liberarListaProducto(listaProductos);
+    //liberarListaProducto(listaProductos);
 
 
 
