@@ -212,7 +212,8 @@ void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nomb
 
     // Ejecutamos la consulta
     if (mysql_query(conexion, consulta)) {
-        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        printf("%s\n", mysql_error(conexion)); //Esto lo podemos quitar
+        printf("No se agrego el %s pues no puede repetir identificadores de productos que ya existen\n",id_producto);
         free(consulta);
         return;
     }
@@ -230,7 +231,6 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
     while (actual != NULL)
     {
 
-        printf("Pass..\n");
 
         char *id_producto;
         char *nombre;

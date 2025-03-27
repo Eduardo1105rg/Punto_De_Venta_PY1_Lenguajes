@@ -62,7 +62,6 @@ create table Factura(
     constraint fk_FIDCotizacion foreign key (IdCotizacion) references Cotizacion(IdCotizacion)
 );
 
-
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
 -- Se vuelva negativa envie un mensaje de error, esto por cada actualización de producto.
 -- drop trigger actualizadorInventario
@@ -306,7 +305,58 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Validacion para corroborar si hay algún ID de familia agregado previamente a su inserción
+delimiter $$
+use puntoVenta$$
+create trigger DuplicadosFamilia
+before insert on FamiliaProductos
+for each row 
+begin
+	declare nuevoID varchar(10);
+    set nuevoID = new.IdFamilia;
+	if exists (select 1 from FamiliaProductos where IdFamilia = nuevoID) then 
+		signal sqlstate '45000'
+        set MESSAGE_TEXT = 'Error: No se pueden repetir identificadores de familias';
+	end if;
+end$$
+delimiter;
 
+-- insert into FamiliaProductos(IdFamilia,Descripcion) Values ('Fam1','Enlatados'); prueba
+
+
+
+-- Validacion para corroborar si hay algún ID de productos agregado previamente a su inserción
+delimiter $$
+use puntoVenta$$
+create trigger DuplicadosProductos
+before insert on Productos
+for each row 
+begin
+	declare nuevoID varchar(10);
+    set nuevoID = new.IdProducto;
+	if exists (select 1 from Productos where IdProducto = nuevoID) then 
+		signal sqlstate '45000'
+        set MESSAGE_TEXT = 'Error: No se pueden repetir identificadores de productos';
+	end if;
+end$$
+delimiter;
+
+-- Esta es la validación para cuando se quiere eliminar un productos ya facturado o cotizado 
+delimiter $$
+use puntoVenta$$
+create trigger revisaEliminarProductos
+before delete on Productos
+for each row 
+begin
+	declare nuevoID varchar(10);
+    set nuevoID = old.IdProducto;
+	if exists (select 1 from CotizacionDetalle where IdProducto = nuevoID) then 
+		signal sqlstate '45000'
+        set MESSAGE_TEXT = 'Error: No se puede eliminar un producto ya cotizado o facturado';
+	end if;
+end$$
+delimiter;
+DELETE FROM Productos WHERE IdProducto = 'Prod3';
 
 
 delimiter $$
