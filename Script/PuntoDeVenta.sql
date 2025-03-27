@@ -5,7 +5,7 @@ create table Negocio(
     Telefono varchar(8) not null,
     CedulaJuridica varchar(14) not null primary key,
     HorarioAtencion varchar(40) not null,
-    NumSecuencial int auto_increment not null
+    NumSecuencial int not null
 );
 insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
 values
@@ -52,7 +52,7 @@ create table CotizacionDetalle (
 );
 
 create table Factura(
-	IdFactura varchar(15) primary key,
+	IdFactura int auto_increment primary key,
     IdCotizacion int unique not null,
 	fechaHora datetime not null,
     SubTotal float not null,
@@ -60,11 +60,21 @@ create table Factura(
     Total float	not null,
     constraint fk_FIDCotizacion foreign key (IdCotizacion) references Cotizacion(IdCotizacion)
 );
-
+use puntoVenta;
+create view verCatalogo as
+select
+	p.IdProducto,
+    p.Nombre,
+	(p.precio -(p.precio *0.13)) as PrecioSinIva,
+    p.Cantidad,
+    fp.Descripcion AS DescripcionFamilia
+from Productos as p
+JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
 -- Se vuelva negativa envie un mensaje de error, esto por cada actualización de producto.
 -- drop trigger actualizadorInventario
 delimiter $$
+use puntoVenta$$
 create trigger actualizadorInventario
 before update on Productos
 for each row 
@@ -85,16 +95,7 @@ delimiter;
 -- drop view verCatalogo esto es para quitarla
 -- Falta agregar una descripcion en la base, en si se le asigna un alias a la tabla
 -- De forma que no se tenga que estar escribiendo constantemente su nombre y permitiendo acceder a sus tablas
-use puntoVenta;
-create view verCatalogo as
-select
-	p.IdProducto,
-    p.Nombre,
-	(p.precio -(p.precio *0.13)) as PrecioSinIva,
-    p.Cantidad,
-    fp.Descripcion AS DescripcionFamilia
-from Productos as p
-JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
+
 -- select * from verCatalogo Este es para ver la consulta
 
 
@@ -145,7 +146,7 @@ BEGIN
     SELECT
         p.IdProducto,
         p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Precio AS PrecioSinIva,
         p.Cantidad,
         fp.Descripcion AS DescripcionFamilia
     FROM 
@@ -201,27 +202,6 @@ begin
 end $$
 DELIMITER ;
 
-
-DELIMITER $$
-USE puntoVenta$$
-CREATE PROCEDURE obtenerProductoPorID(
-    IN idProdu VARCHAR(40)
-)
-BEGIN
-    SELECT
-        p.IdProducto,
-        p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
-        p.Cantidad,
-        fp.Descripcion AS DescripcionFamilia
-    FROM 
-        Productos p
-    JOIN
-        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
-    WHERE
-        p.IdProducto = idProdu;
-END $$
-DELIMITER ;
 
 
 -- Verifica si hay suficiente cantidad en stock antes de realizar la cotizacion
@@ -355,8 +335,7 @@ begin
 	end if;
 end$$
 delimiter;
-DELETE FROM Productos WHERE IdProducto = 'Prod3';
-
+-- DELETE FROM Productos WHERE IdProducto = 'Prod3';
 
 delimiter $$
 USE puntoVenta$$

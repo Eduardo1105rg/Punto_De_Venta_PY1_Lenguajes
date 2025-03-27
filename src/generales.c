@@ -325,34 +325,67 @@ void menu_cotizacion() {
     return;
 }
 
-void crearFactura(MYSQL *conexion, int numCotizacion,char nombreCliente, datetime fechaHora) {
 
+
+int crearFactura(MYSQL *conexion, int numCotizacion, char *nombreCliente, char *fechaHora) {
     char *consulta = NULL;
-    int largoConsultaF2 = asprintf(&consulta, "call facturaFin('%d', '%s')", numCotizacion, nombreCliente);
-    if(mysql_query(conexion, consulta)){
+    int largoConsultaF2 = asprintf(&consulta, "call facturaFinDinero('%d', '%s')", numCotizacion, nombreCliente);
+    if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consulta);
-        return;
-
+        return -1; 
     }
     free(consulta);
+
     MYSQL_RES *resultado2 = mysql_store_result(conexion);
-
-    char *consulta2 = NULL;
-    int largoConsultaF3 = asprintf(&consulta2, "insert into Factura(IdCotizacion,fechaHora,SubTotal,
-        Impuesto,Total) values('%d','%d','%f','%f','%f')", numCotizacion, fechaHora, resultado2[0],resultado2[1], resultado2[2]);
-    if(mysql_query(conexion, consulta2)){
-        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-        free(consulta);
-        return;
-
+    if (resultado2 == NULL) {
+        printf("Error al obtener el resultado: %s\n", mysql_error(conexion));
+        return -1; 
     }
+    MYSQL_ROW fila = mysql_fetch_row(resultado2);
 
+
+    while (mysql_next_result(conexion) == 0) {
+        MYSQL_RES *res = mysql_store_result(conexion);
+        if (res) mysql_free_result(res);
+    }
     
 
 
-}
+    char *consulta2 = NULL;
+    int largoConsultaF3 = asprintf(&consulta2, "insert into Factura(IdCotizacion, fechaHora, SubTotal, Impuesto, Total) values(%d, '%s', %f, %f, %f)", numCotizacion, fechaHora, atof(fila[0]), atof(fila[1]), atof(fila[2]));
+    if (mysql_query(conexion, consulta2)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta2);
+        mysql_free_result(resultado2);
+        return -1;
+    }
+    free(consulta2);
+    mysql_free_result(resultado2);
 
+    char *consulta3 = NULL;
+    int largoConsultaF4 = asprintf(&consulta3, "SELECT IdFactura FROM Factura WHERE IdCotizacion = '%d'", numCotizacion);
+    if (mysql_query(conexion, consulta3)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta3);
+        return -1; 
+    }
+    MYSQL_RES *resultado3 = mysql_store_result(conexion);
+    if (resultado3 == NULL) {
+        printf("Error al obtener el resultado: %s\n", mysql_error(conexion));
+        free(consulta3);
+        return -1; 
+    }
+    MYSQL_ROW fila2 = mysql_fetch_row(resultado3);
+    int idFactura = -1;
+    if (fila2) {
+        idFactura = atoi(fila2[0]); 
+    }
+    mysql_free_result(resultado3);
+    free(consulta3);
+
+    return idFactura;
+}
 
 void menu_facturacion() {
     time_t t = time(NULL);
@@ -408,6 +441,13 @@ void menu_facturacion() {
     free(consultaFC);
 
 
+
+    //Aqui recien creamos la factura antes de mostrarla
+    int resID = crearFactura(conexion, numCotizacionF, nombreClienteF,fechaHora);
+    printf("DEBUG: Valor de resID = %d\n", resID);
+
+
+
     char *consultaF = NULL;
     int largoConsultaF = asprintf(&consultaF, "select NumSecuencial, NombreLocal, CedulaJuridica, Telefono from Negocio");
 
@@ -425,17 +465,16 @@ void menu_facturacion() {
     }
 
     MYSQL_ROW fila;
-    //crearFactura()
+
     while ((fila = mysql_fetch_row(resultado2)) != NULL) {
         char *empresaNombre = fila[1];   
-        char *identificadorF = fila[0]; //Esto hay que cambiarlo esta mal debo asociarle el de la factura o lo voy asignando manual
         char *cedulaJuridica = fila[2];  
         char *telefonoEmpresa = fila[3]; 
 
         printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
         printf("|                                       %-57s |\n", empresaNombre); 
         printf("| Fecha de emisión: %-77s |\n", fechaHora);
-        printf("| Identificador: %-80s |\n", identificadorF);
+        printf("| Identificador: %-80d |\n", resID);
         printf("| Cédula jurídica: %-78s |\n", cedulaJuridica);
         printf("| Teléfono: %-85s |\n", telefonoEmpresa);
         printf("| Cliente: %-86s |\n", nombreClienteF);
@@ -511,11 +550,6 @@ void menu_facturacion() {
         printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
         break;
     }
-
-
-
-
-
     free(nombreClienteF);
     return;
 }
