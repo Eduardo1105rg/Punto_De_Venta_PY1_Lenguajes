@@ -71,15 +71,15 @@ int main() {
 
 
     // Cargar estock de productos desde txt
-     NodoCargaStock *lista_carga_stock = NULL;
+    //  NodoCargaStock *lista_carga_stock = NULL;
 
-     cargarStockDesdeArchivo("data/stock.txt", &lista_carga_stock);
+    //  cargarStockDesdeArchivo("data/stock.txt", &lista_carga_stock);
 
-     imprimirListaNodosCargaStock(lista_carga_stock);
+    //  imprimirListaNodosCargaStock(lista_carga_stock);
 
-     guardarStockEnDB(conexion,lista_carga_stock);
+    //  guardarStockEnDB(conexion,lista_carga_stock);
 
-     liberarListaCargaStock(lista_carga_stock);
+    //  liberarListaCargaStock(lista_carga_stock);
 
 
 
