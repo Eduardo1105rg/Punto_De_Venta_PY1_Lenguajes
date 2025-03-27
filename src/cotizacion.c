@@ -424,5 +424,68 @@ void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** he
     return;
 }
 
+/* Na */
+void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
+    NodoCotizacionDetalle *actual = lista;
+    while (actual != NULL) {
+        printf("IdProducto: %s\n", actual->detallesCotizacion.IdProducto);
+        printf("NombreProducto: %s\n", actual->detallesCotizacion.NombreProducto);
+        printf("Descripcion: %s\n", actual->detallesCotizacion.Descripcion);
+        printf("NumeroFila: %d\n", actual->detallesCotizacion.NumeroFila);
+        printf("Precio: %.2f\n", actual->detallesCotizacion.precio);
+        printf("Cantidad: %d\n", actual->detallesCotizacion.cantidad);
+        printf("-------------------------\n");
+        actual = actual->siguiente;
+    }
+}
 
+void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizacion) {
+    printf("Entre aquí\n");
+    char *consulta = NULL;
+
+    // Insertar la cotización con estado 'Pendiente'
+    int largoConsulta = asprintf(&consulta, 
+        "INSERT INTO Cotizacion (EstadoCotizacion, Cliente) VALUES ('Pendiente', '%s');", 
+        nombreCliente);
+
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+
+    // Obtener el ID generado automáticamente
+    *idCotizacion = mysql_insert_id(conexion);
+    printf("El ID de tu cotización es: %d\n", *idCotizacion);
+
+    free(consulta);
+}
+
+void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion) {
+    printf("Entre aquí\n");
+
+    NodoCotizacionDetalle *actual = lista;
+    char *consulta = NULL;
+
+    while (actual != NULL) {
+        const char *idProdu = actual->detallesCotizacion.IdProducto;
+        int cantidadProductos = actual->detallesCotizacion.cantidad;
+        float precioProducto = actual->detallesCotizacion.precio;
+
+        // Insertar los detalles de la cotización
+        int largoConsulta = asprintf(&consulta, 
+            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto, Cantidad, PrecioXunidad) "
+            "VALUES ('%d', '%s', '%d', '%f');", 
+            idCotizacion, idProdu, cantidadProductos, precioProducto);
+
+        if (mysql_query(conexion, consulta)) {
+            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+            free(consulta);
+            return;
+        }
+
+        free(consulta);
+        actual = actual->siguiente;
+    }
+}
 

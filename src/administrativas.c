@@ -119,7 +119,7 @@ void menu_agregar_eliminar_productos() {
                  
                 // Solicitar 
                 char *id_producto1;
-                printf("\nIngresa el nombre del producto a eliminar: ");
+                printf("\nIngresa el id del producto a eliminar: ");
                 leerCaracteresDeFormadinamica(&id_producto1);
                 printf("\n");
                 eliminarProducto(conexion, id_producto1);
@@ -129,7 +129,7 @@ void menu_agregar_eliminar_productos() {
             case 'B':
 
                 char *id_producto2;
-                printf("\nIngresa el nombre del producto a eliminar: ");
+                printf("\nIngresa el id del producto a eliminar: ");
                 leerCaracteresDeFormadinamica(&id_producto2);
                 printf("\n");
                 eliminarProducto(conexion, id_producto2);

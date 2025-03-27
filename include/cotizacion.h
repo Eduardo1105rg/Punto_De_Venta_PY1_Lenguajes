@@ -53,4 +53,12 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion);
 
 void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot);
+
+void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista);
+
+void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizacion);
+
+void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion);
+
+
 #endif
