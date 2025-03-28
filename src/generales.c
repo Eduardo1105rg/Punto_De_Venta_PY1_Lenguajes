@@ -879,3 +879,124 @@ void menu_principal_generales() {
 
     return;
 }
+
+void PrimerEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from CantidadCotizacionesPendientes");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+
+    printf("Esta es la cantidad de cotizaciones pendientes %d\n", fila[0]);
+    mysql_free_result(resultado);
+
+}
+
+void SegundaEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from CantidadCotizacionesFacturadas");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+
+    printf("Esta es la cantidad de cotizaciones facturadas %d\n", fila[0]);
+    mysql_free_result(resultado);
+
+}
+
+void TerceraEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from PromedioTotal");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+
+    printf("Este es el promedio de compra %f\n", fila[0]);
+    mysql_free_result(resultado);
+
+}
+
+void CuartaEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from Top5ProductosVendidos");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+    for (int i = 0; i < mysql_num_rows(resultado); i++) {
+        fila = mysql_fetch_row(resultado);
+        if (fila) {
+            printf("Este es el producto #%d, su nombre es %s y su cantidad es %s\n", i + 1, fila[0], fila[1]);
+        }
+    }
+    mysql_free_result(resultado);
+
+}
+
+void QuintaEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from TopProductoFamilia");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+    for (int i = 0; i < mysql_num_rows(resultado); i++) {
+        fila = mysql_fetch_row(resultado);
+        if (fila) {
+            printf("Este es el nombre de la familia %s y su producto mas vendido es %s\n", fila[0], fila[1]);
+        }
+    }
+    mysql_free_result(resultado);
+
+}
+
+
+void SextaEstadistica(MYSQL *conexion) {
+
+    char *consulta =NULL;
+    int largoConsultaF = asprintf(&consulta, "select * from MontoTopFamilia");
+    if(mysql_query(conexion,consulta)){
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consulta);
+        return;
+    }
+    free(consulta);
+    MYSQL_RES *resultado = mysql_store_result(conexion);
+    MYSQL_ROW fila;
+    for (int i = 0; i < mysql_num_rows(resultado); i++) {
+        fila = mysql_fetch_row(resultado);
+        if (fila) {
+            printf("Este es el nombre de la familia %s y su monto es de %f\n", fila[0], fila[1]);
+        }
+    }
+    mysql_free_result(resultado);
+
+}

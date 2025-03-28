@@ -70,6 +70,117 @@ select
     fp.Descripcion AS DescripcionFamilia
 from Productos as p
 JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
+
+
+use puntoVenta;
+create view CantidadCotizacionesPendientes as
+select
+	count(c.EstadoCotizacion) as cantidadEstados
+from Cotizacion as c
+	where EstadoCotizacion = 'Pendiente';
+    
+use puntoVenta;
+create view CantidadCotizacionesFacturadas as
+select
+	count(c.EstadoCotizacion) as cantidadEstados
+from Cotizacion as c
+	where EstadoCotizacion = 'Facturado';
+    
+    
+-- Para sacar el promedio lo que hago es sumar todos los totales y dividirlos por la cantidad de facturas que se han creado    
+use puntoVenta;
+create view PromedioTotal as
+select
+	sum(f.Total / f.IdFactura) as Totalpromedio
+from Factura as f;
+
+ -- select * from PromedioTotal 
+
+
+use puntoVenta;
+create view Top5ProductosVendidos as
+select 
+	p.Nombre,
+	sum(cd.cantidad) as cantidadVendida
+from 
+	CotizacionDetalle as cd
+join 
+	Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	p.Nombre
+order by 
+	cantidadVendida desc
+limit 5;
+
+ select * from Top5ProductosVendidos
+
+use puntoVenta;
+create view TopProductoFamilia as
+select
+	Descripcion,
+    Nombre,
+    cantidadVendida
+from (
+select 
+	fp.Descripcion,
+    p.Nombre,
+	sum(cd.cantidad) as cantidadVendida,
+	row_number() over (partition by fp.Descripcion order by sum(cd.cantidad) desc) as ranking
+from 
+	CotizacionDetalle as cd
+join 
+	Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+join
+	FamiliaProductos as fp on p.IdFamilia = fp.IdFamilia
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	fp.Descripcion,
+    p.Nombre
+) as subquery where ranking = 1;
+
+ --   select * from TopProductoFamilia
+  
+  
+  
+  
+  use puntoVenta;
+create view MontoTopFamilia as
+select
+	Descripcion,
+    Monto
+from (
+select 
+	fp.Descripcion,
+	sum(f.Total) as Monto,
+	row_number() over (partition by fp.Descripcion order by sum(f.Total) desc) as ranking
+from 
+	Factura as f
+join 
+	Cotizacion as c on f.IdCotizacion = c.IdCotizacion
+join
+	CotizacionDetalle as cd on c.IdCotizacion = cd.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+join
+	FamiliaProductos as fp on p.IdFamilia = fp.IdFamilia
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	fp.Descripcion,
+    f.Total
+) as subquery where ranking = 1;
+
+--  select * from MontoTopFamilia
+   -- select * from CantidadCotizacionesFacturadas
+
+    
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
 -- Se vuelva negativa envie un mensaje de error, esto por cada actualización de producto.
 -- drop trigger actualizadorInventario
@@ -90,6 +201,10 @@ begin
 	end if;
 end$$
 delimiter;
+
+
+
+
 
 
 -- drop view verCatalogo esto es para quitarla
@@ -337,6 +452,12 @@ end$$
 delimiter;
 -- DELETE FROM Productos WHERE IdProducto = 'Prod3';
 
+
+
+
+
+
+
 delimiter $$
 USE puntoVenta$$
 create trigger actualizadorInventario
@@ -354,3 +475,7 @@ begin
 	end if;
 end$$
 delimiter;
+
+
+
+
