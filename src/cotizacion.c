@@ -4,6 +4,8 @@
 #include <mysql/mysql.h>
 
 #include "../include/cotizacion.h"
+// int cantidadCotizaciones = 1;
+const char *estadoCotizacion = "Pago pendiente";
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2

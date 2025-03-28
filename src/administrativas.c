@@ -9,6 +9,7 @@
 #include "../include/producto.h"
 #include "../include/db.h"
 #include "../include/manipularArchivos.h"
+#include "../include/estadisticas.h"
 
 
 
@@ -45,7 +46,6 @@ void incluir_familia_de_productos() {
 
     return;
 }
-
 
 void menu_agregar_eliminar_productos() {
     MYSQL *conexion = NULL;
@@ -161,6 +161,109 @@ void menu_modificar_stock() {
 
     
 
+}
+
+
+void menu_principal_estadisticas() {
+    MYSQL *conexion = NULL;
+    if (conectar(&conexion) != 0) {
+        
+        return; 
+    }
+
+    char opcion;
+    do {
+        printf("\nBienvenido al apartado de estadisticas. \n");
+        printf("Selecciona una de las siguientes opciones para continuar...\n");
+
+        printf(">> A) Cantidad de cotizaciones pendientes. \n");
+        printf(">> B) Cantidad de cotizaciones facturadas.\n");
+        printf(">> C) Promedio de compra (promedio de total).\n");
+        printf(">> D) Top 5 de productos más vendidos.\n");
+        printf(">> E) Producto más vendido por familia .\n");
+        printf(">> F) Monto vendido por familia.\n");
+
+        printf(">> S) Volver al menu principal.\n");
+
+        printf("Ingrese la letra de las seccion a la que desea ingresar: ");
+        scanf(" %c", &opcion); 
+        getchar(); 
+
+        switch (opcion) {
+            // ========== Cantidad de cotizaciones pendientes.
+            case 'a' :
+                PrimerEstadistica(conexion);
+                break;
+            case 'A':
+                PrimerEstadistica(conexion);
+
+                
+                break;
+
+            // ========== Cantidad de cotizaciones facturadas.
+            case 'b':
+                SegundaEstadistica(conexion);
+                break;
+
+            case 'B':
+                SegundaEstadistica(conexion);
+                break;
+
+            // ========== Promedio de compra (promedio de total).
+            case 'c' :
+                TerceraEstadistica(conexion);
+                break;
+            case 'C':
+                TerceraEstadistica(conexion);
+                
+                break;
+
+            // ========== Top 5 de productos más vendidos.
+            case 'd':
+                CuartaEstadistica(conexion);
+                break;
+
+            case 'D':
+                break;
+                
+             // ========== Producto más vendido por familia.
+             case 'e' :
+                QuintaEstadistica(conexion);
+             break;
+
+            case 'E':
+                QuintaEstadistica(conexion);
+                
+                break;
+
+             // ========== Monto vendido por familia.
+             case 'f' :
+                SextaEstadistica(conexion);
+                
+             break;
+
+            case 'F':
+                SextaEstadistica(conexion);
+                
+                break;
+             
+            // ======== Salir de la seccion:
+            case 's':
+                printf("Saliendo de la seccion de estadisticas...\n");
+                break;
+
+            case 'S':
+                printf("Saliendo de la seccion de estadisticas...\n");
+                break;
+
+
+            default:
+                printf("Opción no válida, intenta de nuevo.\n");
+        }
+    } while (opcion != 's');
+    cerrarConexion(conexion);
+
+    return;
 }
 
 
