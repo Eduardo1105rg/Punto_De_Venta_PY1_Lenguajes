@@ -5,7 +5,7 @@ create table Negocio(
     Telefono varchar(8) not null,
     CedulaJuridica varchar(14) not null primary key,
     HorarioAtencion varchar(40) not null,
-    NumSecuencial int auto_increment not null
+    NumSecuencial int not null
 );
 insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
 values
@@ -52,7 +52,7 @@ create table CotizacionDetalle (
 );
 
 create table Factura(
-	IdFactura varchar(15) primary key,
+	IdFactura int auto_increment primary key,
     IdCotizacion int unique not null,
 	fechaHora datetime not null,
     SubTotal float not null,
@@ -61,11 +61,132 @@ create table Factura(
     NombreCliente varchar(30) not null,
     constraint fk_FIDCotizacion foreign key (IdCotizacion) references Cotizacion(IdCotizacion)
 );
+use puntoVenta;
+create view verCatalogo as
+select
+	p.IdProducto,
+    p.Nombre,
+	(p.precio -(p.precio *0.13)) as PrecioSinIva,
+    p.Cantidad,
+    fp.Descripcion AS DescripcionFamilia
+from Productos as p
+JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
 
+
+use puntoVenta;
+create view CantidadCotizacionesPendientes as
+select
+	count(c.EstadoCotizacion) as cantidadEstados
+from Cotizacion as c
+	where EstadoCotizacion = 'Pendiente';
+    
+use puntoVenta;
+create view CantidadCotizacionesFacturadas as
+select
+	count(c.EstadoCotizacion) as cantidadEstados
+from Cotizacion as c
+	where EstadoCotizacion = 'Facturado';
+    
+    
+-- Para sacar el promedio lo que hago es sumar todos los totales y dividirlos por la cantidad de facturas que se han creado    
+use puntoVenta;
+create view PromedioTotal as
+select
+	sum(f.Total / f.IdFactura) as Totalpromedio
+from Factura as f;
+
+ -- select * from PromedioTotal 
+
+
+use puntoVenta;
+create view Top5ProductosVendidos as
+select 
+	p.Nombre,
+	sum(cd.cantidad) as cantidadVendida
+from 
+	CotizacionDetalle as cd
+join 
+	Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	p.Nombre
+order by 
+	cantidadVendida desc
+limit 5;
+
+ select * from Top5ProductosVendidos
+
+use puntoVenta;
+create view TopProductoFamilia as
+select
+	Descripcion,
+    Nombre,
+    cantidadVendida
+from (
+select 
+	fp.Descripcion,
+    p.Nombre,
+	sum(cd.cantidad) as cantidadVendida,
+	row_number() over (partition by fp.Descripcion order by sum(cd.cantidad) desc) as ranking
+from 
+	CotizacionDetalle as cd
+join 
+	Cotizacion as c on cd.IdCotizacion = c.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+join
+	FamiliaProductos as fp on p.IdFamilia = fp.IdFamilia
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	fp.Descripcion,
+    p.Nombre
+) as subquery where ranking = 1;
+
+ --   select * from TopProductoFamilia
+  
+  
+  
+  
+  use puntoVenta;
+create view MontoTopFamilia as
+select
+	Descripcion,
+    Monto
+from (
+select 
+	fp.Descripcion,
+	sum(f.Total) as Monto,
+	row_number() over (partition by fp.Descripcion order by sum(f.Total) desc) as ranking
+from 
+	Factura as f
+join 
+	Cotizacion as c on f.IdCotizacion = c.IdCotizacion
+join
+	CotizacionDetalle as cd on c.IdCotizacion = cd.IdCotizacion
+join
+	Productos as p on cd.IdProducto = p.IdProducto
+join
+	FamiliaProductos as fp on p.IdFamilia = fp.IdFamilia
+where 
+	c.EstadoCotizacion = 'Facturado'
+group by
+	fp.Descripcion,
+    f.Total
+) as subquery where ranking = 1;
+
+--  select * from MontoTopFamilia
+   -- select * from CantidadCotizacionesFacturadas
+
+    
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
 -- Se vuelva negativa envie un mensaje de error, esto por cada actualización de producto.
 -- drop trigger actualizadorInventario
 delimiter $$
+use puntoVenta$$
 create trigger actualizadorInventario
 before update on Productos
 for each row 
@@ -83,19 +204,14 @@ end$$
 delimiter;
 
 
+
+
+
+
 -- drop view verCatalogo esto es para quitarla
 -- Falta agregar una descripcion en la base, en si se le asigna un alias a la tabla
 -- De forma que no se tenga que estar escribiendo constantemente su nombre y permitiendo acceder a sus tablas
-use puntoVenta;
-create view verCatalogo as
-select
-	p.IdProducto,
-    p.Nombre,
-	(p.precio -(p.precio *0.13)) as PrecioSinIva,
-    p.Cantidad,
-    fp.Descripcion AS DescripcionFamilia
-from Productos as p
-JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
+
 -- select * from verCatalogo Este es para ver la consulta
 
 
@@ -146,7 +262,7 @@ BEGIN
     SELECT
         p.IdProducto,
         p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Precio AS PrecioSinIva,
         p.Cantidad,
         fp.Descripcion AS DescripcionFamilia
     FROM 
@@ -202,27 +318,6 @@ begin
 end $$
 DELIMITER ;
 
-
-DELIMITER $$
-USE puntoVenta$$
-CREATE PROCEDURE obtenerProductoPorID(
-    IN idProdu VARCHAR(40)
-)
-BEGIN
-    SELECT
-        p.IdProducto,
-        p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
-        p.Cantidad,
-        fp.Descripcion AS DescripcionFamilia
-    FROM 
-        Productos p
-    JOIN
-        FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia
-    WHERE
-        p.IdProducto = idProdu;
-END $$
-DELIMITER ;
 
 
 -- Verifica si hay suficiente cantidad en stock antes de realizar la cotizacion
@@ -356,7 +451,12 @@ begin
 	end if;
 end$$
 delimiter;
-DELETE FROM Productos WHERE IdProducto = 'Prod3';
+-- DELETE FROM Productos WHERE IdProducto = 'Prod3';
+
+
+
+
+
 
 
 delimiter $$
@@ -376,3 +476,7 @@ begin
 	end if;
 end$$
 delimiter;
+
+
+
+
