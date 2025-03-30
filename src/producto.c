@@ -300,15 +300,17 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
 
 
 /**
- * Nombre:
+ * Nombre:agregarProductos
  * 
- * Descripcion:
+ * Descripcion: Es la función que realiza toda la inserción de los datos a Productos
  * 
- * Funcionamiento:
+ * Funcionamiento: Esta función recibe todos los datos necesarios para poder agregar todos los productos que se le envien a la base
+ de datos, de forma que se agrega constantemente y sin generar fallos
  * 
- * Entradas:
+ * Entradas: un puntero a un tipo de datos mysql, un char constante de id_producto, nombre, id_familia, float en costo, precio 
+ y un entero para su precio
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nombre, const char *id_familia, float costo, float precio, int cantidad) {
@@ -340,15 +342,16 @@ void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nomb
 
 
 /**
- * Nombre:
+ * Nombre:guardarProductosEnDB
  * 
- * Descripcion:
+ * Descripcion: Guarda productos en la base de datos
  * 
- * Funcionamiento:
+ * Funcionamiento: En si se puede ver como un puente pues recibe los datos pasados por el usuario en variables las cuales
+ luego se van a pasar a una funcion donde realmente sí se agreguen para despues nada mas volver y terminar su ejecucion
  * 
- * Entradas:
+ * Entradas: un puntero a un dato MYSQL, un puntero a un struct
  * 
- * Salidas:
+ * Salidas: No tiene
  * 
  */
 void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {

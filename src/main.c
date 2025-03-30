@@ -28,6 +28,10 @@
 // Actual.
 // gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c src/estadisticas.c src/facturacion.c src/consultaFacturas.c  -lmysqlclient
 
+
+//Final finalito
+// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c src/estadisticas.c src/facturacion.c src/consultaFacturas.c -lmysqlclient -lcrypto
+
 int main() {
 
     MYSQL *conexion = NULL;

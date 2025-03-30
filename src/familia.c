@@ -200,6 +200,20 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
 }
 
 
+/**
+ * Nombre:agregarFamilias
+ * 
+ * Descripcion: Agrega familias a la base de datos
+ * 
+ * Funcionamiento: En si recibe ciertos identificadores necesarios con los cuales podra realizar inserciones en la
+ tabla de FamiliaProductos enviando así los datos correctamente y haciendo que estos se vean reflejados en la base de datos
+ * 
+ * Entradas: Una conexion MYSQL, un puntero de tipo char constante para el id y la descripcion de la familia
+ * 
+ * Salidas: Es vacia
+ * 
+ */
+
 void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descripcion) {
     // Verificamos que nada sea nulo
     if (idFamilia == NULL || descripcion == NULL) {
@@ -223,10 +237,7 @@ void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descrip
     //es agregarle los valores que necesita la consulta
     snprintf(consulta, consultaTamano, "INSERT INTO FamiliaProductos(IdFamilia, Descripcion) VALUES ('%s', '%s');", idFamilia, descripcion);
 
-    // para corroborar si esta bien hecha la consulta
-    //printf("Consulta generada: %s\n", consulta);
 
-    // Ejecutamos la consulta
     if (mysql_query(conexion, consulta)) {
         printf("%s\n", mysql_error(conexion));
         printf("No se pudo agregar %s pues esta familia ya se encuentra registrada\n", idFamilia);
@@ -239,14 +250,25 @@ void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descrip
     return;
 }
 
-
+/**
+ * Nombre:guardarFamiliasEnDB
+ * 
+ * Descripcion: En si se puede ver como la funcion principal de guardar las familias en la base de datos
+ * 
+ * Funcionamiento: Recibe datos como la conexion MYSQL y el nodoFamilia la cual contiene los datos que el usuario agrego
+ en la aplicación de forma que se extraen para luego pasarlos a una función que modifique realmente agregue esto en la base
+ de datos.
+ * 
+ * Entradas: Un puntero a un tipo de dato MYSQL, un puntero a un struct 
+ * 
+ * Salidas: No tiene
+ * 
+ */
 void guardarFamiliasEnDB(MYSQL *conexion, NodoFamilia* head) {
 
     NodoFamilia *actual = head;
     while (actual != NULL)
     {
-
-        printf("Pass...");
 
         char *id_familia;
         char *descripcion;

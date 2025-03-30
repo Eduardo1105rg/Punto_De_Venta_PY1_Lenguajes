@@ -106,15 +106,17 @@ void menu_consulta_catalogo() {
 }
 
 /**
- * Nombre:
+ * Nombre:menu_cotizacion
  * 
- * Descripcion:
+ * Descripcion: Es el menu principal para lo que viene despues de crear la cotizacion o sea el relleno de su contenido
  * 
- * Funcionamiento:
+ * Funcionamiento:Una vez creada nuestra cotizacion podemos agregar productos, ver catalogo, eliminarlos, registrar la cotizacion
+ o salir y no guardarla, conforme hagamos cambios el usuario podra observar los productos que esta cotizando, sus valores o le 
+ muestra si borra alguno, pero para hacer los cambios efectivos debe guardalo
  * 
- * Entradas:
+ * Entradas:No tiene
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void menu_cotizacion() {
@@ -283,15 +285,17 @@ void menu_cotizacion() {
 }
 
 /**
- * Nombre:
+ * Nombre:menu_modificar_cotizacion
  * 
- * Descripcion:
+ * Descripcion: Es un menu que contiene opciones acerca de una cotización
  * 
- * Funcionamiento:
+ * Funcionamiento:Es un menu que nos deja por medio de un ID de cotizacion podemos agregar productos, eliminar productos,
+ ver catalogo, guardarlo o salir, en general podremos salir y no se guardan los cambios pero si hacemos eliminaciones o 
+ agregamos productos estos cambios no se realizaran de forma permanente hasta que se guarde
  * 
- * Entradas:
+ * Entradas:No tiene
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void menu_modificar_cotizacion() {
@@ -342,8 +346,8 @@ void menu_modificar_cotizacion() {
 
             // ========== Agregar un nuevo producto a la cotizacion.
             case 'b':
+
                  
-                // Solicitar 
                 char *id_producto1;
                 printf("\nIngresa el id del producto a agregar: ");
                 leerCaracteresDeFormadinamica(&id_producto1);
@@ -353,7 +357,6 @@ void menu_modificar_cotizacion() {
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
                 int cantidad_producto1 = leerNumeroDinamico();
                 printf("\n");
-                //printf("Pass0");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
                 int guarda = 1;
 
@@ -409,6 +412,9 @@ void menu_modificar_cotizacion() {
 
             // ========== Guardar la cotizacion creada.
             case 'd':
+                //Aqui lo que hacemos es utilizar la lista de los productos más actualizada para así pasar los datos de poco a poco
+                //aunque lo que realmente se termina haciendo es una consulta para insertar estos datos en la base una vez el usuario
+                //Haya decidido guardarlos
                 if(guarda == 1) {
                     char * consulta3 = NULL;
                     NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
@@ -520,15 +526,17 @@ void menu_modificar_cotizacion() {
 }
 
 /**
- * Nombre:
+ * Nombre:menu_crear_factura
  * 
- * Descripcion:
+ * Descripcion: Esta es la parte que hace toda la facturación de las cotizaciones
  * 
- * Funcionamiento:
+ * Funcionamiento: En si primero le pedimos al usuario el nombre de la persona que cotizo y el ID de esta cotización
+ de forma que si coincide le mostramos la facturacion en base a lo que nos había dado en la cotización, cambiando
+ su estado y mostrando todo esto por medio de prints, así el usuario puede observar todo
  * 
- * Entradas:
- * 
- * Salidas:
+ * Entradas:No tiene
+ *  
+ * Salidas:No tiene
  * 
  */
 void menu_crear_factura() {
@@ -574,7 +582,8 @@ void menu_crear_factura() {
     }
     nombreClienteF = temp;
 
-
+    
+    //Cambiamos el estado de la cotizacion a Facturado
     char *consultaFC = NULL;
     int largoConsultaFC = asprintf(&consultaFC, "update Cotizacion set EstadoCotizacion = '%s' where IdCotizacion = '%d'", "Facturado",numCotizacionF);
     if (mysql_query(conexion, consultaFC)) {
@@ -591,7 +600,8 @@ void menu_crear_factura() {
     printf("DEBUG: Valor de resID = %d\n", resID);
 
 
-
+    //Esta se podría ver como la parte inicial de la factura pues de aquí sacamos cierto tipo de datos
+    //Que van en el encabezado de esta misma
     char *consultaF = NULL;
     int largoConsultaF = asprintf(&consultaF, "select NumSecuencial, NombreLocal, CedulaJuridica, Telefono from Negocio");
 
@@ -609,7 +619,8 @@ void menu_crear_factura() {
     }
 
     MYSQL_ROW fila;
-
+    //Aqui lo que hacemos es ir pasando de fila en fila en los resultados para así mostrarlo por medio de prints 
+    //Pero como este no tiene muchos datos solo es de aplicarle un break
     while ((fila = mysql_fetch_row(resultado2)) != NULL) {
         char *empresaNombre = fila[1];   
         char *cedulaJuridica = fila[2];  
@@ -627,6 +638,7 @@ void menu_crear_factura() {
         break;
     }
 
+    //Aqui sacamos la parte de la cotizacion para así mostrarla en la factura
     char *consultaF2 = NULL;
     int largoConsultaF2 = asprintf(&consultaF2, "call facturaFin('%d', '%s')", numCotizacionF, nombreClienteF);
 
@@ -644,6 +656,8 @@ void menu_crear_factura() {
     }
 
     MYSQL_ROW fila2;
+    //Aqui si es necesario el bucle pues hasta que ya no hayan más datos este seguira imprimiendo
+    //Los productos que fueron comprados por el usuario
     while ((fila2 = mysql_fetch_row(resultado3)) != NULL) {
         char *Producto = fila2[0];   
         char *Cantidad = fila2[1];    
@@ -683,6 +697,8 @@ void menu_crear_factura() {
     }
 
     MYSQL_ROW fila3;
+    //Por ultimo hacemos el calculo final de lo que viene a ser la factura para así mostrar con mayor claridad todos
+    //los costos.
     while ((fila3 = mysql_fetch_row(resultado4)) != NULL) {
         char *subototalF = fila3[0];   
         char *impuestoF = fila3[1];    
@@ -718,15 +734,17 @@ void menu_crear_factura() {
 
 /* ============================ Menu principal de la seccion ==========================*/
 /**
- * Nombre:
+ * Nombre:menu_principal_generales
  * 
- * Descripcion:
+ * Descripcion:En si esta es el menu inicial que se tiene al ingresar en el apartado de opciones generales
  * 
- * Funcionamiento:
+ * Funcionamiento: Podremos navegar constantemente en las diferentes opciones que nos ofrece como lo son los catalogos
+ la cotizacion, modificar cotizacion, facturar o volver al menu principal, aunque suene raro dentro de este menu hay otros submenus
+ con muchas más opciones entonces la idea es que el usuario pueda explorar constantemente entre la distintas opciones que posee.
  * 
- * Entradas:
+ * Entradas:No tiene
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void menu_principal_generales() {
