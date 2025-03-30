@@ -331,6 +331,10 @@ void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
 }
 
 
+// int validar_cantidad_producto(int cantidadDB, int canti) {
+
+// }
+
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {
     
     int existe_producto = validar_exitencia_producto(conexion, idProducto);
@@ -365,6 +369,7 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
                 const char *nombreProducto = fila[1];
                 const char *descripcion = fila[4];
                 int precio = atoi(fila[2]);
+                int cantidadExitente = atoi(fila[3]);
                 
                 // Revisar si no hay otro elemento con este ID
                 int cantProducto = buscarPorIdCotizacionDetalle(*head, idProducto);
@@ -372,16 +377,29 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 
                 if (cantProducto != 0) {
                     
+                    if ((cantidadExitente - (cantProducto + cantidad)) <= 0) {
 
-                    // Este es para combinar las cantodades de producto exitentes...
-                    modificarValoresNodoCotizacionDetalle(head, idProducto, cantidad);
+                        printf("\n Error: No contamos con suficiente existencias de este prodcuto par la cantidad ingresada, por favor vuelva a interntarlo. \n");
+                    } else {
+                        // Este es para combinar las cantodades de producto exitentes...
+                        modificarValoresNodoCotizacionDetalle(head, idProducto, cantidad);
+                    }
 
                 } else {
 
-                    // Agregar el producto a la cotización
-                    insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
+                    if ((cantidadExitente - cantidad) <= 0) {
 
-                    printf("Producto agregado a la cotización: %s\n", idProducto);
+                        printf("\n Error: No contamos con suficiente existencias de este prodcuto par la cantidad ingresada, por favor vuelva a interntarlo. \n");
+
+                    } else {
+                        // Este es para combinar las cantodades de producto exitentes...
+                        // Agregar el producto a la cotización
+                        insertarElementoAlFinalCotizacionDetalle(head, idProducto, nombreProducto, descripcion, precio, cantidad);
+
+                        printf("Producto agregado a la cotización: %s\n", idProducto);
+                    }
+
+
                 }
 
             }

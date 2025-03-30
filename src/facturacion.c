@@ -5,6 +5,9 @@
 #include <mysql/mysql.h>
 #include <time.h>
 
+#include "../include/facturacion.h"
+
+
 int crearFactura(MYSQL *conexion, int numCotizacion, char *nombreCliente, char *fechaHora) {
     char *consulta = NULL;
     int largoConsultaF2 = asprintf(&consulta, "call facturaFinDinero('%d', '%s')", numCotizacion, nombreCliente);

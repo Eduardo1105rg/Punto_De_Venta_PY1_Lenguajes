@@ -111,8 +111,8 @@ void menu_consulta_catalogo() {
  * Descripcion: Es el menu principal para lo que viene despues de crear la cotizacion o sea el relleno de su contenido
  * 
  * Funcionamiento:Una vez creada nuestra cotizacion podemos agregar productos, ver catalogo, eliminarlos, registrar la cotizacion
- o salir y no guardarla, conforme hagamos cambios el usuario podra observar los productos que esta cotizando, sus valores o le 
- muestra si borra alguno, pero para hacer los cambios efectivos debe guardalo
+ *  o salir y no guardarla, conforme hagamos cambios el usuario podra observar los productos que esta cotizando, sus valores o le 
+ *  muestra si borra alguno, pero para hacer los cambios efectivos debe guardalo
  * 
  * Entradas:No tiene
  * 
@@ -548,44 +548,59 @@ void menu_crear_factura() {
     char *formato = "%Y-%m-%d %H:%M:%S";
     int escritos = strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
     if (escritos != 0) {
-        printf("Fecha y hora: %s", fechaHora);
+        printf("Fecha y hora: %s\n", fechaHora);
     
     } else {
-        printf("No se formateo bien la fecha");
+        printf("No se formateo bien la fecha.\n");
     }
 
-    char *nombreClienteF = NULL;
-    int numCotizacionF = 0;
+    // char *nombreClienteF = NULL;
+    // int numCotizacionF = 0;
     MYSQL *conexion = NULL;
 
     if (conectar(&conexion) != 0) {
         return;
     }
 
-    nombreClienteF = (char *)malloc(100 * sizeof(char));
-    if (nombreClienteF == NULL) {
-        printf("Error al asignar memoria.\n");
+    // nombreClienteF = (char *)malloc(100 * sizeof(char));
+    // if (nombreClienteF == NULL) {
+    //     printf("Error al asignar memoria.\n");
+    //     return;
+    // }
+
+    // printf("Antes de darle su factura por favor escribanos su numero de cotizacion\n");
+    // printf("y si es muy amable el nombre de la persona que cotizo\n");
+    // scanf("%d", &numCotizacionF);
+    // getchar(); 
+    // scanf("%s", nombreClienteF);
+
+    printf("\nIngresa el id de la cotizacion a factruar: ");
+    int id_cotizacion = leeNumeroDinamicoV2();
+    //printf("\n Valor ingresado: %i\n", id_cotizacion);
+
+    printf("\n");
+    if (id_cotizacion == -21) {
         return;
     }
 
-    printf("Antes de darle su factura por favor escribanos su numero de cotizacion\n");
-    printf("y si es muy amable el nombre de la persona que cotizo\n");
-    scanf("%d", &numCotizacionF);
-    getchar(); 
-    scanf("%s", nombreClienteF);
+    char *nombre;
+    printf("\nIngresa el nombre del cliente que se usao para la cotizacion: ");
+    leerCaracteresDeFormadinamica(&nombre);
+    printf("\n");
 
-    char *temp = realloc(nombreClienteF, (strlen(nombreClienteF) + 1) * sizeof(char));
-    if (temp == NULL) {
-        printf("Error al reasignar memoria para nombreClienteF.\n");
-        free(nombreClienteF);
-        return;
-    }
-    nombreClienteF = temp;
+
+    // char *temp = realloc(nombreClienteF, (strlen(nombreClienteF) + 1) * sizeof(char));
+    // if (temp == NULL) {
+    //     printf("Error al reasignar memoria para nombreClienteF.\n");
+    //     free(nombreClienteF);
+    //     return;
+    // }
+    // nombreClienteF = temp;
 
     
     //Cambiamos el estado de la cotizacion a Facturado
     char *consultaFC = NULL;
-    int largoConsultaFC = asprintf(&consultaFC, "update Cotizacion set EstadoCotizacion = '%s' where IdCotizacion = '%d'", "Facturado",numCotizacionF);
+    int largoConsultaFC = asprintf(&consultaFC, "update Cotizacion set EstadoCotizacion = '%s' where IdCotizacion = '%d'", "Facturado", id_cotizacion);
     if (mysql_query(conexion, consultaFC)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consultaFC);
@@ -596,7 +611,7 @@ void menu_crear_factura() {
 
 
     //Aqui recien creamos la factura antes de mostrarla
-    int resID = crearFactura(conexion, numCotizacionF, nombreClienteF,fechaHora);
+    int resID = crearFactura(conexion, id_cotizacion, nombre, fechaHora);
     printf("DEBUG: Valor de resID = %d\n", resID);
 
 
@@ -632,7 +647,7 @@ void menu_crear_factura() {
         printf("| Identificador: %-80d |\n", resID);
         printf("| Cédula jurídica: %-78s |\n", cedulaJuridica);
         printf("| Teléfono: %-85s |\n", telefonoEmpresa);
-        printf("| Cliente: %-86s |\n", nombreClienteF);
+        printf("| Cliente: %-86s |\n", nombre);
         printf("|                                       %-57s |\n", "Productos"); 
 
         break;
@@ -640,7 +655,7 @@ void menu_crear_factura() {
 
     //Aqui sacamos la parte de la cotizacion para así mostrarla en la factura
     char *consultaF2 = NULL;
-    int largoConsultaF2 = asprintf(&consultaF2, "call facturaFin('%d', '%s')", numCotizacionF, nombreClienteF);
+    int largoConsultaF2 = asprintf(&consultaF2, "call facturaFin('%d', '%s')", id_cotizacion, nombre);
 
     if (mysql_query(conexion, consultaF2)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
@@ -681,7 +696,7 @@ void menu_crear_factura() {
     }
 
     char *consultaF3 = NULL;
-    int largoConsultaF3 = asprintf(&consultaF3, "call facturaFinDinero('%d', '%s')", numCotizacionF, nombreClienteF);
+    int largoConsultaF3 = asprintf(&consultaF3, "call facturaFinDinero('%d', '%s')", id_cotizacion, nombre);
 
     if (mysql_query(conexion, consultaF3)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
@@ -710,7 +725,7 @@ void menu_crear_factura() {
         printf("+------------+--------------+----------------------+-------------------+-------------+------------+\n");
         break;
     }
-    free(nombreClienteF);
+    free(nombre);
     return;
 }
 

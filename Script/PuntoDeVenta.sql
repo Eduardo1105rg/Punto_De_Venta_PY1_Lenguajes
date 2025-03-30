@@ -57,7 +57,6 @@ create table Factura(
     SubTotal float not null,
     Impuesto float not null,
     Total float	not null,
-    NombreCliente varchar(30) not null,
     constraint fk_FIDCotizacion foreign key (IdCotizacion) references Cotizacion(IdCotizacion)
 );
 use puntoVenta;

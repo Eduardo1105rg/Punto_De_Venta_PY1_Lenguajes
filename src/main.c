@@ -8,6 +8,10 @@
 #include "../include/db.h"
 #include "../include/menu.h"
 #include "../include/consultaCatalogo.h"
+#include "../include/consultaFacturas.h"
+#include "../include/estadisticas.h"
+
+
 
 
 
@@ -36,12 +40,12 @@ int main() {
 
     MYSQL *conexion = NULL;
 
-    printf("Aqui");
+    printf("Aqui\n");
     if (conectar(&conexion) != 0) {
         
         return 1; 
     }
-    printf("Se logro conectar");
+    printf("Se logro conectar.\n");
 
     // Lista de familias.
     //NodoFamilia *listaDeFamilias = NULL;
@@ -98,9 +102,15 @@ int main() {
 
 
     // Pruebas del menu..
-    menu_principal();
+    //menu_principal();
 
+    //mostrar_detalles_factura(conexion, 0);
 
     //eliminarProducto(conexion, "Prod1");
+
+
+    // ============= Estadisticas del programa...
+    SextaEstadistica(conexion);
+
     return 0;
 }

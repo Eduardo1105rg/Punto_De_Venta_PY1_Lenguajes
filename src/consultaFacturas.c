@@ -12,7 +12,7 @@ void mostrar_facturas(MYSQL *conexion) {
     MYSQL_ROW fila;
 
     // Se crea la consulta...
-    const char* consulta = "SELECT * FROM verCatalogo";
+    const char* consulta = "SELECT * FROM verFacturas";
     
     //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
@@ -39,11 +39,11 @@ void mostrar_facturas(MYSQL *conexion) {
     // Recorrer los resultados e imprimir cada fila
     while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
         //printf("Datos: %s\n", fila[0]);
-        printf("| %-12s | %-20s | %-19.2f | %-15.2f |\n", fila[0], fila[1], atof(fila[2]), atof(fila[3]));
+        printf("| %-12s | %-20s | %-17.2f | %-11.2f |\n", fila[0], fila[1], atof(fila[2]), atof(fila[3]));
 
     }
 
-    printf("+--------------+----------------------+-------------------+---------------+\n\n");
+    printf("+--------------+----------------------+-------------------+-------------+\n\n");
 
     mysql_free_result(datos_recibidos);
 
@@ -65,25 +65,25 @@ void mostrar_detalles_factura(MYSQL *conexion, const int id_factura) {
         return;
     }
 
+    int countFactura = 0;
     do {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
 
-                printf("+--------------+ Detalles de la factura: %i +--------------+\n\n", id_factura);
+                printf("\n+--------------+ Detalles de la factura: %i +--------------+\n\n", id_factura);
             
                 // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    printf("+--------------+----------------------+-------------------+-------------+\n\n");
+                    printf("+--------------+----------------------+-------------------+\n\n");
 
                     printf(">> ID Factura: %s\n", fila[0]);
                     printf(">> Fecha de la factura: %s\n", fila[2]);
-                    printf(">> Subtotal: %f\n", atof(fila[3]));
-                    printf(">> Impuestos: %f\n", atof(fila[4]));
-                    printf(">> Total: %f\n", atof(fila[4]));
+                    printf(">> Subtotal: %.2f\n", atof(fila[3]));
+                    printf(">> Impuestos: %.2f\n", atof(fila[4]));
+                    printf(">> Total: %.2f\n", atof(fila[4]));
 
-                    printf("+--------------+----------------------+-------------------+-------------+\n\n");
-
-                    mostrar_detalle_cotizacion_facturada(conexion, atoi(fila[1]));
+                    printf("+--------------+----------------------+-------------------+\n\n");
+                    countFactura = atoi(fila[1]);
 
                 }
 
@@ -91,6 +91,15 @@ void mostrar_detalles_factura(MYSQL *conexion, const int id_factura) {
         }
     } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
 
+    if (countFactura != 0) {
+
+        printf("Datos de los prodcutos de esta factura:\n");
+
+        mostrar_detalle_cotizacion_facturada(conexion, countFactura);
+    } else {
+        printf("La factura con el id ingresado no fue encontrado...\n");
+    }
+    //printf("\nDato id:%s\n", fila[1]);
 
     return;
 }

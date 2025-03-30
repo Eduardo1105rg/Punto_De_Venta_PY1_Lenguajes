@@ -345,7 +345,7 @@ void menu_principal_consulta_facturas() {
 }
 
 /**
- * Nombre:
+ * Nombre: menu_principal_estadisticas
  * 
  * Descripcion:
  * 
