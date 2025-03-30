@@ -10,6 +10,8 @@
 #include "../include/generales.h"
 #include "../include/menu.h"  
 #include "../include/db.h"  
+#include "../include/manipularArchivos.h"
+
 
 
 /**
@@ -38,8 +40,9 @@ void menu_principal() {
         printf(">> S) Salir\n");
 
         printf("Ingrese la letra de las seccion a la que desea ingresar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Opciones administrativas.
@@ -137,16 +140,26 @@ char* EncriptacionSha256(const char *contra) {
  * Salidas: Un 1 si resulto exitoso sino un 0
  * 
  */
-
-
 int verificacionAdministrativo() {
-    char nombre[50];
-    char contrasena[65];
+    // char nombre[50];
+    // char contrasena[65];
     printf("Antes de ingresar a este menu debe loguearse como usuario\n");
-    printf("Primero escriba el nombre de usuario\n");
-    scanf("%s", nombre);
-    printf("Por ultimo escriba su contraseña\n");
-    scanf("%s", contrasena);
+    // printf("Primero escriba el nombre de usuario\n");
+    // scanf("%s", nombre);
+    // printf("Por ultimo escriba su contraseña\n");
+    // scanf("%s", contrasena);
+
+    char *nombre;
+    printf("\nIngresa el usuario: ");
+    leerCaracteresDeFormadinamica(&nombre);
+    printf("\n");
+
+    char *contrasena;
+    printf("\nIngresa la contraseña: ");
+    leerCaracteresDeFormadinamica(&contrasena);
+    printf("\n");
+
+
 
     MYSQL *conexion = NULL;
 
@@ -177,6 +190,8 @@ int verificacionAdministrativo() {
                 if (strcmp(contraHash, fila[1]) == 0) {
                     free(contraHash); 
                     mysql_free_result(resultado4); 
+                    free(nombre);
+                    free(contrasena);
                     return 1; 
                 }
                 free(contraHash); 
@@ -187,3 +202,5 @@ int verificacionAdministrativo() {
     mysql_free_result(resultado4);
     return 0;
 }
+
+

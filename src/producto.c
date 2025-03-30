@@ -13,15 +13,13 @@
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
 
 /**
- * Nombre:
+ * Nombre: crearNodoProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion que crea un nuevo nodo de un elemento, este nodo contendra los valores que define el struct que lo representa.
  * 
- * Funcionamiento:
+ * Entradas: const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad: Datos del struct que lo representa.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas:  No posee.
  * 
  */
 NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
@@ -63,15 +61,14 @@ NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, cons
 
 
 /**
- * Nombre:
+ * Nombre: insertarelementoAlInicioProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para insertar un nuevo nodo al inicio de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
  * 
- * Funcionamiento:
+ * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad: Datos del nodo.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void insertarelementoAlInicioProducto(NodoProducto** head, const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
@@ -83,15 +80,13 @@ void insertarelementoAlInicioProducto(NodoProducto** head, const char *idProduct
 
 
 /**
- * Nombre:
+ * Nombre: insertarElementoAlFinalProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para insertar un nuevo nodo al final de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
  * 
- * Funcionamiento:
- * 
- * Entradas:
- * 
- * Salidas:
+ * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad: Datos del nodo.
+ * Salidas: No posee.
  * 
  */
 void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
@@ -113,15 +108,14 @@ void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto
 
 
 /**
- * Nombre:
+ * Nombre: eliminarPorIdProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
  * 
- * Funcionamiento:
+ * Entradas:  NodoProducto** head: Puntero a la lista de nodos.
+ *  char * idProducto: Id del prodcuto a eliminar.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
@@ -153,15 +147,14 @@ void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
 
 
 /**
- * Nombre:
+ * Nombre: buscarPorIdProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para buscar la exitencia de un elementos en la lista de nodos, retorna un entero indicando la exitencia del producto en la lista.
  * 
- * Funcionamiento:
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ *  const char* idProducto: Id del producto a buscar.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {
@@ -179,15 +172,13 @@ int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {
 
 
 /**
- * Nombre:
+ * Nombre: imprimirListaNodosProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para imprimir los datos de una lista de nodos.
  * 
- * Funcionamiento:
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void imprimirListaNodosProducto(NodoProducto* head) {
@@ -204,15 +195,13 @@ void imprimirListaNodosProducto(NodoProducto* head) {
 
 
 /**
- * Nombre:
+ * Nombre: liberarListaProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion que se encarga de liberar la memoria asignada a los nodos y datos de la lista.
  * 
- * Funcionamiento:
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void liberarListaProducto(NodoProducto* head) {
@@ -234,15 +223,15 @@ void liberarListaProducto(NodoProducto* head) {
 // ==============Este seria el apartado para cargar los datos de una familia des un archivo y su guardado en la base de datos.
 
 /**
- * Nombre:
+ * Nombre: cargarProductosDesdeArchivo
  * 
- * Descripcion:
+ * Descripcion: Esta funcion se encarga de cargar los datos desde un archivo, validarlo y posteriormente los alamacena en una lista de punteros de nodos que almacenan la 
+ * informacion del archivo.
  * 
- * Funcionamiento:
+ * Entradas: char * nombreArchivo: Nombre del archivo del que se estan leyendo lo datos.
+ *  NodoProducto** listaDeFamilias: Lista de punteros para la lista de nodos en la que se estan guardando los datos.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: El estado de la carga de datos.
  * 
  */
 int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFamilias) {
@@ -310,7 +299,7 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
  * Entradas: un puntero a un tipo de datos mysql, un char constante de id_producto, nombre, id_familia, float en costo, precio 
  y un entero para su precio
  * 
- * Salidas:No tiene
+ * Salidas: No tiene
  * 
  */
 void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nombre, const char *id_familia, float costo, float precio, int cantidad) {
@@ -402,15 +391,16 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
 
 
 /**
- * Nombre:
+ * Nombre: validar_exitencia_producto
  * 
- * Descripcion:
+ * Descripcion: Funcion para validar la existencia del registro de un producto de la base de datos, esto se hace midiendo la cantidad de elementos que retona la consulta, si es 0 
+ * significa que el prodcuto no exite, en caso de ser diferente de cero, significa que existe.
  * 
- * Funcionamiento:
+ * Entradas: 
+ *  MYSQL *conexion: Puntero a la instancia de MYSQL
+ *  const char *idProducto: Id del prodcuto.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: int count: la cantidad de elmentos registrados.
  * 
  */
 int validar_exitencia_producto(MYSQL *conexion, const char *idProducto) {
@@ -466,15 +456,14 @@ int validar_exitencia_producto(MYSQL *conexion, const char *idProducto) {
 
 
 /**
- * Nombre:
+ * Nombre: eliminarProducto
  * 
- * Descripcion:
+ * Descripcion: Funcion para la eliminacion de un producto mediante el id, se contruye una consulta mediante un DELETE para eliminar el prodcuto..
  * 
- * Funcionamiento:
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL
+ *  const char *idProducto: ID del prodcuto a eliminar.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void eliminarProducto(MYSQL *conexion, const char *idProducto) {

@@ -10,6 +10,17 @@ const char *estadoCotizacion = "Pago pendiente";
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
+
+/**
+ * Nombre: crearNodoCotizacionDetalle
+ * 
+ * Descripcion: Funcion que crea un nuevo nodo de un elemento, este nodo contendra los valores que define el struct que lo representa.
+ * 
+ * Entradas: const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del struct que lo representa.
+ * 
+ * Salidas:  No posee.
+ * 
+ */
 NodoCotizacionDetalle* crearNodoCotizacionDetalle(const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad) {
     NodoCotizacionDetalle* nuevoNodo = (NodoCotizacionDetalle*)malloc(sizeof(NodoCotizacionDetalle));
 
@@ -42,6 +53,18 @@ NodoCotizacionDetalle* crearNodoCotizacionDetalle(const char *id, const char *no
     return nuevoNodo;
 }
 
+
+/**
+ * Nombre: insertarelementoAlInicioCotizacionDetalle
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al inicio de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del nodo.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void insertarelementoAlInicioCotizacionDetalle(NodoCotizacionDetalle** head, const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad) {
     NodoCotizacionDetalle* nuevoNodo = crearNodoCotizacionDetalle(id, nombreProducto, descripcion, precio, cantidad);
     nuevoNodo->siguiente = *head;
@@ -49,6 +72,18 @@ void insertarelementoAlInicioCotizacionDetalle(NodoCotizacionDetalle** head, con
     return;
 }
 
+
+/**
+ * Nombre: insertarElementoAlFinalCotizacionDetalle
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al final de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del nodo.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void insertarElementoAlFinalCotizacionDetalle(NodoCotizacionDetalle** head, const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad) {
 
     //Cambio 
@@ -84,6 +119,18 @@ void insertarElementoAlFinalCotizacionDetalle(NodoCotizacionDetalle** head, cons
     return;
 }
 
+
+/**
+ * Nombre: eliminarPorIdCotizacionDetalle
+ * 
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
+ * 
+ * Entradas:  NodoProducto** head: Puntero a la lista de nodos.
+ *  char * idProducto: Id del prodcuto a eliminar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id) {
 
     NodoCotizacionDetalle* actual = *head;
@@ -111,6 +158,18 @@ void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id) {
     return;
 }
 
+
+/**
+ * Nombre: eliminarCotizacionPorNumFila
+ * 
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
+ * 
+ * Entradas:  NodoProducto** head: Puntero a la lista de nodos.
+ *  const int numFila: numero de fila en la que se encuentra el prodcuto a eliminar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFila) {
 
     NodoCotizacionDetalle* actual = *head;
@@ -140,6 +199,17 @@ void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFil
 }
 
 
+/**
+ * Nombre: buscarPorIdCotizacionDetalle
+ * 
+ * Descripcion: Funcion para buscar la exitencia de un elementos en la lista de nodos, retorna un entero indicando la exitencia del producto en la lista.
+ * 
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ *  const char* id: Id del nodo a buscar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 int buscarPorIdCotizacionDetalle(NodoCotizacionDetalle* head, const char* id) {
 
     if (head == NULL) {
@@ -159,6 +229,17 @@ int buscarPorIdCotizacionDetalle(NodoCotizacionDetalle* head, const char* id) {
     return 0;
 }
 
+
+/**
+ * Nombre: imprimirListaNodosCotizacionDetalle
+ * 
+ * Descripcion: Funcion para imprimir los datos de una lista de nodos.
+ * 
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void imprimirListaNodosCotizacionDetalle(NodoCotizacionDetalle* head) {
     NodoCotizacionDetalle *actual = head;
 
@@ -171,6 +252,19 @@ void imprimirListaNodosCotizacionDetalle(NodoCotizacionDetalle* head) {
     return;
 }
 
+
+/**
+ * Nombre: modificarValoresNodoCotizacionDetalle
+ * 
+ * Descripcion: Funcion para modificar la cantidad de un producto, se utiliza el id del producto para realizar la busqueda de este.
+ * 
+ * Entradas: NodoCotizacionDetalle** head: Puntero a la lista de nodos.
+ *  const char * id: Id del nodo a buscar.
+ *  const int cantidad: Cantidad que se usara para modificar.
+ * 
+ * Salidas:
+ * 
+ */
 void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const char * id, const int cantidad) {
 
     if (head == NULL) {
@@ -194,6 +288,16 @@ void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const c
 }
 
 
+/**
+ * Nombre: liberarListaCotizacionDetalle
+ * 
+ * Descripcion: Funcion que se encarga de liberar la memoria asignada a los nodos y datos de la lista.
+ * 
+ * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head) {
     NodoCotizacionDetalle *actual;
     while (head != NULL)
@@ -211,7 +315,16 @@ void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head) {
 
 
 
-
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void mostrar_cotizacion(NodoCotizacionDetalle* head) {
 
     if (head == NULL) {
@@ -238,6 +351,19 @@ void mostrar_cotizacion(NodoCotizacionDetalle* head) {
     return;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * MYSQL *conexion: Puntero a la instancia de MYSQL
+ * int id
+ * 
+ * Salidas:
+ * 
+ */
 void mostrar_cotizacionID(MYSQL *conexion, int id) {
     char *consulta = NULL;
     int largoConsulta = asprintf(&consulta, "call mostrarDetalleCotizacion('%d')", id);
@@ -317,6 +443,16 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
 }
 
 
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
     char *consulta2 = NULL;
     printf("%s",IdProd);
@@ -331,10 +467,16 @@ void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
 }
 
 
-// int validar_cantidad_producto(int cantidadDB, int canti) {
-
-// }
-
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {
     
     int existe_producto = validar_exitencia_producto(conexion, idProducto);
@@ -415,7 +557,17 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 }
 
 
-void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion) {
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
+int  optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion) {
     MYSQL_RES *resultado;
     MYSQL_ROW fila;
 
@@ -424,10 +576,11 @@ void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** he
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consulta);
-        return;
+        return 0;
     }
 
     // registrar los datos del detalle de la cotizacion.
+    int count = 0;
     do {
         resultado = mysql_store_result(conexion);
         if (resultado) {
@@ -441,6 +594,7 @@ void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** he
                 
                 // Crear la lista de nodos con los datos de la cotizacion.
                 insertarElementoAlFinalCotizacionDetalle(head, fila[0], fila[1], fila[2], atof(fila[3]), atoi(fila[4]));
+                count++;
 
             }
             mysql_free_result(resultado); // Liberar este conjunto de resultados
@@ -449,7 +603,7 @@ void optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** he
     
     free(consulta);
 
-    return;
+    return count;
 }
 
 /* Na */
@@ -467,6 +621,17 @@ void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
     }
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizacion) {
     printf("Entre aquí1\n");
     char *consulta = NULL;
@@ -489,8 +654,21 @@ void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizaci
     free(consulta);
 }
 
+
+/**
+ * Nombre: enviarCotizacionDB
+ * 
+ * Descripcion:
+ * 
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  NodoCotizacionDetalle *lista: Lista de nodos con los datos a almacenar.
+ *  int idCotizacion: Id de la cotizacion con la que se relaciona el detalle.
+ * 
+ * Salidas:
+ * 
+ */
 void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion) {
-    printf("Entre aquí2\n");
+    //printf("Entre aquí2\n");
 
     NodoCotizacionDetalle *actual = lista;
     char *consulta = NULL;
@@ -518,6 +696,17 @@ void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCot
 }
 
 
+/**
+ * Nombre: mostrar_detalle_cotizacion_facturada
+ * 
+ * Descripcion: Funcion para mostrar los datos de los producto de una cotizacion especifica.
+ * 
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  const int idCotizacion: Id de la cotizacion a mostrar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void mostrar_detalle_cotizacion_facturada(MYSQL *conexion, const int idCotizacion) {
 
     char *consulta = NULL;

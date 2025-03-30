@@ -11,8 +11,6 @@
  * 
  * Descripcion:
  * 
- * Funcionamiento:
- * 
  * Entradas:
  * 
  * Salidas:
@@ -59,8 +57,6 @@ void PrimerEstadistica(MYSQL *conexion) {
  * 
  * Descripcion:
  * 
- * Funcionamiento:
- * 
  * Entradas:
  * 
  * Salidas:
@@ -102,8 +98,6 @@ void SegundaEstadistica(MYSQL *conexion) {
  * Nombre:
  * 
  * Descripcion:
- * 
- * Funcionamiento:
  * 
  * Entradas:
  * 
@@ -148,8 +142,6 @@ void TerceraEstadistica(MYSQL *conexion) {
  * Nombre:
  * 
  * Descripcion:
- * 
- * Funcionamiento:
  * 
  * Entradas:
  * 
@@ -214,8 +206,6 @@ void CuartaEstadistica(MYSQL *conexion) {
  * 
  * Descripcion:
  * 
- * Funcionamiento:
- * 
  * Entradas:
  * 
  * Salidas:
@@ -277,8 +267,6 @@ void QuintaEstadistica(MYSQL *conexion) {
  * Nombre:
  * 
  * Descripcion:
- * 
- * Funcionamiento:
  * 
  * Entradas:
  * 

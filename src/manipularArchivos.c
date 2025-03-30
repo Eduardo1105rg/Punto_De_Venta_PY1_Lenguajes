@@ -1,11 +1,3 @@
-/**
- * 
- * Nombre: Manipular-Archivos
- * 
- * Descipcion: Se requiere del desarrollo de un programa que lea los datos de un archivo txt
- *  e imprima las palabras que conformar cada linea del archivo.
- * 
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -55,7 +47,29 @@ void leerCaracteresDeFormadinamica(char** cadena) {
     return;
 }
 
+// char *descripcion_familia1;
+// printf("\nIngresa la descripcion de la familia a buscar: ");
+// leerCaracteresDeFormadinamica(&descripcion_familia1);
+// printf("\n");
+// >> Aqui Va la funcion que ocupa el dato.
+// free(descripcion_familia1);
 
+
+/**
+ * Nombre: leerNumeroDinamico
+ * 
+ * Descripcion: Funcion para ingresar numeros, y validar que no se ingresen datos que no sean numeros.
+ * 
+ * Funcionamiento: Esta funcion hace uso de la funcion de de leerCaracteresDeFormadinamica, con la cual el usuario ingresa una cadena de texto, posteriormente,
+ *  esta el metodo strtol para intentar convertir los valores a numeros, pero en caso de que haya algo que no sea un numero, lo almacena en el puntero y se valida para ver si hay valores
+ * en ese puntero, en ese caso, se devuleve un -21 que indica error.
+ *  
+ * 
+ * Entradas: No posee.
+ * 
+ * Salidas: numero: int: El numero ingresadp o en caso de error -21.
+ * 
+ */
 int leerNumeroDinamico() {
     char *cadena = NULL; // Esta es la cadena.
     int tamano = 1;
@@ -101,6 +115,21 @@ int leerNumeroDinamico() {
 }
 
 
+/**
+ * Nombre: leerNumeroDinamico
+ * 
+ * Descripcion: Funcion para ingresar numeros, y validar que no se ingresen datos que no sean numeros.
+ * 
+ * Funcionamiento: Esta funcion hace uso de la funcion de de leerCaracteresDeFormadinamica, con la cual el usuario ingresa una cadena de texto, posteriormente,
+ *  esta el metodo strtol para intentar convertir los valores a numeros, pero en caso de que haya algo que no sea un numero, lo almacena en el puntero y se valida para ver si hay valores
+ * en ese puntero, en ese caso, se devuleve un -21 que indica error.
+ *  
+ * 
+ * Entradas: No posee.
+ * 
+ * Salidas: numero: int: El numero ingresadp o en caso de error -21.
+ * 
+ */
 int leeNumeroDinamicoV2() {
 
     // Leer los caracteres que ingrese el usuario.
@@ -122,6 +151,25 @@ int leeNumeroDinamicoV2() {
     return numero;
 }
 
+
+/**
+ * Nombre: leerPrimerCaracter
+ * 
+ * Descripcion: Leer el pimer caracter de una entrada de texto.
+ * 
+ * Funcionamiento: Usa scanf, para crear una entrada de texto, despues con un while y getchar(), limpiamos el buffer.
+ * 
+ * Entradas: char *opcion
+ * 
+ * Salidas: No posee.
+ * 
+ */
+void leerPrimerCaracter(char *opcion) {
+    scanf(" %c", opcion); 
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF); // Consumir todos los caracteres restantes
+    return;
+}
 
 /**
  * 

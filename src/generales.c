@@ -19,15 +19,18 @@ int cantidadCotizaciones = 1;
 
 
 /**
- * Nombre:
+ * Nombre: menu_consulta_catalogo
  * 
- * Descripcion:
+ * Descripcion: El menu pincipal para la consulta de catalogo, se consulta de dos modos, ver todos las productos en una tabla y el otros modo
+ * es ver todos lod prodcutos de una familia especifica.
  * 
- * Funcionamiento:
+ * Funcionamiento: Los productos agregados a la base de datos, se mostraran en forma de tabla, esta funcion hacer peticiones a una vista en 
+ * de la base de datos, para optener todos los prodcutos registrado. En la opcion de ver catalogo por familia, el usuario ingresa el nombre de una familia
+ * el sistema llama al procedimiento alamacenado en la base de datos para optener los datos.
  * 
- * Entradas:
+ * Entradas: No tiene
  * 
- * Salidas:
+ * Salidas: No tiene
  * 
  */
 void menu_consulta_catalogo() {
@@ -48,9 +51,10 @@ void menu_consulta_catalogo() {
         printf(">> S) Volver al menu anterior.\n");
 
 
-        printf("Ingrese la letra de la consulta a realizar.: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        printf("Ingrese la letra de la consulta a realizar: ");
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Consulta de catalogo.
@@ -85,8 +89,6 @@ void menu_consulta_catalogo() {
 
                 break;
 
-      
-
             // ========== Salir del menu.
             case 's':
                 printf("Volviendo a la seccion anterior...\n");
@@ -104,6 +106,7 @@ void menu_consulta_catalogo() {
     
     return;
 }
+
 
 /**
  * Nombre:menu_cotizacion
@@ -146,8 +149,9 @@ void menu_cotizacion() {
 
 
         printf("Ingrese la letra de la accion a realizar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Consulta de catalogo.
@@ -170,8 +174,12 @@ void menu_cotizacion() {
 
 
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
-                int cantidad_producto1 = leerNumeroDinamico();
+                int cantidad_producto1 = leeNumeroDinamicoV2();
                 printf("\n");
+
+                if (cantidad_producto1 == -21) {
+                    break;
+                }
                 //printf("Pass0");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
 
@@ -188,8 +196,11 @@ void menu_cotizacion() {
 
                 //Solicitar la cantidad del producto.
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
-                int cantidad_producto2 = leerNumeroDinamico();
+                int cantidad_producto2 = leeNumeroDinamicoV2();
                 printf("\n");
+                if (cantidad_producto2 == -21) {
+                    break;
+                }
 
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto2, cantidad_producto2);
 
@@ -203,79 +214,133 @@ void menu_cotizacion() {
                 //char *id_producto_a_eliminar1;
                 printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
                 // leerCaracteresDeFormadinamica(&id_producto_a_eliminar1);
-                int num_fila_eliminar1 = leerNumeroDinamico();
-
+                int num_fila_eliminar1 = leeNumeroDinamicoV2();
                 printf("\n");
-
+                if (num_fila_eliminar1 == -21) {
+                    break;
+                }
                 eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar1);
                 //eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar1);
 
                 //free(id_producto_a_eliminar1);
 
                 break;
+
             case 'C':
 
                 printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
-                int num_fila_eliminar2 = leerNumeroDinamico();
+                int num_fila_eliminar2 = leeNumeroDinamicoV2();
                 printf("\n");
-
+                if (num_fila_eliminar2 == -21) {
+                    break;
+                }
                 eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
-
                 break;
 
             // ========== Guardar la cotizacion realizada.
             case 'd':
                 mostrar_cotizacion(lista_productos_en_cotizacion);
 
-                char *nombre_cliente1;
-                printf("\nIngresa el nombre del cliente para la cotizacion: ");
-                leerCaracteresDeFormadinamica(&nombre_cliente1);
-                printf("\n");
-                int idCotizacion;
-                crearCotizacion(conexion, nombre_cliente1, &idCotizacion);
-                enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion );
+                // Validar si deverdad se quiere guardar.
+                char aceptar;
+
+                printf("Seguro que desear guarda?\n ");
+                printf("Ingrese N (para no guardar)\n ");
+
+                // scanf(" %c", &aceptar); 
+                // getchar(); 
+                leerPrimerCaracter(&aceptar);
+
+                if (aceptar != 'N' && aceptar != 'n') {
+                    char *nombre_cliente1;
+                    printf("\nIngresa el nombre del cliente para la cotizacion: ");
+                    leerCaracteresDeFormadinamica(&nombre_cliente1);
+                    printf("\n");
+                    int idCotizacion;
+                    crearCotizacion(conexion, nombre_cliente1, &idCotizacion);
+                    enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion );
+                    opcion = 's';
+                }
+
+
+                // char *nombre_cliente1;
+                // printf("\nIngresa el nombre del cliente para la cotizacion: ");
+                // leerCaracteresDeFormadinamica(&nombre_cliente1);
+                // printf("\n");
+                // int idCotizacion;
+                // crearCotizacion(conexion, nombre_cliente1, &idCotizacion);
+                // enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion );
                 //printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
                 break;
 
             case 'D':
                 mostrar_cotizacion(lista_productos_en_cotizacion);
 
-                char *nombre_cliente2;
-                printf("\nIngresa el nombre del cliente para la cotizacion: ");
-                leerCaracteresDeFormadinamica(&nombre_cliente2);
-                printf("\n");
-                int idCotizacion2;
-                crearCotizacion(conexion, nombre_cliente2,&idCotizacion2);
-                enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion2);
-                printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                // Validar si deverdad se quiere guardar.
+                char aceptar2;
+
+                printf("Seguro que desear guarda?\n ");
+                printf("Ingrese N (para no guardar)\n ");
+
+                // scanf(" %c", &aceptar2); 
+                // getchar(); 
+                leerPrimerCaracter(&aceptar2);
+
+
+                if (aceptar2 != 'N' && aceptar2 != 'n') {
+                    char *nombre_cliente2;
+                    printf("\nIngresa el nombre del cliente para la cotizacion: ");
+                    leerCaracteresDeFormadinamica(&nombre_cliente2);
+                    printf("\n");
+
+                    int idCotizacion2;
+                    crearCotizacion(conexion, nombre_cliente2,&idCotizacion2);
+                    enviarCotizacionDB(conexion,lista_productos_en_cotizacion,idCotizacion2);
+                    opcion = 's';
+                    //printf("Cotización creada, tu ID de cotizacion es: %d", cantidadCotizaciones);  
+                }
                 break;
 
             // ========== Salir del menu.
             case 's': 
                 char op1;
-                printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
-                printf("Si desea salir vuelva a escribir S\n");
-                scanf("%c",&op1);
+                printf("Advertencia: Si sales en este momento no se guardara la cotización.\n");
+                printf("Si desea salir vuelva a escribir S: ");
+                // scanf("%c",&op1);
+                // getchar();
+                leerPrimerCaracter(&op1);
+
+                printf("\n");
                 if(op1 == 'S' || op1 == 's'){
                     printf("Volviendo a la seccion anterior...\n");
-                    return;
+                    opcion = 's';
+                }else {
+                    opcion = 'n';
                 }
                 break;
+
             case 'S':
-            char op2;
-            printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
-            printf("Si desea salir vuelva a escribir S\n");
-            scanf("%c",&op2);
-            if(op2 == 'S' || op2 == 's'){
-                printf("Volviendo a la seccion anterior...\n");
-                return;
-            }
+                char op2;
+                printf("Advertencia: Si sales en este momento no se guardara la cotización.\n");
+                printf("Si desea salir vuelva a escribir S: ");
+                // scanf("%c",&op2);
+                // getchar();
+                leerPrimerCaracter(&op2);
+
+                printf("\n");
+
+                if(op2 == 'S' || op2 == 's'){
+                    printf("Volviendo a la seccion anterior...\n");
+                    opcion = 's';
+                } else {
+                    opcion = 'n';
+                }
             break;
 
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     cerrarConexion(conexion);
     
@@ -284,6 +349,24 @@ void menu_cotizacion() {
     return;
 }
 
+
+int ingresar_indentificador_cotizacion() {
+    while (1)
+    {
+        printf("Por favor escriba el identificador de la cotizacion:");
+        int identificadorCotizacion = leeNumeroDinamicoV2();
+        // scanf("%d", &identificadorCotizacion);
+        printf("\n");
+    
+        if (identificadorCotizacion != -21) {
+            return identificadorCotizacion;
+        }
+        printf("El valor ingresado no es aceptado. Ingresolo nuevamente.\n\n");
+    }
+
+
+    return -21;
+}
 /**
  * Nombre:menu_modificar_cotizacion
  * 
@@ -308,11 +391,22 @@ void menu_modificar_cotizacion() {
 
     NodoCotizacionDetalle *lista_productos_en_cotizacion = NULL;
 
-    printf("Por favor escriba el identificador de la cotizacion a modificar:");
-    int identificadorCotizacion = 0;
-    scanf("%d", &identificadorCotizacion);
+
+    //printf("Por favor escriba el identificador de la cotizacion a modificar:");
+    int identificadorCotizacion = ingresar_indentificador_cotizacion();
+    // scanf("%d", &identificadorCotizacion);
     printf("\n");
-    optener_datos_cotizacion_por_id(conexion, &lista_productos_en_cotizacion, identificadorCotizacion);
+
+    if (identificadorCotizacion == -21) {
+        return;
+    }
+
+    int estado_datos = optener_datos_cotizacion_por_id(conexion, &lista_productos_en_cotizacion, identificadorCotizacion);
+
+    if (estado_datos == 0) {
+        printf("El id de cotizacion ingresado no ha sido encontrado.");
+        return;
+    }
 
     char opcion;
     do {
@@ -331,8 +425,10 @@ void menu_modificar_cotizacion() {
 
 
         printf("Ingrese la letra de la accion a realizar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
+
 
         switch (opcion) {
             // ========== Consulta de catalogo.
@@ -353,14 +449,11 @@ void menu_modificar_cotizacion() {
                 leerCaracteresDeFormadinamica(&id_producto1);
                 printf("\n");
 
-
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
                 int cantidad_producto1 = leerNumeroDinamico();
                 printf("\n");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
                 int guarda = 1;
-
-
 
                 free(id_producto1);
                 break;
@@ -412,6 +505,22 @@ void menu_modificar_cotizacion() {
 
             // ========== Guardar la cotizacion creada.
             case 'd':
+
+                char aceptar1;
+                printf("Seguro que desear guarda?\n ");
+                printf("Ingrese N (para no guardar)\n ");
+
+                // scanf(" %c", &aceptar2); 
+                // getchar(); 
+                leerPrimerCaracter(&aceptar1);
+
+
+                if (aceptar1 == 'N' && aceptar1 == 'n') {
+                    break;
+                }
+                opcion = 's';
+
+
                 //Aqui lo que hacemos es utilizar la lista de los productos más actualizada para así pasar los datos de poco a poco
                 //aunque lo que realmente se termina haciendo es una consulta para insertar estos datos en la base una vez el usuario
                 //Haya decidido guardarlos
@@ -455,67 +564,98 @@ void menu_modificar_cotizacion() {
                 break;
 
             case 'D':
-            if(guarda == 1) {
-                char * consulta3 = NULL;
-                NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                while (actual != NULL) { 
-                    char *IdProd = actual->detallesCotizacion.IdProducto;
-                    int cantidadProdu = actual->detallesCotizacion.cantidad;
-                    float precio = actual->detallesCotizacion.precio;                   
-                    int largoConsulta = asprintf(&consulta3, 
-                        "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
-                        identificadorCotizacion, IdProd, cantidadProdu, precio);
-                
-                    if (mysql_query(conexion, consulta3)) {
-                        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-                        free(consulta3);
-                        return;
-                    }
-                    free(consulta3);                    
-                    actual = actual->siguiente; 
-                }
-            
 
-            }else { 
-                NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                while (actual != NULL) { 
-                    char *IdProd = actual->detallesCotizacion.IdProducto;  
-                    printf("%d",identificadorCotizacion);                    
-                    printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
-                    
-                    eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
-                    
-                    actual = actual->siguiente; 
+                char aceptar2;
+                printf("Seguro que desear guarda?\n ");
+                printf("Ingrese N (para no guardar)\n ");
+
+                // scanf(" %c", &aceptar2); 
+                // getchar(); 
+                leerPrimerCaracter(&aceptar2);
+
+
+                if (aceptar2 == 'N' && aceptar2 == 'n') {
+                    break;
                 }
-            }
+                opcion = 's';
+
+                if(guarda == 1) {
+                    char * consulta3 = NULL;
+                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                    while (actual != NULL) { 
+                        char *IdProd = actual->detallesCotizacion.IdProducto;
+                        int cantidadProdu = actual->detallesCotizacion.cantidad;
+                        float precio = actual->detallesCotizacion.precio;                   
+                        int largoConsulta = asprintf(&consulta3, 
+                            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
+                            identificadorCotizacion, IdProd, cantidadProdu, precio);
+                    
+                        if (mysql_query(conexion, consulta3)) {
+                            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                            free(consulta3);
+                            return;
+                        }
+                        free(consulta3);                    
+                        actual = actual->siguiente; 
+                    }
+                
+
+                }else { 
+                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                    while (actual != NULL) { 
+                        char *IdProd = actual->detallesCotizacion.IdProducto;  
+                        printf("%d",identificadorCotizacion);                    
+                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                        
+                        eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
+                        
+                        actual = actual->siguiente; 
+                    }
+                }
                 break;
 
             // ========== Salir del menu.
             case 's': 
                 char op1;
-                printf("Advertencia: Si sales en este momento no se guardaran los cambios en la cotizacion.\n");
-                printf("Si desea salir vuelva a escribir S\n");
-                scanf("%c",&op1);
+
+                printf("Advertencia: Si sales en este momento no se guardara la cotización.\n");
+                printf("Si desea salir vuelva a escribir S: ");
+                // scanf("%c",&op2);
+                // getchar();
+                leerPrimerCaracter(&op1);
+
+                printf("\n");
+
                 if(op1 == 'S' || op1 == 's'){
                     printf("Volviendo a la seccion anterior...\n");
-                    return;
+                    opcion = 's';
+                }else {
+                    opcion = 'n';
                 }
                 break;
+
             case 'S':
-            char op2;
-            printf("Advertencia: Si sales en este momento no se guardara la cotización si no la haz guardado\n");
-            printf("Si desea salir vuelva a escribir S\n");
-            scanf("%c",&op2);
-            if(op2 == 'S' || op2 == 's'){
-                printf("Volviendo a la seccion anterior...\n");
-                return;
-            }
-            break;
+                char op2;
+                printf("Advertencia: Si sales en este momento no se guardara la cotización.\n");
+                printf("Si desea salir vuelva a escribir S: ");
+                // scanf("%c",&op2);
+                // getchar();s
+                leerPrimerCaracter(&op2);
+
+                printf("\n");
+
+                if(op2 == 'S' || op2 == 's'){
+                    printf("Volviendo a la seccion anterior...\n");
+                    opcion = 's';
+                }else {
+                    opcion = 'n';
+                }
+                break;
 
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     cerrarConexion(conexion);
     
@@ -524,6 +664,7 @@ void menu_modificar_cotizacion() {
     return;
 
 }
+
 
 /**
  * Nombre:menu_crear_factura
@@ -575,7 +716,7 @@ void menu_crear_factura() {
     // scanf("%s", nombreClienteF);
 
     printf("\nIngresa el id de la cotizacion a factruar: ");
-    int id_cotizacion = leeNumeroDinamicoV2();
+    int id_cotizacion = ingresar_indentificador_cotizacion();
     //printf("\n Valor ingresado: %i\n", id_cotizacion);
 
     printf("\n");
@@ -728,23 +869,6 @@ void menu_crear_factura() {
     free(nombre);
     return;
 }
-
-// void menu_crear_factura() {
-
-//     while (1) {
-//         printf("\nIngresa el codigo de la cotizacion a facturar: ");
-//         int cantidad_producto1 = leerNumeroDinamico();
-//         printf("\n");
-
-
-//         char *nombre_cliente;
-//         printf("\nIngresa el nombre del cliente para la facturacion: ");
-//         leerCaracteresDeFormadinamica(&nombre_cliente);
-//         printf("\n");
-
-//     }
-
-// }
 
 
 /* ============================ Menu principal de la seccion ==========================*/

@@ -15,4 +15,6 @@ int leerNumeroDinamico();
 
 int leeNumeroDinamicoV2();
 
+void leerPrimerCaracter(char *opcion);
+
 #endif
