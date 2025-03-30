@@ -10,12 +10,11 @@ create table Negocio(
 insert into Negocio(NombreLocal,Telefono,CedulaJuridica,HorarioAtencion,NumSecuencial)
 values
 ("Los tilines company","85425308","3002398412","Lunes a domingo de 7am a 10pm",1);
-
 create table Usuario( 
 	NombreUsuario varchar(30),
-    ContraseñaUsuario varchar(30)
+    ContraseñaUsuario varchar(100)
 );
-
+insert into Usuario(NombreUsuario,ContraseñaUsuario) values ('Foka', SHA2('ADMIN', 256));
 
 create table FamiliaProductos(
 	IdFamilia varchar(10) primary key,
@@ -117,7 +116,7 @@ order by
 	cantidadVendida desc
 limit 5;
 
- select * from Top5ProductosVendidos
+ -- select * from Top5ProductosVendidos
 
 use puntoVenta;
 create view TopProductoFamilia as
