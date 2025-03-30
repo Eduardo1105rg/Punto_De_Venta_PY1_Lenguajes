@@ -11,6 +11,19 @@
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
 
     NodoProducto* nuevoNodo = (NodoProducto*)malloc(sizeof(NodoProducto));
@@ -48,6 +61,19 @@ NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, cons
     return nuevoNodo;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void insertarelementoAlInicioProducto(NodoProducto** head, const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
     NodoProducto* nuevoNodo = crearNodoProducto(idProducto, nombre, idFamilia, costo, precio, cantidad);
     nuevoNodo->siguiente = *head;
@@ -55,6 +81,19 @@ void insertarelementoAlInicioProducto(NodoProducto** head, const char *idProduct
     return;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
 
     NodoProducto * nuevoNddo = crearNodoProducto(idProducto, nombre, idFamilia, costo, precio, cantidad);
@@ -72,6 +111,19 @@ void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto
     return;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
 
     NodoProducto* actual = *head;
@@ -99,6 +151,19 @@ void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
     return;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {
     NodoProducto* actual = head;
 
@@ -112,6 +177,19 @@ int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {
     return 0;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void imprimirListaNodosProducto(NodoProducto* head) {
     NodoProducto *actual = head;
 
@@ -124,6 +202,19 @@ void imprimirListaNodosProducto(NodoProducto* head) {
     return;
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void liberarListaProducto(NodoProducto* head) {
     NodoProducto *actual;
     while (head != NULL)
@@ -141,12 +232,25 @@ void liberarListaProducto(NodoProducto* head) {
 
 
 // ==============Este seria el apartado para cargar los datos de una familia des un archivo y su guardado en la base de datos.
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFamilias) {
     FILE *archivo = fopen(nombreArchivo, "r");
 
     if (archivo == NULL) {
         printf("Error al abrir el archivo.\n");
-        return -1;
+        return 1;
     }
 
     int num_linea = 0;
@@ -195,7 +299,18 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
 }
 
 
-
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nombre, const char *id_familia, float costo, float precio, int cantidad) {
     // Verificamos que nada sea nulo
     printf("soy idProducto: %s\n",id_familia);
@@ -224,7 +339,18 @@ void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nomb
 }
 
 
-
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
 
     NodoProducto *actual = head;
@@ -272,9 +398,112 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
 }
 
 
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
+int validar_exitencia_producto(MYSQL *conexion, const char *idProducto) {
 
+    MYSQL_RES *resultado;
+    MYSQL_ROW fila;
+    char consulta[256];
+
+    // Paso 1: Verificar si el producto existe usando el procedimiento almacenado
+    snprintf(consulta, sizeof(consulta), "CALL obtenerProductoPorID('%s')", idProducto);
+
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        return 1;
+    }
+
+    resultado = mysql_store_result(conexion);
+    if (resultado == NULL) {
+        printf("Error al obtener los resultados: %s\n", mysql_error(conexion));
+        return 1;
+    }
+
+    int count = 0;
+
+    fila = mysql_fetch_row(resultado); 
+
+    if (fila == NULL) {
+        //printf("Error: El producto con ID '%s' no existe en la base de datos.\n", idProducto);
+        count++;
+    }
+    
+    do {
+        resultado = mysql_store_result(conexion);
+        if (resultado) {
+            
+                // Recorrer los resultados e imprimir cada fila
+                while ((fila = mysql_fetch_row(resultado)) != NULL) {
+                    if (fila == NULL) {
+                        count++;
+                    }
+                }
+            mysql_free_result(resultado); // Liberar resultados del conjunto actual
+        }
+    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+
+    if (count != 0) {
+        printf("Error: El producto con ID '%s' no existe en la base de datos.\n", idProducto);
+    }
+
+    return count;
+
+}
+
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void eliminarProducto(MYSQL *conexion, const char *idProducto) {
 
+    // Validamos que el producto exista.
+    int existe_producto = validar_exitencia_producto(conexion, idProducto);
+    if (existe_producto != 0) {
+        printf("\nPor favo intentelo nuevamente...\n");
+        return;
+    }
+
+    char consulta[128];
+    int resultado;
+
+    // Crear la consulta SQL para eliminar el producto
+    snprintf(consulta, sizeof(consulta), "DELETE FROM Productos WHERE IdProducto = '%s'", idProducto);
+
+    // Ejecutar la consulta
+    resultado = mysql_query(conexion, consulta);
+
+    if (resultado) {
+        // Si ocurre un error, mostrar el mensaje proporcionado por el trigger o MySQL
+        printf("Error al eliminar el producto con ID '%s', no e pueden eliminar producto que tengan una cotizacion Pendiente.\n", idProducto);
+    } else {
+        printf("Producto con ID '%s' eliminado correctamente.\n", idProducto);
+    }
 
     return;
+
 }
+
+
+
+
+

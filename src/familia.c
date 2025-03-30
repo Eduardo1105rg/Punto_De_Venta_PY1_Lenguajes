@@ -149,7 +149,7 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
 
     if (archivo == NULL) {
         printf("Error al abrir el archivo.\n");
-        return -1;
+        return 1;
     }
 
     int num_linea = 0;
@@ -277,17 +277,4 @@ void guardarFamiliasEnDB(MYSQL *conexion, NodoFamilia* head) {
     return;
 }
 
-// int conectar(MYSQL **conexion) {
-//     int error;
 
-//     *conexion = mysql_init(NULL);  // Inicializamos la estructura de conexión
-//     if (mysql_real_connect(*conexion, HOST, USERNAME, PASSWORD, DATABASE, PORT, NULL, 0) != NULL) {
-//         printf("Se estableció la conexión con la base de datos\n");
-//         error = 0;
-//     } else {
-//         printf("Error al conectarse a la base de datos: %s\n", mysql_error(*conexion));
-//         error = 1;
-//     }
-
-//     return error;
-// }

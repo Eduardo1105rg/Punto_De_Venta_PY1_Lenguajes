@@ -4,6 +4,7 @@
 #include <mysql/mysql.h>
 
 #include "../include/cotizacion.h"
+#include "../include/producto.h"
 // int cantidadCotizaciones = 1;
 const char *estadoCotizacion = "Pago pendiente";
 
@@ -331,6 +332,13 @@ void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
 
 
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {
+    
+    int existe_producto = validar_exitencia_producto(conexion, idProducto);
+    if (existe_producto != 0) {
+        printf("\nPor favo intentelo nuevamente...\n");
+        return;
+    }
+    
     printf("%s",idProducto);
     printf("%d",cantidad);
 

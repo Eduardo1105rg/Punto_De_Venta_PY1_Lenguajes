@@ -42,4 +42,6 @@ void liberarListaProducto( NodoProducto* head);
 
 void eliminarProducto(MYSQL *conexion, const char *idProducto);
 
+int validar_exitencia_producto(MYSQL *conexion, const char *idProducto);
+
 #endif

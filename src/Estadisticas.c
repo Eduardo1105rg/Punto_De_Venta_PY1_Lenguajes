@@ -6,7 +6,18 @@
 
 #include "../include/estadisticas.h"
 
-
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void PrimerEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;
@@ -25,6 +36,19 @@ void PrimerEstadistica(MYSQL *conexion) {
 
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void SegundaEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;
@@ -43,6 +67,19 @@ void SegundaEstadistica(MYSQL *conexion) {
 
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void TerceraEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;
@@ -61,6 +98,19 @@ void TerceraEstadistica(MYSQL *conexion) {
 
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void CuartaEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;
@@ -83,6 +133,19 @@ void CuartaEstadistica(MYSQL *conexion) {
 
 }
 
+
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void QuintaEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;
@@ -106,6 +169,18 @@ void QuintaEstadistica(MYSQL *conexion) {
 }
 
 
+/**
+ * Nombre:
+ * 
+ * Descripcion:
+ * 
+ * Funcionamiento:
+ * 
+ * Entradas:
+ * 
+ * Salidas:
+ * 
+ */
 void SextaEstadistica(MYSQL *conexion) {
 
     char *consulta = NULL;

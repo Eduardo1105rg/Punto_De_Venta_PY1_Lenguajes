@@ -443,16 +443,25 @@ create trigger revisaEliminarProductos
 before delete on Productos
 for each row 
 begin
+
 	declare nuevoID varchar(10);
     set nuevoID = old.IdProducto;
-	if exists (select 1 from CotizacionDetalle where IdProducto = nuevoID) then 
+
+	if exists (
+
+        SELECT 1
+        FROM CotizacionDetalle AS cd
+        JOIN Cotizacion AS c ON cd.IdCotizacion = c.IdCotizacion
+        WHERE cd.IdProducto = nuevoID AND c.EstadoCotizacion = 'Pendiente'
+    
+    ) then 
 		signal sqlstate '45000'
         set MESSAGE_TEXT = 'Error: No se puede eliminar un producto ya cotizado o facturado';
 	end if;
 end$$
 delimiter;
 -- DELETE FROM Productos WHERE IdProducto = 'Prod3';
-
+-- -- DROP TRIGGER revisaEliminarProductos;
 
 
 
@@ -477,6 +486,32 @@ begin
 end$$
 delimiter;
 
+-- >> Vista para ver todas las facturas realizadas.
+-- Uso: selec * from verFacturas;
+create view verFacturas as
+select
+	f.IdFactura,
+    f.fechaHora,
+    f.SubTotal,
+    f.Total
+from Factura as f;
 
-
-
+-- >> Procedure para optener los datos completos de una facturas (Se excluyen los datos de los productos).
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE verDatosFacturaEspecifica(
+    IN idFactura INT
+)
+BEGIN
+    select
+        f.IdFactura,
+        f.IdCotizacion,
+        f.fechaHora,
+        f.SubTotal,
+        f.Impuesto,
+        f.Total
+    from Factura as f
+    WHERE
+        f.idFactura = idFactura;
+END $$
+DELIMITER ;
