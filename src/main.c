@@ -102,7 +102,7 @@ int main() {
 
 
     // Pruebas del menu..
-    //menu_principal();
+    menu_principal();
 
     //mostrar_detalles_factura(conexion, 0);
 
@@ -110,7 +110,7 @@ int main() {
 
 
     // ============= Estadisticas del programa...
-    SextaEstadistica(conexion);
+    //SextaEstadistica(conexion);
 
     return 0;
 }
