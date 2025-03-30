@@ -201,7 +201,7 @@ begin
         set new.Cantidad = cantidadTotal;
 	end if;
 end$$
-delimiter;
+delimiter ;
 
 
 
@@ -414,7 +414,7 @@ begin
         set MESSAGE_TEXT = 'Error: No se pueden repetir identificadores de familias';
 	end if;
 end$$
-delimiter;
+delimiter ;
 
 -- insert into FamiliaProductos(IdFamilia,Descripcion) Values ('Fam1','Enlatados'); prueba
 
@@ -434,7 +434,7 @@ begin
         set MESSAGE_TEXT = 'Error: No se pueden repetir identificadores de productos';
 	end if;
 end$$
-delimiter;
+delimiter ;
 
 -- Esta es la validación para cuando se quiere eliminar un productos ya facturado o cotizado 
 delimiter $$
@@ -459,7 +459,7 @@ begin
         set MESSAGE_TEXT = 'Error: No se puede eliminar un producto ya cotizado o facturado';
 	end if;
 end$$
-delimiter;
+delimiter ;
 -- DELETE FROM Productos WHERE IdProducto = 'Prod3';
 -- -- DROP TRIGGER revisaEliminarProductos;
 
@@ -484,7 +484,7 @@ begin
         set new.Cantidad = cantidadTotal;
 	end if;
 end$$
-delimiter;
+delimiter ;
 
 -- >> Vista para ver todas las facturas realizadas.
 -- Uso: selec * from verFacturas;

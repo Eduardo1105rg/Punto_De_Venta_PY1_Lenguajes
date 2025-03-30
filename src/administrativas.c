@@ -300,23 +300,27 @@ void menu_principal_consulta_facturas() {
             case 'b':
                  
                 // Solicitar 
-                char *id_producto1;
-                printf("\nIngresa el id del producto a eliminar: ");
-                leerCaracteresDeFormadinamica(&id_producto1);
-                printf("\n");
-                eliminarProducto(conexion, id_producto1);
-                free(id_producto1);
+                
+                printf("\nIngresa el id de la factura a consultar: ");
+                int id_factura1 = leeNumeroDinamicoV2();
+
+                if (id_factura1 == -21) {
+                    break;
+                }
+
+                mostrar_detalles_factura(conexion, id_factura1);
                 break;
 
             case 'B':
 
-                char *id_producto2;
-                printf("\nIngresa el id del producto a eliminar: ");
-                leerCaracteresDeFormadinamica(&id_producto2);
-                printf("\n");
-                eliminarProducto(conexion, id_producto2);
-                free(id_producto2);
+                printf("\nIngresa el id de la factura a consultar: ");
+                int id_factura2 = leeNumeroDinamicoV2();
 
+                if (id_factura2 == -21) {
+                    break;
+                }
+
+                mostrar_detalles_factura(conexion, id_factura2);
                 break;
 
       

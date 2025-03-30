@@ -13,4 +13,6 @@ void leerCaracteresDeFormadinamica(char** cadena);
 
 int leerNumeroDinamico();
 
+int leeNumeroDinamicoV2();
+
 #endif

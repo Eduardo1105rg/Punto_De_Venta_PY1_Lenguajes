@@ -101,6 +101,28 @@ int leerNumeroDinamico() {
 }
 
 
+int leeNumeroDinamicoV2() {
+
+    // Leer los caracteres que ingrese el usuario.
+    char *cadena;
+    leerCaracteresDeFormadinamica(&cadena);
+
+
+    int numero;
+    char *endptr;
+
+    numero = strtol(cadena, &endptr, 10);
+
+    if (*endptr != '\0') {
+        printf("Entrada no válida, se detectaron caracteres no validos, solo se aceptar valores numericos.\n");
+        free(cadena);
+        return -21; // Con esto indicamos que ocurrio un error.
+        
+    }
+    return numero;
+}
+
+
 /**
  * 
  * Nombre: separar_cadenas

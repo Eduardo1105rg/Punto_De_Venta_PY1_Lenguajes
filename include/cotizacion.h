@@ -60,5 +60,6 @@ void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizaci
 
 void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion);
 
+void mostrar_detalle_cotizacion_facturada(MYSQL *conexion, const int idCotizacion);
 
 #endif
