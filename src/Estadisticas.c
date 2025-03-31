@@ -79,7 +79,7 @@ void SegundaEstadistica(MYSQL *conexion) {
 
             mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); /
+    } while (mysql_next_result(conexion) == 0); 
 
     return;
 
