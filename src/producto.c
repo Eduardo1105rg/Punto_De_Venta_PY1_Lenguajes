@@ -304,7 +304,7 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
  */
 void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nombre, const char *id_familia, float costo, float precio, int cantidad) {
     // Verificamos que nada sea nulo
-    printf("soy idProducto: %s\n",id_familia);
+    printf("Prodcuto en proceso: %s\n", id_producto);
     if (id_producto == NULL || nombre == NULL || id_familia == NULL) {
         printf("Error: Ningún campo puede ser nulo\n");
         return;
@@ -319,7 +319,7 @@ void agregarProductos(MYSQL *conexion, const char *id_producto, const char *nomb
     // Ejecutamos la consulta
     if (mysql_query(conexion, consulta)) {
         printf("%s\n", mysql_error(conexion)); //Esto lo podemos quitar
-        printf("No se agrego el %s pues no puede repetir identificadores de productos que ya existen\n",id_producto);
+        printf("No se agrego el %s pues no puede repetir identificadores de productos o el id de familia no fue encontrado.\n",id_producto);
         free(consulta);
         return;
     }

@@ -46,6 +46,6 @@ Prod45,Plasticina,Fam15,100.0,500.0,250
 Prod46,Moras,Fam16,1250.0,3400.0,30
 Prod47,Fresas,Fam16,1250.0,3000.0,25
 Prod48,Tilapias,Fam16,2000.0,4000.0,30
-Prod49,Cucharas,Fam17 Cocina,300.0,600.0,75
-Prod50,Tenedores,Fam17 Cocina,400.0,850.0,80
-Prod51,Cuchillos,Fam17 Cocina,500.0,1000.0,100
+Prod49,Cucharas,Fam17,300.0,600.0,75
+Prod50,Tenedores,Fam17,400.0,850.0,80
+Prod51,Cuchillos,Fam17,500.0,1000.0,100

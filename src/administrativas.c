@@ -114,7 +114,7 @@ void menu_agregar_eliminar_productos() {
             // ========== Agregar lote de productos.
             case 'a' :
                 char *rutasArchivo1;
-                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/familias.txt): ");
+                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/producto.txt): ");
                 leerCaracteresDeFormadinamica(&rutasArchivo1);
                 printf("\n");
                 
@@ -125,7 +125,7 @@ void menu_agregar_eliminar_productos() {
             
                 if (estado1 == 1) {
                     printf("\n Error en el archivo, por favor verifique la ruta y el nombre del archivo ingresado antes de continuar. \n");
-                    return;
+                    break;
                 }
                 //Imprimimos los datos guardados en la lista.
                 //imprimirListaNodosProducto(listaProductos1);
@@ -142,7 +142,7 @@ void menu_agregar_eliminar_productos() {
 
             case 'A':
                 char *rutasArchivo2;
-                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/familias.txt): ");
+                printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/producto.txt): ");
                 leerCaracteresDeFormadinamica(&rutasArchivo1);
                 printf("\n");
 
@@ -152,7 +152,7 @@ void menu_agregar_eliminar_productos() {
                 int estado2 = cargarProductosDesdeArchivo(rutasArchivo2, &listaProductos2);
                 if (estado2 == 1) {
                     printf("\n Error en el archivo, por favor verifique la ruta y el nombre del archivo ingresado antes de continuar. \n");
-                    return;
+                    break;
                 }
                 //Imprimimos los datos guardados en la lista.
                 //imprimirListaNodosProducto(listaProductos2);
