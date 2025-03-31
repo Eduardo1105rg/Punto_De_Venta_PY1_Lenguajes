@@ -286,7 +286,7 @@ void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
         return;
     }
     char *consulta;
-    int largo = asprintf(&consulta, "update Productos set Cantidad = %d where IdProducto = '%s'", cantidad, id_producto);
+    int largo = asprintf(&consulta, "call actualizaStockC('%s', %d);", id_producto, cantidad);
 
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));

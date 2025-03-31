@@ -212,6 +212,40 @@ group by
 
 
 
+-- drop trigger actualizadorInventario
+ -- De esta forma puede funcionar porque no actualiza directamente la cantidad de productos
+ -- esto ya tocaria hacerlo manual
+ delimiter $$
+ use puntoVenta$$
+ create trigger actualizadorInventario
+ before update on Productos
+ for each row 
+ begin
+	declare cantidadTotal int;
+    set cantidadTotal = new.Cantidad + old.Cantidad;
+    
+    if cantidadTotal < 0 then
+		signal sqlstate '45000' 
+        set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
+	end if;
+ end$$
+ delimiter ;
+
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE actualizaStockC(
+    IN idProd VARCHAR(40),
+    IN cantidad INT
+)
+BEGIN
+    UPDATE Productos
+    SET Cantidad = Cantidad + cantidad
+    WHERE IdProducto = idProd;
+END$$
+
+DELIMITER ;
+
 
 
 
