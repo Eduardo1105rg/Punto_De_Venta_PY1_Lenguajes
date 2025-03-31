@@ -5,7 +5,17 @@
 
 #include "../include/cotizacion.h"
 
-
+/**
+ * Nombre: mostrar_facturas
+ * 
+ * Descripcion: Esta funcion se encarga de mostrar los datos de todas las facturas registradas en la base de datos, muestra (el id de la factura, 
+ * La fecha de la factura, el subtotal y el total), para esto se llama a una vista que ya contiene esos datos.
+ * 
+ * Entradas: MYSQL *conexion: un puntero a un tipo de datos mysql.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void mostrar_facturas(MYSQL *conexion) {
 
     MYSQL_RES *datos_recibidos;
@@ -51,6 +61,18 @@ void mostrar_facturas(MYSQL *conexion) {
 }
 
 
+/**
+ * Nombre: mostrar_detalles_factura
+ * 
+ * Descripcion: Funcion para mostrar los detalles especificos de una factura, para esto se recibe el id de la factura y se extraen los datos del encabezado y del detalle,
+ * de dicha factura registrados en la base de datos.
+ * 
+ * Entradas: MYSQL *conexion: un puntero a un tipo de datos mysql.
+ * const int id_factura: El id de la factura con la que se consultaran los datos a usar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void mostrar_detalles_factura(MYSQL *conexion, const int id_factura) {
     // Para esta se usaria, el procedure de ver datos factura (Se excluyen los datos de los productos.)y el procedure de mostrarDetalleCotizacion.
 
@@ -70,11 +92,11 @@ void mostrar_detalles_factura(MYSQL *conexion, const int id_factura) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
 
-                printf("\n+--------------+ Detalles de la factura: %i +--------------+\n\n", id_factura);
             
                 // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    printf("+--------------+----------------------+-------------------+\n\n");
+                    //printf("+--------------+----------------------+-------------------+\n\n");
+                    printf("\n+--------------+ Detalles de la factura: %i +--------------+\n\n", id_factura);
 
                     printf(">> ID Factura: %s\n", fila[0]);
                     printf(">> Fecha de la factura: %s\n", fila[2]);

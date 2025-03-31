@@ -7,7 +7,20 @@
 
 #include "../include/facturacion.h"
 
-
+/**
+ * Nombre: crearFactura
+ * 
+ * Descripcion: Funciona para registrar una factura en la base de datos, se toman los datos del encabezado de la factura y se registran esos datos, ademas se vincula 
+ * con la tabla de la cotizacion con la cual se esta creando esta factura.
+ * 
+ * Entradas: MYSQL *conexion: Un puntero a una instancia de MySQL.
+ * int numCotizacion: El numero de la cotizacion con las cual se va a crear esta factura?
+ * char *nombreCliente, char *fechaHora: La hora y fecha actual en la que se esta creando la factura.
+ * 
+ * Salidas: int idFactura: Un valor entero que sera -1 en caso de que ocurra un error, 
+ * en caso de que se registre bien los datos de la factura, devolvera el id de la cotizacion.
+ * 
+ */
 int crearFactura(MYSQL *conexion, int numCotizacion, char *nombreCliente, char *fechaHora) {
     char *consulta = NULL;
     int largoConsultaF2 = asprintf(&consulta, "call facturaFinDinero('%d', '%s')", numCotizacion, nombreCliente);

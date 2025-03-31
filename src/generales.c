@@ -900,8 +900,9 @@ void menu_principal_generales() {
         printf(">> S) Volver al menu principal.\n");
 
         printf("Ingrese la letra de las seccion a la que desea ingresar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Consulta de catalogo.
@@ -954,7 +955,7 @@ void menu_principal_generales() {
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     return;
 }

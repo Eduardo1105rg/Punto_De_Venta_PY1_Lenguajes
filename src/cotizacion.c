@@ -18,7 +18,7 @@ const char *estadoCotizacion = "Pago pendiente";
  * 
  * Entradas: const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del struct que lo representa.
  * 
- * Salidas:  No posee.
+ * Salidas:  NodoCotizacionDetalle: Devuelve el nodo creado.
  * 
  */
 NodoCotizacionDetalle* crearNodoCotizacionDetalle(const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad) {
@@ -59,7 +59,7 @@ NodoCotizacionDetalle* crearNodoCotizacionDetalle(const char *id, const char *no
  * 
  * Descripcion: Funcion para insertar un nuevo nodo al inicio de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
  * 
- * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * Entradas: NodoCotizacionDetalle** head: Puntero a la lista de nodos.
  * const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del nodo.
  * 
  * Salidas: No posee.
@@ -78,7 +78,7 @@ void insertarelementoAlInicioCotizacionDetalle(NodoCotizacionDetalle** head, con
  * 
  * Descripcion: Funcion para insertar un nuevo nodo al final de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
  * 
- * Entradas: NodoProducto** head: Puntero a la lista de nodos.
+ * Entradas: NodoCotizacionDetalle** head: Puntero a la lista de nodos.
  * const char *id, const char *nombreProducto ,const char *descripcion, int precio, int cantidad: Datos del nodo.
  * 
  * Salidas: No posee.
@@ -125,7 +125,7 @@ void insertarElementoAlFinalCotizacionDetalle(NodoCotizacionDetalle** head, cons
  * 
  * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
  * 
- * Entradas:  NodoProducto** head: Puntero a la lista de nodos.
+ * Entradas:  NodoCotizacionDetalle** head: Puntero a la lista de nodos.
  *  char * idProducto: Id del prodcuto a eliminar.
  * 
  * Salidas: No posee.
@@ -164,7 +164,7 @@ void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id) {
  * 
  * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
  * 
- * Entradas:  NodoProducto** head: Puntero a la lista de nodos.
+ * Entradas:  NodoCotizacionDetalle** head: Puntero a la lista de nodos.
  *  const int numFila: numero de fila en la que se encuentra el prodcuto a eliminar.
  * 
  * Salidas: No posee.
@@ -204,10 +204,10 @@ void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFil
  * 
  * Descripcion: Funcion para buscar la exitencia de un elementos en la lista de nodos, retorna un entero indicando la exitencia del producto en la lista.
  * 
- * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ * Entradas: NodoCotizacionDetalle* head: Puntero a la lista de nodos.
  *  const char* id: Id del nodo a buscar.
  * 
- * Salidas: No posee.
+ * Salidas: Un entero que representa la exitencia del elemento buscado, 0 (No existe), 1 (Existe).
  * 
  */
 int buscarPorIdCotizacionDetalle(NodoCotizacionDetalle* head, const char* id) {
@@ -235,7 +235,7 @@ int buscarPorIdCotizacionDetalle(NodoCotizacionDetalle* head, const char* id) {
  * 
  * Descripcion: Funcion para imprimir los datos de una lista de nodos.
  * 
- * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ * Entradas: NodoCotizacionDetalle* head: Puntero a la lista de nodos.
  * 
  * Salidas: No posee.
  * 
@@ -293,7 +293,7 @@ void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const c
  * 
  * Descripcion: Funcion que se encarga de liberar la memoria asignada a los nodos y datos de la lista.
  * 
- * Entradas: NodoProducto* head: Puntero a la lista de nodos.
+ * Entradas: NodoCotizacionDetalle* head: Puntero a la lista de nodos.
  * 
  * Salidas: No posee.
  * 
@@ -316,13 +316,13 @@ void liberarListaCotizacionDetalle(NodoCotizacionDetalle* head) {
 
 
 /**
- * Nombre:
+ * Nombre: mostrar_cotizacion
  * 
- * Descripcion:
+ * Descripcion: Funcion que imprime los datos de los producto de la cotizacion que actualmente se esta creando o modificando.
  * 
- * Entradas:
+ * Entradas: NodoCotizacionDetalle* head: Lista de nodos.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void mostrar_cotizacion(NodoCotizacionDetalle* head) {
@@ -353,15 +353,15 @@ void mostrar_cotizacion(NodoCotizacionDetalle* head) {
 
 
 /**
- * Nombre:
+ * Nombre: mostrar_cotizacionID
  * 
- * Descripcion:
+ * Descripcion: Funcion para mostrar y cargar los datos de una cotizacion mediante su id.
  * 
  * Entradas:
  * MYSQL *conexion: Puntero a la instancia de MYSQL
- * int id
+ * int id: Id de la cotizacion.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void mostrar_cotizacionID(MYSQL *conexion, int id) {
@@ -444,13 +444,15 @@ void mostrar_cotizacionID(MYSQL *conexion, int id) {
 
 
 /**
- * Nombre:
+ * Nombre: eliminarFilaBD
  * 
- * Descripcion:
+ * Descripcion: Funcion para eliminar un producto del detalle de una cotizacion registrada.
  * 
- * Entradas:
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  char *IdProd: Id del prodcuto a cotizar.
+ *  int idCot: Id de la cotizacion a usar.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
@@ -468,13 +470,17 @@ void eliminarFilaBD(MYSQL *conexion, char *IdProd, int idCot) {
 
 
 /**
- * Nombre:
+ * Nombre: agregar_nuevo_producto
  * 
- * Descripcion:
+ * Descripcion: Funcion la cual agrega un nuevo producto a la lista de nodos de la cotizacion con la que se esta trabajando en ese momento, 
+ * ademas valida que el producto exista y que se cuente con suficiente stock de este producto para su cotizacion.
  * 
- * Entradas:
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  NodoCotizacionDetalle** head: Lista de nodos con los datos de la cotizacion, en la cual se agregara el nuevo nodo con los datos del producto o se modificara un nodo.
+ *  const char * idProducto: Id del producto a agregar.
+ *  const int cantidad: Cantidad del producto a cotizar.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const char * idProducto, const int cantidad) {
@@ -558,13 +564,15 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 
 
 /**
- * Nombre:
+ * Nombre: optener_datos_cotizacion_por_id
  * 
- * Descripcion:
+ * Descripcion: Funcion la cual se encarga de optener los datos del detalle de una cotizacion registrada en la base de datos, mediante el id de esta.
  * 
- * Entradas:
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  NodoCotizacionDetalle** head: Lista de nodos con los datos a almacenar.
+ *  const int idCotizacion: Id de la cotizacion de la que se extraeran los datos.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 int  optener_datos_cotizacion_por_id(MYSQL *conexion, NodoCotizacionDetalle** head, const int idCotizacion) {
@@ -622,14 +630,16 @@ void imprimirListaCotizacionDetalle(NodoCotizacionDetalle *lista) {
 }
 
 
-/**
- * Nombre:
+/** 
+ * Nombre: crearCotizacion
  * 
- * Descripcion:
+ * Descripcion: Funcion la cual crea una un nuevo encabezado de cotizacion en la base de datos.
  * 
- * Entradas:
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  const char *nombreCliente: Nombre del cliente a registrar.
+ *  int *idCotizacion: Id de la cotizacion.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizacion) {
@@ -658,13 +668,13 @@ void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizaci
 /**
  * Nombre: enviarCotizacionDB
  * 
- * Descripcion:
+ * Descripcion: Funcion la cual registra los datos de un producto en la tabla de de cotizacion detalle.
  * 
  * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
  *  NodoCotizacionDetalle *lista: Lista de nodos con los datos a almacenar.
  *  int idCotizacion: Id de la cotizacion con la que se relaciona el detalle.
  * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion) {

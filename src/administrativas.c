@@ -14,13 +14,15 @@
 #include "../include/consultaFacturas.h"
 
 
+// opcion != 's' && opcion != 'S'
+//         leerPrimerCaracter(&opcion);
+
+
 
 /**
  * Nombre:
  * 
  * Descripcion:
- * 
- * Funcionamiento:
  * 
  * Entradas:
  * 
@@ -73,8 +75,6 @@ void incluir_familia_de_productos() {
  * Nombre:
  * 
  * Descripcion:
- * 
- * Funcionamiento:
  * 
  * Entradas:
  * 
@@ -207,8 +207,6 @@ void menu_agregar_eliminar_productos() {
  * 
  * Descripcion:
  * 
- * Funcionamiento:
- * 
  * Entradas:
  * 
  * Salidas:
@@ -255,15 +253,13 @@ void menu_modificar_stock() {
 }
 
 /**
- * Nombre:
+ * Nombre: menu_principal_consulta_facturas
  * 
- * Descripcion:
+ * Descripcion: Funcion que actua como menu de la seccion de consulta de facturas, consta de un do while para ir mostrando las opciones y reccionando a lo que deses el usaurio.
  * 
- * Funcionamiento:
+ * Entradas: No posee.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void menu_principal_consulta_facturas() {
@@ -284,8 +280,9 @@ void menu_principal_consulta_facturas() {
 
 
         printf("Ingrese la letra de la consulta a realizar.: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Ver facturas realizadas.
@@ -327,16 +324,16 @@ void menu_principal_consulta_facturas() {
 
             // ========== Salir del menu.
             case 's':
-                printf("Saliendo de la seccion de opciones generales...\n");
+                printf("Saliendo de la seccion de consulta de facturas...\n");
                 break;
             case 'S':
-                printf("Saliendo de la seccion de opciones generales...\n");
+                printf("Saliendo de la seccion de consulta de facturas...\n");
                 break;
 
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     cerrarConexion(conexion);
     
@@ -347,13 +344,11 @@ void menu_principal_consulta_facturas() {
 /**
  * Nombre: menu_principal_estadisticas
  * 
- * Descripcion:
+ * Descripcion: Funcion que actua como menu de la seccion de estadisticas, consta de un do while para ir mostrando las opciones y reccionando a lo que deses el usaurio.
  * 
- * Funcionamiento:
+ * Entradas: No posee.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void menu_principal_estadisticas() {
@@ -379,8 +374,9 @@ void menu_principal_estadisticas() {
         printf(">> S) Volver al menu principal.\n");
 
         printf("Ingrese la letra de las seccion a la que desea ingresar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Cantidad de cotizaciones pendientes.
@@ -453,7 +449,7 @@ void menu_principal_estadisticas() {
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
     cerrarConexion(conexion);
 
     return;
@@ -461,15 +457,13 @@ void menu_principal_estadisticas() {
 
 
 /**
- * Nombre:
+ * Nombre: menu_principal_administrativos
  * 
- * Descripcion:
+ * Descripcion: Funcion que actua como menu de la seccion de administrativos, consta de un do while para ir mostrando las opciones y reccionando a lo que deses el usaurio.
  * 
- * Funcionamiento:
+ * Entradas: No posee.
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No posee.
  * 
  */
 void menu_principal_administrativos() {
@@ -488,8 +482,10 @@ void menu_principal_administrativos() {
         printf(">> S) Volver al menu principal.\n");
 
         printf("Ingrese la letra de las seccion a la que desea ingresar: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
+
 
         switch (opcion) {
             // ========== Registro de familias de productos.
@@ -552,7 +548,7 @@ void menu_principal_administrativos() {
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     return;
 }

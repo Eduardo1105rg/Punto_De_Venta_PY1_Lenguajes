@@ -10,6 +10,17 @@
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
+
+/**
+ * Nombre: crearNodoFamilia
+ * 
+ * Descripcion: Funcion que crea un nuevo nodo de un elemento, este nodo contendra los valores que define el struct que lo representa.
+ * 
+ * Entradas: const char *id, const char *descripcion: Datos del struct que lo representa.
+ * 
+ * Salidas:  NodoFamilia: Devuelve el nodo creado.
+ * 
+ */
 NodoFamilia* crearNodoFamilia(const char *id, const char *descripcion) {
     NodoFamilia* nuevoNodo = (NodoFamilia*)malloc(sizeof(NodoFamilia));
 
@@ -39,6 +50,18 @@ NodoFamilia* crearNodoFamilia(const char *id, const char *descripcion) {
     return nuevoNodo;
 }
 
+
+/**
+ * Nombre: insertarelementoAlInicioFamilia
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al inicio de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoFamilia** head: Puntero a la lista de nodos.
+ * const char *id, const char *descripcion: Datos del nodo.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void insertarelementoAlInicioFamilia(NodoFamilia** head, const char *id, const char *descripcion) {
     NodoFamilia* nuevoNodo = crearNodoFamilia(id, descripcion);
     nuevoNodo->siguiente = *head;
@@ -46,6 +69,17 @@ void insertarelementoAlInicioFamilia(NodoFamilia** head, const char *id, const c
     return;
 }
 
+
+/**
+ * Nombre: insertarElementoAlFinalFamilia
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al final de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoFamilia** head: Puntero a la lista de nodos.
+ * const char *id, const char *descripcion: Datos del nodo.
+ * Salidas: No posee.
+ * 
+ */
 void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const char *descripcion) {
 
     //Cambio 
@@ -75,6 +109,18 @@ void insertarElementoAlFinalFamilia(NodoFamilia** head, const char *id, const ch
     return;
 }
 
+
+/**
+ * Nombre: eliminarPorIdFamilia
+ * 
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
+ * 
+ * Entradas:  NodoFamilia** head: Puntero a la lista de nodos.
+ *  char * idProducto: Id de la familia a eliminar a eliminar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void eliminarPorIdFamilia(NodoFamilia** head, char * id) {
 
     NodoFamilia* actual = *head;
@@ -102,6 +148,18 @@ void eliminarPorIdFamilia(NodoFamilia** head, char * id) {
     return;
 }
 
+
+/**
+ * Nombre: buscarPorIdFamilia
+ * 
+ * Descripcion: Funcion para buscar la exitencia de un elementos en la lista de nodos, retorna un entero indicando la exitencia del producto en la lista.
+ * 
+ * Entradas: NodoFamilia* head: Puntero a la lista de nodos.
+ *  const char* idProducto: Id del producto a buscar.
+ * 
+ * Salidas: Un entero que representa la exitencia del elemento buscado, 0 (No existe), 1 (Existe).
+ * 
+ */
 int buscarPorIdFamilia(NodoFamilia* head, const char* id) {
     NodoFamilia* actual = head;
 
@@ -116,6 +174,17 @@ int buscarPorIdFamilia(NodoFamilia* head, const char* id) {
     return 0;
 }
 
+
+/**
+ * Nombre: imprimirListaNodosFamilia
+ * 
+ * Descripcion: Funcion para imprimir los datos de una lista de nodos.
+ * 
+ * Entradas: NodoFamilia* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void imprimirListaNodosFamilia(NodoFamilia* head) {
     NodoFamilia *actual = head;
 
@@ -128,6 +197,17 @@ void imprimirListaNodosFamilia(NodoFamilia* head) {
     return;
 }
 
+
+/**
+ * Nombre: liberarListaFamilia
+ * 
+ * Descripcion: Funcion que se encarga de liberar la memoria asignada a los nodos y datos de la lista.
+ * 
+ * Entradas: NodoFamilia* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void liberarListaFamilia(NodoFamilia* head) {
     NodoFamilia *actual;
     while (head != NULL)
@@ -144,6 +224,19 @@ void liberarListaFamilia(NodoFamilia* head) {
 
 
 // ==============Este seria el apartado para cargar los datos de una familia des un archivo y su guardado en la base de datos.
+
+/**
+ * Nombre: cargarFamiliasDesdeArchivo
+ * 
+ * Descripcion: Esta funcion se encarga de cargar los datos desde un archivo, validarlo y posteriormente los alamacena en una lista de punteros de nodos que almacenan la 
+ * informacion del archivo.
+ * 
+ * Entradas: char * nombreArchivo: Nombre del archivo del que se estan leyendo lo datos.
+ *  NodoFamilia** listaDeFamilias: Lista de punteros para la lista de nodos en la que se estan guardando los datos.
+ * 
+ * Salidas: El estado de la carga de datos.
+ * 
+ */
 int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamilias) {
     FILE *archivo = fopen(nombreArchivo, "r");
 
@@ -213,7 +306,6 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
  * Salidas: Es vacia
  * 
  */
-
 void agregarFamilias(MYSQL *conexion, const char *idFamilia, const char *descripcion) {
     // Verificamos que nada sea nulo
     if (idFamilia == NULL || descripcion == NULL) {

@@ -40,12 +40,12 @@ int main() {
 
     MYSQL *conexion = NULL;
 
-    printf("Aqui\n");
+    //printf("Aqui\n");
     if (conectar(&conexion) != 0) {
         
         return 1; 
     }
-    printf("Se logro conectar.\n");
+    //printf("Se logro conectar.\n");
 
     // Lista de familias.
     //NodoFamilia *listaDeFamilias = NULL;

@@ -19,7 +19,7 @@
  * 
  * Entradas: const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad: Datos del struct que lo representa.
  * 
- * Salidas:  No posee.
+ * Salidas:  NodoProducto: Devuelve el nodo creado.
  * 
  */
 NodoProducto* crearNodoProducto(const char *idProducto, const char *nombre, const char *idFamilia, const float costo, float precio, int cantidad) {
@@ -154,7 +154,7 @@ void eliminarPorIdProducto(NodoProducto** head, char * idProducto) {
  * Entradas: NodoProducto* head: Puntero a la lista de nodos.
  *  const char* idProducto: Id del producto a buscar.
  * 
- * Salidas: No posee.
+ * Salidas: Un entero que representa la exitencia del elemento buscado, 0 (No existe), 1 (Existe).
  * 
  */
 int buscarPorIdProducto(NodoProducto* head, const char* idProducto) {
@@ -296,7 +296,7 @@ int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaDeFami
  * Funcionamiento: Esta función recibe todos los datos necesarios para poder agregar todos los productos que se le envien a la base
  de datos, de forma que se agrega constantemente y sin generar fallos
  * 
- * Entradas: un puntero a un tipo de datos mysql, un char constante de id_producto, nombre, id_familia, float en costo, precio 
+ * Entradas: MYSQL *conexion: un puntero a un tipo de datos mysql, un char constante de id_producto, nombre, id_familia, float en costo, precio 
  y un entero para su precio
  * 
  * Salidas: No tiene

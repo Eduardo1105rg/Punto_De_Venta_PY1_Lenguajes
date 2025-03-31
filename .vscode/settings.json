@@ -12,6 +12,7 @@
         "ctype.h": "c",
         "estadisticas.h": "c",
         "cotizacion.h": "c",
-        "consultacatalogo.h": "c"
+        "consultacatalogo.h": "c",
+        "administrativas.h": "c"
     }
 }

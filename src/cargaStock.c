@@ -11,6 +11,17 @@
 
 
 // Video el cual fue usado como guia para crear las listas, creditos al autor: https://www.youtube.com/watch?v=3-u5SRuStuc&t=966s&ab_channel=DIF%E2%84%A2
+
+/**
+ * Nombre: crearNodoCargaStock
+ * 
+ * Descripcion: Funcion que crea un nuevo nodo de un elemento, este nodo contendra los valores que define el struct que lo representa.
+ * 
+ * Entradas: const char *idProducto, const int cantidad: Datos del struct que lo representa.
+ * 
+ * Salidas:  NodoCargaStock: Devuelve el nodo creado.
+ * 
+ */
 NodoCargaStock* crearNodoCargaStock(const char *idProducto, const int cantidad) {
     NodoCargaStock* nuevoNodo = (NodoCargaStock*)malloc(sizeof(NodoCargaStock));
 
@@ -41,6 +52,18 @@ NodoCargaStock* crearNodoCargaStock(const char *idProducto, const int cantidad) 
     return nuevoNodo;
 }
 
+
+/**
+ * Nombre: insertarElementoAlInicioCargaStock
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al inicio de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoCargaStock** head: Puntero a la lista de nodos.
+ * const char *idProducto, const int cantidad: Datos del nodo.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void insertarElementoAlInicioCargaStock(NodoCargaStock** head, const char *idProducto, const int cantidad) {
     NodoCargaStock* nuevoNodo = crearNodoCargaStock(idProducto, cantidad);
     nuevoNodo->siguiente = *head;
@@ -48,6 +71,17 @@ void insertarElementoAlInicioCargaStock(NodoCargaStock** head, const char *idPro
     return;
 }
 
+
+/**
+ * Nombre: insertarElementoAlFinalCargaStock
+ * 
+ * Descripcion: Funcion para insertar un nuevo nodo al final de la lista de nodos, tambien llama a la funcion encargada de crear el nodo.
+ * 
+ * Entradas: NodoCargaStock** head: Puntero a la lista de nodos.
+ * const char *idProducto, const int cantidad: Datos del nodo.
+ * Salidas: No posee.
+ * 
+ */
 void insertarElementoAlFinalCargaStock(NodoCargaStock** head, const char *idProducto, const int cantidad) {
 
     NodoCargaStock * nuevoNddo = crearNodoCargaStock(idProducto, cantidad);
@@ -65,6 +99,18 @@ void insertarElementoAlFinalCargaStock(NodoCargaStock** head, const char *idProd
     return;
 }
 
+
+/**
+ * Nombre: eliminarPorIdNodoCargaStock
+ * 
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
+ * 
+ * Entradas:  NodoCargaStock** head: Puntero a la lista de nodos.
+ *  char * idProducto: Id del NodoCargaStock a eliminar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void eliminarPorIdNodoCargaStock(NodoCargaStock** head, char * idProducto) {
 
     NodoCargaStock* actual = *head;
@@ -92,6 +138,18 @@ void eliminarPorIdNodoCargaStock(NodoCargaStock** head, char * idProducto) {
     return;
 }
 
+
+/**
+ * Nombre: buscarPorIdCargaStock
+ * 
+ * Descripcion: Funcion para buscar la exitencia de un elementos en la lista de nodos, retorna un entero indicando la exitencia del producto en la lista.
+ * 
+ * Entradas: NodoCargaStock* head: Puntero a la lista de nodos.
+ *  const char* idProducto: Id del NodoCargaStock a buscar.
+ * 
+ * Salidas: Un entero que representa la exitencia del elemento buscado, 0 (No existe), 1 (Existe).
+ * 
+ */
 int buscarPorIdCargaStock(NodoCargaStock* head, const char* id) {
     NodoCargaStock* actual = head;
 
@@ -106,6 +164,17 @@ int buscarPorIdCargaStock(NodoCargaStock* head, const char* id) {
     return 0;
 }
 
+
+/**
+ * Nombre: imprimirListaNodosCargaStock
+ * 
+ * Descripcion: Funcion para imprimir los datos de una lista de nodos.
+ * 
+ * Entradas: NodoCargaStock* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void imprimirListaNodosCargaStock(NodoCargaStock* head) {
     NodoCargaStock *actual = head;
 
@@ -118,6 +187,17 @@ void imprimirListaNodosCargaStock(NodoCargaStock* head) {
     return;
 }
 
+
+/**
+ * Nombre: liberarListaCargaStock
+ * 
+ * Descripcion: Funcion que se encarga de liberar la memoria asignada a los nodos y datos de la lista.
+ * 
+ * Entradas: NodoCargaStock* head: Puntero a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void liberarListaCargaStock(NodoCargaStock* head) {
     NodoCargaStock *actual;
     while (head != NULL)
@@ -133,6 +213,20 @@ void liberarListaCargaStock(NodoCargaStock* head) {
 
 
 // ==============Este seria el apartado para cargar los datos de una familia des un archivo y su guardado en la base de datos.
+
+
+/**
+ * Nombre: cargarStockDesdeArchivo
+ * 
+ * Descripcion: Esta funcion se encarga de cargar los datos desde un archivo, validarlo y posteriormente los alamacena en una lista de punteros de nodos que almacenan la 
+ * informacion del archivo.
+ * 
+ * Entradas: char * nombreArchivo: Nombre del archivo del que se estan leyendo lo datos.
+ *  NodoCargaStock** listaCargaStock: Lista de punteros para la lista de nodos en la que se estan guardando los datos.
+ * 
+ * Salidas: El estado de la carga de datos.
+ * 
+ */
 int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaStock) {
     
     FILE *archivo = fopen(nombreArchivo, "r");
@@ -173,6 +267,19 @@ int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaSto
     return 0;
 }
 
+
+/**
+ * Nombre: agregarStock
+ * 
+ * Descripcion: Funcion para alamacenar en la base de datos los producto en la base de datos.
+ * 
+ * Entradas: MYSQL *conexion: conexion un puntero a un tipo de datos mysql.
+ *  const char *id_producto: I del producto a agregar en stock.
+ *  int cantidad: Cantidad del prodcuto a agregar.
+ * 
+ * Salidas:No posee.
+ * 
+ */
 void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
     if (id_producto == NULL || cantidad == 0) {
         printf("Error: Por favor ingrese datos distintos de nullo o una cantidad mayor a cero\n");
@@ -189,6 +296,18 @@ void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
     }
 }
 
+
+/**
+ * Nombre: guardarStockEnDB
+ * 
+ * Descripcion: Funcion encargada de registrar los datos del stock cargado desde un archivo en la base de datos.
+ * 
+ * Entradas: MYSQL *conexion un puntero a un tipo de datos mysql.
+ *  NodoCargaStock* head: Punteroa a la lista de nodos.
+ * 
+ * Salidas: No posee.
+ * 
+ */
 void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head) {
 
     NodoCargaStock *actual = head;

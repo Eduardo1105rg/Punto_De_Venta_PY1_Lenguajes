@@ -90,17 +90,21 @@ void menu_principal() {
  * Descripcion:
  * 
  * Funcionamiento: Primero le damos un char sin asignar que realmente es una lista con el largo de los bits a asignar
- Luego llamamos a la función SHA256 la cual calcula la clave del hash a este le pasamos igual char sin asignar, la
- contraseña y el hash, donde una vez hecho esto calculamos de manera dinamica la cadena final para ir asignando valores
- hexadecimales y por ultimo asignarle un char de terminación.
+ * Luego llamamos a la función SHA256 la cual calcula la clave del hash a este le pasamos igual char sin asignar, la
+ * contraseña y el hash, donde una vez hecho esto calculamos de manera dinamica la cadena final para ir asignando valores
+ * hexadecimales y por ultimo asignarle un char de terminación.
  * 
  * Entradas: const char *contra
  * 
  * Salidas: un puntero a la cadena
  * 
+ * Datos adicionales:asm
+ * 
+ * Paginas de ayuda para crear el codigo https://sha256hash.org/es/c-sha256/ 
+ * 
+ * https://stackoverflow.com/questions/22880627/sha256-implementation-in-c
+ * 
  */
-//Paginas de ayuda para crear el codigo https://sha256hash.org/es/c-sha256/ 
-// https://stackoverflow.com/questions/22880627/sha256-implementation-in-c
 char* EncriptacionSha256(const char *contra) {
     unsigned char hash[SHA256_DIGEST_LENGTH]; // Aqui le damos un char sin asignar de 256 bits 
                                         //Suficiente para un SHA que usa 32 bytes
