@@ -143,7 +143,7 @@ void menu_agregar_eliminar_productos() {
             case 'A':
                 char *rutasArchivo2;
                 printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/producto.txt): ");
-                leerCaracteresDeFormadinamica(&rutasArchivo1);
+                leerCaracteresDeFormadinamica(&rutasArchivo2);
                 printf("\n");
 
                 NodoProducto *listaProductos2 = NULL;
@@ -424,6 +424,8 @@ void menu_principal_estadisticas() {
                 break;
 
             case 'D':
+                CuartaEstadistica(conexion);
+
                 break;
                 
              // ========== Producto más vendido por familia.

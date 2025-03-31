@@ -78,7 +78,7 @@ void mostrar_detalles_factura(MYSQL *conexion, const int id_factura) {
 
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
-    char consulta[128]; // Esto de aqui es por que no se dabe el tamaño del id del proucto y como se va a ocupar espacio, se tiene que reservar.
+    char consulta[128]; // Esto de aqui es por que no se sabe el tamaño del id del proucto y como se va a ocupar espacio, se tiene que reservar.
 
     snprintf(consulta, sizeof(consulta), "CALL verDatosFacturaEspecifica('%i')", id_factura);
     

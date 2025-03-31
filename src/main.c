@@ -17,80 +17,9 @@
 //./punto_de_venta
 
 int main() {
-
-    // MYSQL *conexion = NULL;
-
-    // //printf("Aqui\n");
-    // if (conectar(&conexion) != 0) {
-        
-    //     return 1; 
-    // }
-    //printf("Se logro conectar.\n");
-
-    // Lista de familias.
-    // NodoFamilia *listaDeFamilias = NULL;
-
-    // // // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-    // cargarFamiliasDesdeArchivo("data/familias.txt", &listaDeFamilias);
-
-    // //Imprimimos los datos guardados en la lista.
-    //  imprimirListaNodosFamilia(listaDeFamilias);
-  
-    //  guardarFamiliasEnDB(conexion, listaDeFamilias);
-
-    // // // Los intentamos almacenar en la base de datos.
-    // guardarFamiliasEnDB(conexion,listaDeFamilias);
-
-    // // // Liberamos la memoria asignada a la lista.
-    // liberarListaFamilia(listaDeFamilias);
-
-    // // Lista de productos.
-    // NodoProducto *listaProductos = NULL;
-
-    // // // Primero se cargan los datos desde el archivo y se almacenan en la lista.
-    // cargarProductosDesdeArchivo("data/producto.txt", &listaProductos);
-
-    // // //Imprimimos los datos guardados en la lista.
-    //  imprimirListaNodosProducto(listaProductos);
-
-    // // // Los intentamos almacenar en la base de datos.
-    //  guardarProductosEnDB(conexion,listaProductos);
-
-    // // // Liberamos la memoria asignada a la lista.
-    // liberarListaProducto(listaProductos);
-
-
-
-    // // Cargar estock de productos desde txt
-    //   NodoCargaStock *lista_carga_stock = NULL;
-
-    //   cargarStockDesdeArchivo("data/stock.txt", &lista_carga_stock);
-
-    //   imprimirListaNodosCargaStock(lista_carga_stock);
-
-    //   guardarStockEnDB(conexion,lista_carga_stock);
-
-    //   liberarListaCargaStock(lista_carga_stock);
-
-
-
-    // Para lo de ver el inventario...
-
-    //consultarCatalogo(conexion, 2);
-
-    // consultarCatalogoPorFamilia(conexion, "Enlatados");
-
-
     // Pruebas del menu..
     menu_principal();
 
-    //mostrar_detalles_factura(conexion, 0);
-
-    //eliminarProducto(conexion, "Prod1");
-
-
-    // ============= Estadisticas del programa...
-    //SextaEstadistica(conexion);
 
     return 0;
 }

@@ -574,3 +574,4 @@ BEGIN
 END$$
 DELIMITER ;
 
+show triggers
