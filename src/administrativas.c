@@ -34,6 +34,8 @@
  */
 void incluir_familia_de_productos() {
 
+    printf("\n\nCarga de familias desde archivo. \n\n");
+
     MYSQL *conexion = NULL;
 
     if (conectar(&conexion) != 0) {
@@ -55,7 +57,7 @@ void incluir_familia_de_productos() {
     int estado = cargarFamiliasDesdeArchivo(rutasArchivo, &listaDeFamilias);
 
     if (estado == 1) {
-        printf("\n Error en el archivo, por favor verifique la ruta y el nombre del archivo ingresado antes de continuar. \n");
+        printf("\nError en el archivo, por favor verifique la ruta y el nombre del archivo ingresado antes de continuar. \n");
         return;
     }
 
@@ -69,7 +71,7 @@ void incluir_familia_de_productos() {
     liberarListaFamilia(listaDeFamilias);
 
     
-    printf("\n Fin del proceso de cargas de datos desde archivos, volvinedo al menu de la seccion.\n");
+    printf("\n Fin del proceso de cargas de datos desde archivos, volviendo al menu de la seccion.\n");
     return;
 }
 
@@ -104,8 +106,9 @@ void menu_agregar_eliminar_productos() {
 
 
         printf("Ingrese la letra de la consulta a realizar.: ");
-        scanf(" %c", &opcion); 
-        getchar(); 
+        // scanf(" %c", &opcion); 
+        // getchar(); 
+        leerPrimerCaracter(&opcion);
 
         switch (opcion) {
             // ========== Agregar lote de productos.
@@ -136,6 +139,7 @@ void menu_agregar_eliminar_productos() {
                 printf("\n -- Fin del proceso de cargas de datos desde archivos, volvinedo al menu de la seccion.\n");
 
                 break;
+
             case 'A':
                 char *rutasArchivo2;
                 printf("\nIngresa la ruta y el nombre del archivo a usar, solo se pueden usar archivos .txt (E.J: data/familias.txt): ");
@@ -186,20 +190,20 @@ void menu_agregar_eliminar_productos() {
 
                 break;
 
-      
-
             // ========== Salir del menu.
             case 's':
                 printf("Saliendo de la seccion de opciones generales...\n");
                 break;
+
             case 'S':
                 printf("Saliendo de la seccion de opciones generales...\n");
                 break;
 
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
+
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     cerrarConexion(conexion);
     
@@ -219,6 +223,7 @@ void menu_agregar_eliminar_productos() {
  * 
  */
 void menu_modificar_stock() {
+    printf("\n\nCaragar Stock de prodcutos. \n\n");
 
     MYSQL *conexion = NULL;
 
@@ -253,7 +258,7 @@ void menu_modificar_stock() {
 
     // Cerrar la conexion con la base de datos.
     cerrarConexion(conexion);
-    printf("\n -- Fin del proceso de cargas de datos desde archivos, volvinedo al menu de la seccion.\n");
+    printf("\n -- Fin del proceso de cargas de datos desde archivos, volviendo al menu de la seccion.\n");
 
     return;
 }
@@ -277,7 +282,7 @@ void menu_principal_consulta_facturas() {
 
     char opcion;
     do {
-        printf("\nRegistro de productos... \n");
+        printf("\nConsulta de facturas... \n");
         printf("Selecciona una de las siguientes opciones para continuar...\n");
 
         printf(">> A) Ver facturas realizadas. \n");

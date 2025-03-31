@@ -12,39 +12,19 @@
 #include "../include/estadisticas.h"
 
 
-
-
-
 // Comando para ejecutar desde c, se deben de compilar todos los archivos .c
-// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c
-//./punto_de_venta
-
-
-// Comando de compilacion actual con lo de la base de datos:
-// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c -lmysqlclient
-//./punto_de_venta
-
-
-// Anterio.
-// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c  -lmysqlclient
-
-
-// Actual.
-// gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c src/estadisticas.c src/facturacion.c src/consultaFacturas.c  -lmysqlclient
-
-
-//Final finalito
 // gcc -o punto_de_venta src/main.c src/familia.c src/manipularArchivos.c src/producto.c src/cargaStock.c src/db.c src/menu.c src/administrativas.c src/generales.c src/consultaCatalogo.c src/cotizacion.c src/estadisticas.c src/facturacion.c src/consultaFacturas.c -lmysqlclient -lcrypto
+//./punto_de_venta
 
 int main() {
 
-    MYSQL *conexion = NULL;
+    // MYSQL *conexion = NULL;
 
-    //printf("Aqui\n");
-    if (conectar(&conexion) != 0) {
+    // //printf("Aqui\n");
+    // if (conectar(&conexion) != 0) {
         
-        return 1; 
-    }
+    //     return 1; 
+    // }
     //printf("Se logro conectar.\n");
 
     // Lista de familias.

@@ -558,15 +558,19 @@ CREATE PROCEDURE verDatosFacturaEspecifica(
     IN idFactura INT
 )
 BEGIN
-    select
+    SELECT
         f.IdFactura,
         f.IdCotizacion,
         f.fechaHora,
         f.SubTotal,
         f.Impuesto,
-        f.Total
-    from Factura as f
-    WHERE
-        f.idFactura = idFactura;
-END $$
+        f.Total,
+        n.NombreLocal AS NombreNegocio,
+        n.Telefono AS TelefonoNegocio,
+        n.CedulaJuridica AS CedulaNegocio
+    FROM Factura AS f
+    CROSS JOIN Negocio AS n
+    WHERE f.IdFactura = idFactura;
+END$$
 DELIMITER ;
+

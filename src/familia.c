@@ -279,7 +279,7 @@ int cargarFamiliasDesdeArchivo(char * nombreArchivo, NodoFamilia** listaDeFamili
             if (lista_palabras[i] == NULL) {
                 printf("Advertencia: `lista_palabras[%d]` es NULL, no se liberará\n", i);
             } else {
-                printf("Liberando memoria de: %s\n", lista_palabras[i]);
+                //printf("Liberando memoria de: %s\n", lista_palabras[i]);
                 free(lista_palabras[i]);
             }
         }

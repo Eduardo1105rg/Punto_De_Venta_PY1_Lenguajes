@@ -344,7 +344,7 @@ char* leer_lineas(FILE *archivo, int num_linea) {
         }
     }
     linea[indice] = '\0';
-    printf("Datos de la linea que se leyo: %s\n", linea);
+    //printf("Datos de la linea que se leyo: %s\n", linea);
 
     return linea;
 }
