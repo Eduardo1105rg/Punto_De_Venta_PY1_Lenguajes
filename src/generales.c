@@ -15,16 +15,26 @@
 
 
 int cantidadCotizaciones = 1;
-// const char *estadoCotizacion = "Pago pendiente";
 
 
 
-
+/**
+ * Nombre: ConsultaOpcional
+ * 
+ * Descripcion: En este apartado se descuenta el stock de los productos en factura y se hace la consulta en caso de ser necesario
+ un ajuste
+ * 
+ * Funcionamiento: Primero verifica los datos que se van a enviar a la cotizacion para la parte del stock, si no es necesario
+ no se ajusta sino se le indica al usuario por medio de un mensaje si lo quiere modificar
+ * 
+ * Entradas: Un puntero a un tipo de dato MYSQL, un entero para el id de cotizacion
+ * 
+ * Salidas: No tiene
+ * 
+ */
 void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
-    printf("SIuuu entre\n");
     char *consultaBF = NULL;
 
-    // Crear la consulta para llamar al procedimiento almacenado
     int largoConsultaBF = asprintf(&consultaBF, "CALL VerificarYRestarStock(%d)", id_cotizacion);
 
     if (mysql_query(conexion, consultaBF)) {
@@ -35,13 +45,28 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
     }
     printf("Verifiqué el stock\n");
 
-    // Arrays para almacenar datos temporales
-    int ajustes[100]; // Para almacenar respuestas (máximo 100 productos)
-    char *productos[100]; 
-    int cantidadesSolicitadas[100];
-    int cantidadesDisponibles[100];
+    
+    int *ajustes = NULL;
+    char **productos = NULL;
+    int *cantidadesSolicitadas = NULL;
+    int *cantidadesDisponibles = NULL;
     int index = 0;
+    int capacidad = 10;  
 
+    ajustes = (int *)malloc(capacidad * sizeof(int));
+    productos = (char **)malloc(capacidad * sizeof(char *));
+    cantidadesSolicitadas = (int *)malloc(capacidad * sizeof(int));
+    cantidadesDisponibles = (int *)malloc(capacidad * sizeof(int));
+
+    if (!ajustes || !productos || !cantidadesSolicitadas || !cantidadesDisponibles) {
+        printf("Error al asignar memoria\n");
+        free(consultaBF);
+        free(ajustes);
+        free(productos);
+        free(cantidadesSolicitadas);
+        free(cantidadesDisponibles);
+        return;
+    }
     do {
         MYSQL_RES *resultadoBF = mysql_store_result(conexion);
         if (resultadoBF) {
@@ -51,7 +76,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                 int cantidadSolicitada = atoi(filaBF[1]);
                 int cantidadDisponible = atoi(filaBF[2]);
                 
-                // Si la cantidad solicitada es menor o igual a la disponible, no es necesario ajustar
+                // Si la cantidad solicitada es menor o igual a la disponible no es necesario que lo ajustemos
                 if (cantidadSolicitada <= cantidadDisponible) {
                     printf("Producto %s tiene suficiente stock (%d disponibles, %d solicitados), restando automáticamente.\n",
                         filaBF[0], cantidadDisponible, cantidadSolicitada);
@@ -65,8 +90,36 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                         printf("Error al realizar la consulta (Productos - descuento automático): %s\n", mysql_error(conexion));
                     }
                     free(consultaBF5);
-                    continue; // Saltar el proceso de ajuste manual
+                    continue; 
                 }
+                if (cantidadDisponible == 0) {
+                    printf("Lo sentimos, actualmente no podemos generar un re-stock pues tenemos '%d' productos.\n", cantidadDisponible);
+                
+                    mysql_free_result(resultadoBF);
+                
+                    while (mysql_next_result(conexion) == 0) {
+                        MYSQL_RES *temp = mysql_store_result(conexion);
+                        if (temp) mysql_free_result(temp);
+                    }
+                
+                    char *consultaBF7 = NULL;
+                    asprintf(&consultaBF7,
+                        "DELETE FROM CotizacionDetalle WHERE IdCotizacion = %d AND IdProducto = '%s';",
+                        id_cotizacion, filaBF[0]);  
+                
+                    if (mysql_query(conexion, consultaBF7)) {
+                        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                    } else {
+                        printf("Línea de cotización eliminada correctamente.\n");
+                    }
+                
+                    free(consultaBF7);
+                    return;
+                }
+                
+                
+                
+                
 
                 printf("Estimado usuario, este producto %s nos pide una cantidad de %d\n"
                        "Actualmente contamos con %d disponibles, desea ajustarlo? "
@@ -78,11 +131,32 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                     printf("Error en la entrada. Por favor ingrese un número válido.\n");
                     mysql_free_result(resultadoBF);
                     free(consultaBF);
+                    free(ajustes);
+                    free(productos);
+                    free(cantidadesSolicitadas);
+                    free(cantidadesDisponibles);
                     return;
+                }
+                if (index >= capacidad) {
+                    capacidad *= 2; 
+                    ajustes = (int *)realloc(ajustes, capacidad * sizeof(int));
+                    productos = (char **)realloc(productos, capacidad * sizeof(char *));
+                    cantidadesSolicitadas = (int *)realloc(cantidadesSolicitadas, capacidad * sizeof(int));
+                    cantidadesDisponibles = (int *)realloc(cantidadesDisponibles, capacidad * sizeof(int));
+
+                    if (!ajustes || !productos || !cantidadesSolicitadas || !cantidadesDisponibles) {
+                        printf("Error al reasignar memoria\n");
+                        free(consultaBF);
+                        free(ajustes);
+                        free(productos);
+                        free(cantidadesSolicitadas);
+                        free(cantidadesDisponibles);
+                        return;
+                    }
                 }
 
                 ajustes[index] = recibep;
-                productos[index] = strdup(filaBF[0]); // Guardar una copia del IdProducto
+                productos[index] = strdup(filaBF[0]); 
                 cantidadesSolicitadas[index] = cantidadSolicitada;
                 cantidadesDisponibles[index] = cantidadDisponible;
                 index++;
@@ -90,12 +164,10 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
 
             mysql_free_result(resultadoBF);
         }
-    } while (mysql_next_result(conexion) == 0);  // Procesar todos los resultados antes de actualizar
+    } while (mysql_next_result(conexion) == 0);  
 
-    // Ejecutar los UPDATE después de terminar con `CALL`
     for (int i = 0; i < index; i++) {
         if (ajustes[i] == 1) {
-            printf("Ajustando el stock de %s...\n", productos[i]);
             
             // Actualizar CotizacionDetalle
             char *consultaBF2 = NULL;
@@ -112,7 +184,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
             char *consultaBF3 = NULL;
             asprintf(&consultaBF3,
                 "UPDATE Productos SET Cantidad = Cantidad - %d WHERE IdProducto = '%s';",
-                cantidadesSolicitadas[i], productos[i]);
+                cantidadesDisponibles[i], productos[i]);
 
             if (mysql_query(conexion, consultaBF3)) {
                 printf("Error al realizar la consulta (Productos): %s\n", mysql_error(conexion));
@@ -123,10 +195,14 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
         } else {
             printf("No se ajusta el stock de %s.\n", productos[i]);
         }
-        free(productos[i]); // Liberar memoria asignada
+        free(productos[i]); 
     }
 
     free(consultaBF);
+    free(ajustes);
+    free(productos);
+    free(cantidadesSolicitadas);
+    free(cantidadesDisponibles);
 }
 
 
@@ -289,7 +365,8 @@ void menu_cotizacion() {
                 int cantidad_producto1 = leeNumeroDinamicoV2();
                 printf("\n");
 
-                if (cantidad_producto1 == -21) {
+                if (cantidad_producto1 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
                     break;
                 }
                 //printf("Pass0");
@@ -310,13 +387,14 @@ void menu_cotizacion() {
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
                 int cantidad_producto2 = leeNumeroDinamicoV2();
                 printf("\n");
-                if (cantidad_producto2 == -21) {
+                if (cantidad_producto2 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
                     break;
                 }
 
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto2, cantidad_producto2);
 
-                free(id_producto1);
+                free(id_producto2);
 
                 break;
 
@@ -329,6 +407,10 @@ void menu_cotizacion() {
                 int num_fila_eliminar1 = leeNumeroDinamicoV2();
                 printf("\n");
                 if (num_fila_eliminar1 == -21) {
+                    break;
+                }
+                if (num_fila_eliminar1 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
                     break;
                 }
                 eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar1);
@@ -346,6 +428,10 @@ void menu_cotizacion() {
                 if (num_fila_eliminar2 == -21) {
                     break;
                 }
+                if (num_fila_eliminar2 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
+                    break;
+                }
                 eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
                 break;
 
@@ -356,8 +442,8 @@ void menu_cotizacion() {
                 // Validar si deverdad se quiere guardar.
                 char aceptar;
 
-                printf("Seguro que desear guarda?\n ");
-                printf("Ingrese N (para no guardar)\n ");
+                printf("Seguro que desea guardar? si es asi presione cualquier letra\n ");
+                printf("Distinta de N y si quiere borrar presione N(para no guardar)\n ");
 
                 // scanf(" %c", &aceptar); 
                 // getchar(); 
@@ -388,11 +474,11 @@ void menu_cotizacion() {
             case 'D':
                 mostrar_cotizacion(lista_productos_en_cotizacion);
 
-                // Validar si deverdad se quiere guardar.
+                // Validar si de verdad se quiere guardar.
                 char aceptar2;
 
-                printf("Seguro que desear guarda?\n ");
-                printf("Ingrese N (para no guardar)\n ");
+                printf("Seguro que desea guardar? si es asi presione cualquier letra\n ");
+                printf("Distinta de N y si quiere borrar presione N(para no guardar)\n ");
 
                 // scanf(" %c", &aceptar2); 
                 // getchar(); 
@@ -562,7 +648,14 @@ void menu_modificar_cotizacion() {
                 printf("\n");
 
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
-                int cantidad_producto1 = leerNumeroDinamico();
+                int cantidad_producto1 = leeNumeroDinamicoV2();
+                if (cantidad_producto1 == -21) {
+                    break;
+                }
+                if (cantidad_producto1 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
+                    break;
+                }
                 printf("\n");
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto1, cantidad_producto1);
                 int guarda = 1;
@@ -580,7 +673,14 @@ void menu_modificar_cotizacion() {
 
                 //Solicitar la cantidad del producto.
                 printf("\nIngresa la cantidad del producto que desea agregar: ");
-                int cantidad_producto2 = leerNumeroDinamico();
+                int cantidad_producto2 = leeNumeroDinamicoV2();
+                if (cantidad_producto2 == -21) {
+                    break;
+                }
+                if (cantidad_producto2 <= 0) {
+                    printf("Error: No pueden haber numeros menores o igualesa cero");
+                    break;
+                }
                 printf("\n");
 
                 agregar_nuevo_producto(conexion, &lista_productos_en_cotizacion, id_producto2, cantidad_producto2);
@@ -595,7 +695,7 @@ void menu_modificar_cotizacion() {
                 //char *id_producto_a_eliminar1;
                 printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
                 // leerCaracteresDeFormadinamica(&id_producto_a_eliminar1);
-                int num_fila_eliminar1 = leerNumeroDinamico();
+                int num_fila_eliminar1 = leeNumeroDinamicoV2();
 
                 printf("\n");
 
@@ -608,7 +708,7 @@ void menu_modificar_cotizacion() {
             case 'C':
 
                 printf("\nIngresa el numero de la fila del producto que desea eliminar: ");
-                int num_fila_eliminar2 = leerNumeroDinamico();
+                int num_fila_eliminar2 = leeNumeroDinamicoV2();
                 printf("\n");
 
                 eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
@@ -619,8 +719,8 @@ void menu_modificar_cotizacion() {
             case 'd':
 
                 char aceptar1;
-                printf("Seguro que desear guarda?\n ");
-                printf("Ingrese N (para no guardar)\n ");
+                printf("Seguro que desea guardar? si es asi presione cualquier letra\n ");
+                printf("Distinta de N y si quiere borrar presione N(para no guardar)\n ");
 
                 // scanf(" %c", &aceptar2); 
                 // getchar(); 
@@ -678,8 +778,8 @@ void menu_modificar_cotizacion() {
             case 'D':
 
                 char aceptar2;
-                printf("Seguro que desear guarda?\n ");
-                printf("Ingrese N (para no guardar)\n ");
+                printf("Seguro que desea guardar? si es asi presione cualquier letra\n ");
+                printf("Distinta de N y si quiere borrar presione N(para no guardar)\n ");
 
                 // scanf(" %c", &aceptar2); 
                 // getchar(); 
@@ -847,7 +947,6 @@ void menu_crear_factura() {
         }
     }
     
-    // Liberar los resultados y la memoria de la consulta
     mysql_free_result(resultadoff);
     free(consultaff);
 
@@ -855,6 +954,42 @@ void menu_crear_factura() {
     char *nombre;
     printf("\nIngresa el nombre del cliente que se usao para la cotizacion: ");
     leerCaracteresDeFormadinamica(&nombre);
+
+
+    //Validacion nombre cliente
+    char *consultaff2 = NULL;
+    asprintf(&consultaff2,
+        "SELECT Cliente FROM Cotizacion WHERE IdCotizacion = %d;",
+        id_cotizacion);
+    
+    if (mysql_query(conexion, consultaff2)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaff2);
+        return;
+    }
+    
+    MYSQL_RES *resultadoff2 = mysql_store_result(conexion);
+    if (resultadoff2) {
+        MYSQL_ROW filas2 = mysql_fetch_row(resultadoff2);
+        
+        if (filas2 != NULL) {
+            if (strcmp(filas2[0], nombre) != 0) {
+                printf("Error: El nombre del cliente debe ser el mismo de la cotización.\n");
+                mysql_free_result(resultadoff2);
+                free(consultaff2);
+                return;
+            }
+        } else {
+            printf("Error: No se encontró la cotización con el ID ingresado.\n");
+        }
+    
+        mysql_free_result(resultadoff2);
+    }
+    
+    free(consultaff2);
+        //Validacion nombre cliente
+
+
     printf("\n");
 
     //Aqui realizamos lo de quitar stock
