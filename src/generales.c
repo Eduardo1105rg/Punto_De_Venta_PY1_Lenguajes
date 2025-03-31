@@ -812,19 +812,12 @@ void menu_crear_factura() {
         printf("No se formateo bien la fecha.\n");
     }
 
-    // char *nombreClienteF = NULL;
-    // int numCotizacionF = 0;
     MYSQL *conexion = NULL;
 
     if (conectar(&conexion) != 0) {
         return;
     }
 
-    // nombreClienteF = (char *)malloc(100 * sizeof(char));
-    // if (nombreClienteF == NULL) {
-    //     printf("Error al asignar memoria.\n");
-    //     return;
-    // }
 
 <<<<<<< Updated upstream
     // printf("Antes de darle su factura por favor escribanos su numero de cotizacion\n");
@@ -843,8 +836,6 @@ void menu_crear_factura() {
 >>>>>>> Stashed changes
 
     printf("\n");
-    if (id_cotizacion == -21) {
-        return;
 
     char *consultaff = NULL;
     asprintf(&consultaff,
@@ -878,13 +869,6 @@ void menu_crear_factura() {
     printf("\n");
 
 
-    // char *temp = realloc(nombreClienteF, (strlen(nombreClienteF) + 1) * sizeof(char));
-    // if (temp == NULL) {
-    //     printf("Error al reasignar memoria para nombreClienteF.\n");
-    //     free(nombreClienteF);
-    //     return;
-    // }
-    // nombreClienteF = temp;
     ConsultaOpcional(conexion,id_cotizacion);
 
     //Cambiamos el estado de la cotizacion a Facturado
