@@ -376,7 +376,12 @@ void guardarProductosEnDB(MYSQL *conexion, NodoProducto* head) {
         float precio = actual->producto.Precio;
         int cantidad = actual->producto.Cantidad;
 
-        agregarProductos(conexion,id_producto,nombre,id_familia,costo,precio,cantidad);
+        if (costo > 0 && precio > 0 && cantidad > 0) {
+            agregarProductos(conexion,id_producto,nombre,id_familia,costo,precio,cantidad);
+
+        } else {
+            printf("Error: El costo, el precio y la cantidad, no pueden ser negativos, no se pudo agregar el prodcuto con id: %s", id_producto);
+        }
 
         // Aqui iria el resto de la logica para guardar en la base de datos.
         free(id_producto);
