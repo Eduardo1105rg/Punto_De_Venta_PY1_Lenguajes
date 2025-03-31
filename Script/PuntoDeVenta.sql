@@ -183,23 +183,23 @@ group by
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
 -- Se vuelva negativa envie un mensaje de error, esto por cada actualización de producto.
 -- drop trigger actualizadorInventario
-delimiter $$
-use puntoVenta$$
-create trigger actualizadorInventario
-before update on Productos
-for each row 
-begin
-	declare cantidadTotal int;
-    set cantidadTotal = new.Cantidad + old.Cantidad;
+-- delimiter $$
+-- use puntoVenta$$
+-- create trigger actualizadorInventario
+-- before update on Productos
+-- for each row 
+-- begin
+--	declare cantidadTotal int;
+--    set cantidadTotal = new.Cantidad + old.Cantidad;
     
-    if cantidadTotal < 0 then
-		signal sqlstate '45000' 
-        set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
-	else
-        set new.Cantidad = cantidadTotal;
-	end if;
-end$$
-delimiter ;
+--    if cantidadTotal < 0 then
+--		signal sqlstate '45000' 
+ --       set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
+--	else
+--        set new.Cantidad = cantidadTotal;
+--	end if;
+-- end$$
+-- delimiter ;
 
 
 
@@ -350,7 +350,7 @@ DELIMITER ;
 -- call eliminarDetalleCotizacion("Prod1",1)
 
 
-
+drop procedure facturaFin
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE facturaFin(
@@ -375,6 +375,60 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+
+-- SHOW TRIGGERS;
+
+ drop PROCEDURE VerificarYRestarStock
+
+DELIMITER $$
+
+CREATE PROCEDURE VerificarYRestarStock(IN idCotizacion INT)
+BEGIN
+    -- Primero verificamos qué productos no tienen suficiente stock
+    SELECT cd.IdProducto, cd.Cantidad, p.Cantidad AS StockDisponible
+    FROM CotizacionDetalle cd
+    LEFT JOIN Productos p ON cd.IdProducto = p.IdProducto
+    WHERE cd.IdCotizacion = idCotizacion
+    AND p.Cantidad < cd.Cantidad;
+
+    -- Luego, si hay suficiente stock, actualizamos el stock
+    UPDATE Productos p
+    JOIN CotizacionDetalle cd ON p.IdProducto = cd.IdProducto
+    SET p.Cantidad = p.Cantidad - cd.Cantidad
+    WHERE cd.IdCotizacion = idCotizacion
+    AND p.Cantidad >= cd.Cantidad;  -- Aseguramos que hay suficiente stock
+
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+ --               UPDATE CotizacionDetalle SET Cantidad = 40 WHERE IdCotizacion = 2 AND IdProducto = 'Prod3'
+
+
+-- SELECT IdProducto, Cantidad FROM CotizacionDetalle WHERE IdCotizacion = 2;
+-- SELECT IdProducto, Cantidad FROM Productos WHERE IdProducto IN (SELECT IdProducto FROM CotizacionDetalle WHERE IdCotizacion = 2);
+-- SELECT IdProducto, Cantidad FROM CotizacionDetalle WHERE IdCotizacion = 2;
+
+-- CALL VerificarYRestarStock(2);
+
+-- SELECT IdProducto, Cantidad
+-- FROM CotizacionDetalle
+-- WHERE IdCotizacion = 2 AND IdProducto = 'Prod1';
+
+
+
+	
 -- call facturaFin(1,'Edutec');
 -- Este seria en caso de querer solo mostrar los totales
 DELIMITER $$
@@ -397,6 +451,7 @@ BEGIN
     where c.Cliente = Cliente and cd.IdCotizacion = idCot;
 END $$
 DELIMITER ;
+
 
 -- Validacion para corroborar si hay algún ID de familia agregado previamente a su inserción
 delimiter $$
@@ -462,27 +517,6 @@ delimiter ;
 -- -- DROP TRIGGER revisaEliminarProductos;
 
 
-
-
-
-
-delimiter $$
-USE puntoVenta$$
-create trigger actualizadorInventario
-before update on Productos
-for each row 
-begin
-	declare cantidadTotal int;
-    set cantidadTotal = new.Cantidad + old.Cantidad;
-    
-    if cantidadTotal < 0 then
-		signal sqlstate '45000' 
-        set MESSAGE_TEXT = 'Error: La cantidad no puede ser negativa';
-	else
-        set new.Cantidad = cantidadTotal;
-	end if;
-end$$
-delimiter ;
 
 -- >> Vista para ver todas las facturas realizadas.
 -- Uso: selec * from verFacturas;
