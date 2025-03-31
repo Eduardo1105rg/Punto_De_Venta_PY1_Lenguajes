@@ -18,6 +18,118 @@ int cantidadCotizaciones = 1;
 // const char *estadoCotizacion = "Pago pendiente";
 
 
+
+
+void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
+    printf("SIuuu entre\n");
+    char *consultaBF = NULL;
+
+    // Crear la consulta para llamar al procedimiento almacenado
+    int largoConsultaBF = asprintf(&consultaBF, "CALL VerificarYRestarStock(%d)", id_cotizacion);
+
+    if (mysql_query(conexion, consultaBF)) {
+        printf("Me caí aquí\n");
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        free(consultaBF);
+        return;
+    }
+    printf("Verifiqué el stock\n");
+
+    // Arrays para almacenar datos temporales
+    int ajustes[100]; // Para almacenar respuestas (máximo 100 productos)
+    char *productos[100]; 
+    int cantidadesSolicitadas[100];
+    int cantidadesDisponibles[100];
+    int index = 0;
+
+    do {
+        MYSQL_RES *resultadoBF = mysql_store_result(conexion);
+        if (resultadoBF) {
+            MYSQL_ROW filaBF;
+
+            while ((filaBF = mysql_fetch_row(resultadoBF)) != NULL) {
+                int cantidadSolicitada = atoi(filaBF[1]);
+                int cantidadDisponible = atoi(filaBF[2]);
+                
+                // Si la cantidad solicitada es menor o igual a la disponible, no es necesario ajustar
+                if (cantidadSolicitada <= cantidadDisponible) {
+                    printf("Producto %s tiene suficiente stock (%d disponibles, %d solicitados), restando automáticamente.\n",
+                        filaBF[0], cantidadDisponible, cantidadSolicitada);
+                    
+                    char *consultaBF5 = NULL;
+                    asprintf(&consultaBF5,
+                        "UPDATE Productos SET Cantidad = Cantidad - %d WHERE IdProducto = '%s';",
+                        cantidadSolicitada, filaBF[0]);
+
+                    if (mysql_query(conexion, consultaBF5)) {
+                        printf("Error al realizar la consulta (Productos - descuento automático): %s\n", mysql_error(conexion));
+                    }
+                    free(consultaBF5);
+                    continue; // Saltar el proceso de ajuste manual
+                }
+
+                printf("Estimado usuario, este producto %s nos pide una cantidad de %d\n"
+                       "Actualmente contamos con %d disponibles, desea ajustarlo? "
+                       "Si es así, escriba un 1; sino, un 0: ",
+                       filaBF[0], cantidadSolicitada, cantidadDisponible);
+                
+                int recibep = 0;
+                if (scanf("%d", &recibep) != 1) {
+                    printf("Error en la entrada. Por favor ingrese un número válido.\n");
+                    mysql_free_result(resultadoBF);
+                    free(consultaBF);
+                    return;
+                }
+
+                ajustes[index] = recibep;
+                productos[index] = strdup(filaBF[0]); // Guardar una copia del IdProducto
+                cantidadesSolicitadas[index] = cantidadSolicitada;
+                cantidadesDisponibles[index] = cantidadDisponible;
+                index++;
+            }
+
+            mysql_free_result(resultadoBF);
+        }
+    } while (mysql_next_result(conexion) == 0);  // Procesar todos los resultados antes de actualizar
+
+    // Ejecutar los UPDATE después de terminar con `CALL`
+    for (int i = 0; i < index; i++) {
+        if (ajustes[i] == 1) {
+            printf("Ajustando el stock de %s...\n", productos[i]);
+            
+            // Actualizar CotizacionDetalle
+            char *consultaBF2 = NULL;
+            asprintf(&consultaBF2,
+                "UPDATE CotizacionDetalle SET Cantidad = %d WHERE IdCotizacion = %d AND IdProducto = '%s';",
+                cantidadesDisponibles[i], id_cotizacion, productos[i]);
+
+            if (mysql_query(conexion, consultaBF2)) {
+                printf("Error al realizar la consulta (CotizacionDetalle): %s\n", mysql_error(conexion));
+            }
+            free(consultaBF2);
+
+            // Actualizar Productos
+            char *consultaBF3 = NULL;
+            asprintf(&consultaBF3,
+                "UPDATE Productos SET Cantidad = Cantidad - %d WHERE IdProducto = '%s';",
+                cantidadesSolicitadas[i], productos[i]);
+
+            if (mysql_query(conexion, consultaBF3)) {
+                printf("Error al realizar la consulta (Productos): %s\n", mysql_error(conexion));
+            }
+            free(consultaBF3);
+
+            printf("Stock ajustado.\n");
+        } else {
+            printf("No se ajusta el stock de %s.\n", productos[i]);
+        }
+        free(productos[i]); // Liberar memoria asignada
+    }
+
+    free(consultaBF);
+}
+
+
 /**
  * Nombre: menu_consulta_catalogo
  * 
@@ -666,123 +778,6 @@ void menu_modificar_cotizacion() {
 }
 
 
-<<<<<<< Updated upstream
-=======
-void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
-    printf("SIuuu entre\n");
-    char *consultaBF = NULL;
-
-    // Crear la consulta para llamar al procedimiento almacenado
-    int largoConsultaBF = asprintf(&consultaBF, "CALL VerificarYRestarStock(%d)", id_cotizacion);
-
-    if (mysql_query(conexion, consultaBF)) {
-        printf("Me caí aquí\n");
-        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-        free(consultaBF);
-        return;
-    }
-    printf("Verifiqué el stock\n");
-
-    // Arrays para almacenar datos temporales
-    int ajustes[100]; // Para almacenar respuestas (máximo 100 productos)
-    char *productos[100]; 
-    int cantidadesSolicitadas[100];
-    int cantidadesDisponibles[100];
-    int index = 0;
-
-    do {
-        MYSQL_RES *resultadoBF = mysql_store_result(conexion);
-        if (resultadoBF) {
-            MYSQL_ROW filaBF;
-
-            while ((filaBF = mysql_fetch_row(resultadoBF)) != NULL) {
-                int cantidadSolicitada = atoi(filaBF[1]);
-                int cantidadDisponible = atoi(filaBF[2]);
-                
-                // Si la cantidad solicitada es menor o igual a la disponible, no es necesario ajustar
-                if (cantidadSolicitada <= cantidadDisponible) {
-                    printf("Producto %s tiene suficiente stock (%d disponibles, %d solicitados), restando automáticamente.\n",
-                        filaBF[0], cantidadDisponible, cantidadSolicitada);
-                    
-                    char *consultaBF5 = NULL;
-                    asprintf(&consultaBF5,
-                        "UPDATE Productos SET Cantidad = Cantidad - %d WHERE IdProducto = '%s';",
-                        cantidadSolicitada, filaBF[0]);
-
-                    if (mysql_query(conexion, consultaBF5)) {
-                        printf("Error al realizar la consulta (Productos - descuento automático): %s\n", mysql_error(conexion));
-                    }
-                    free(consultaBF5);
-                    continue; // Saltar el proceso de ajuste manual
-                }
-
-                printf("Estimado usuario, este producto %s nos pide una cantidad de %d\n"
-                       "Actualmente contamos con %d disponibles, desea ajustarlo? "
-                       "Si es así, escriba un 1; sino, un 0: ",
-                       filaBF[0], cantidadSolicitada, cantidadDisponible);
-                
-                int recibep = 0;
-                if (scanf("%d", &recibep) != 1) {
-                    printf("Error en la entrada. Por favor ingrese un número válido.\n");
-                    mysql_free_result(resultadoBF);
-                    free(consultaBF);
-                    return;
-                }
-
-                ajustes[index] = recibep;
-                productos[index] = strdup(filaBF[0]); // Guardar una copia del IdProducto
-                cantidadesSolicitadas[index] = cantidadSolicitada;
-                cantidadesDisponibles[index] = cantidadDisponible;
-                index++;
-            }
-
-            mysql_free_result(resultadoBF);
-        }
-    } while (mysql_next_result(conexion) == 0);  // Procesar todos los resultados antes de actualizar
-
-    // Ejecutar los UPDATE después de terminar con `CALL`
-    for (int i = 0; i < index; i++) {
-        if (ajustes[i] == 1) {
-            printf("Ajustando el stock de %s...\n", productos[i]);
-            
-            // Actualizar CotizacionDetalle
-            char *consultaBF2 = NULL;
-            asprintf(&consultaBF2,
-                "UPDATE CotizacionDetalle SET Cantidad = %d WHERE IdCotizacion = %d AND IdProducto = '%s';",
-                cantidadesDisponibles[i], id_cotizacion, productos[i]);
-
-            if (mysql_query(conexion, consultaBF2)) {
-                printf("Error al realizar la consulta (CotizacionDetalle): %s\n", mysql_error(conexion));
-            }
-            free(consultaBF2);
-
-            // Actualizar Productos
-            char *consultaBF3 = NULL;
-            asprintf(&consultaBF3,
-                "UPDATE Productos SET Cantidad = Cantidad - %d WHERE IdProducto = '%s';",
-                cantidadesSolicitadas[i], productos[i]);
-
-            if (mysql_query(conexion, consultaBF3)) {
-                printf("Error al realizar la consulta (Productos): %s\n", mysql_error(conexion));
-            }
-            free(consultaBF3);
-
-            printf("Stock ajustado.\n");
-        } else {
-            printf("No se ajusta el stock de %s.\n", productos[i]);
-        }
-        free(productos[i]); // Liberar memoria asignada
-    }
-
-    free(consultaBF);
-}
-
-
-
-
-
-
->>>>>>> Stashed changes
 /**
  * Nombre:menu_crear_factura
  * 
@@ -819,7 +814,6 @@ void menu_crear_factura() {
     }
 
 
-<<<<<<< Updated upstream
     // printf("Antes de darle su factura por favor escribanos su numero de cotizacion\n");
     // printf("y si es muy amable el nombre de la persona que cotizo\n");
     // scanf("%d", &numCotizacionF);
@@ -829,11 +823,6 @@ void menu_crear_factura() {
     printf("\nIngresa el id de la cotizacion a factruar: ");
     int id_cotizacion = ingresar_indentificador_cotizacion();
     //printf("\n Valor ingresado: %i\n", id_cotizacion);
-=======
-    printf("\nIngresa el id de la cotizacion a facturar: ");
-    int id_cotizacion = leeNumeroDinamicoV2();
-    printf("\n Valor ingresado: %i\n", id_cotizacion);
->>>>>>> Stashed changes
 
     printf("\n");
 
@@ -868,7 +857,7 @@ void menu_crear_factura() {
     leerCaracteresDeFormadinamica(&nombre);
     printf("\n");
 
-
+    //Aqui realizamos lo de quitar stock
     ConsultaOpcional(conexion,id_cotizacion);
 
     //Cambiamos el estado de la cotizacion a Facturado

@@ -20,13 +20,16 @@
 
 
 /**
- * Nombre:
+ * Nombre:incluir_familia_de_productos
  * 
- * Descripcion:
+ * Descripcion:Esta función permite incluir nuevas familias de productos en la base de datos.Primero solicita la ruta 
+ y el nombre de un .txt desde el cual se cargarán los datos. Luego, valida y 
+ carga los datos desde el archivo en una lista de familias. Una vez cargados los guarda en la base de datos y por ultimo liberamos
+ memoria
  * 
- * Entradas:
+ * Entradas:No tiene
  * 
- * Salidas:
+ * Salidas: no tiene
  * 
  */
 void incluir_familia_de_productos() {
@@ -72,13 +75,15 @@ void incluir_familia_de_productos() {
 
 
 /**
- * Nombre:
+ * Nombre:menu_agregar_eliminar_productos
  * 
- * Descripcion:
+ * Descripcion: Este es un menú interactivo que permite al usuario registrar nuevos productos o eliminar productos
+ * de la base de datos. Si quiere agregar productos lo puede realizar por medio de un txt y para eliminar
+ se pide el ID del producto
  * 
- * Entradas:
+ * Entradas: No tiene
  * 
- * Salidas:
+ * Salidas: No tiene
  * 
  */
 void menu_agregar_eliminar_productos() {
@@ -203,13 +208,14 @@ void menu_agregar_eliminar_productos() {
 
 
 /**
- * Nombre:
+ * Nombre:menu_modificar_stock
  * 
- * Descripcion:
+ * Descripcion:Esta función proporciona un menú interactivo para cargar y modificar el stock de productos en la base de datos.
+ *en el cual el usuario puede ingresar una ruta y un nombre de un txt el cual se procesa y almacena en la base de datos
  * 
- * Entradas:
+ * Entradas:No tiene
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void menu_modificar_stock() {

@@ -7,23 +7,22 @@
 #include "../include/estadisticas.h"
 
 /**
- * Nombre:
+ * Nombre:PrimerEstadistica
  * 
- * Descripcion:
+ * Descripcion: Lo que hace es por medio de una consulta a la base de datos se le retorna la cantida de cotizaciones pendientes
+ el cual lo muestra con un mensaje
  * 
- * Entradas:
+ * Entradas:Un puntero a un tipo de dato MYSQL
  * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void PrimerEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM CantidadCotizacionesPendientes";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -33,33 +32,29 @@ void PrimerEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Esta es la cantidad de cotizaciones pendientes: %s\n", fila[0]);
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); 
 
-    //free(consulta);
 
-    //    int largoConsultaF = asprintf(&consulta, "select * from CantidadCotizacionesPendientes");
-
-    //printf("Esta es la cantidad de cotizaciones pendientes %s\n", fila[0]);
     return;
 
 }
 
 
 /**
- * Nombre:
+ * Nombre:SegundaEstadistica
  * 
- * Descripcion:
+ * Descripcion:Lo que hace es por medio de una consulta a la base de datos se le retorna la cantida de cotizaciones facturadas
+ el cual lo muestra con un mensaje
  * 
- * Entradas:
+ * Entradas: Un puntero a un tipo de dato MYSQL
  * 
- * Salidas:
+ * Salidas: No tiene
  * 
  */
 void SegundaEstadistica(MYSQL *conexion) {
@@ -67,10 +62,8 @@ void SegundaEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM CantidadCotizacionesFacturadas";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -80,14 +73,13 @@ void SegundaEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Esta es la cantidad de cotizaciones facturadas: %s\n", fila[0]);
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); /
 
     return;
 
@@ -95,13 +87,13 @@ void SegundaEstadistica(MYSQL *conexion) {
 
 
 /**
- * Nombre:
+ * Nombre:TerceraEstadistica
  * 
- * Descripcion:
+ * Descripcion: Por medio de una consulta a la base de datos recibimos el promedio total de todas las facturas generadas
+ * Esta se mostrara por medio de un print
+ * Entradas: Un puntero a un tipo de dato MYSQL
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas:No tienes
  * 
  */
 void TerceraEstadistica(MYSQL *conexion) {
@@ -109,10 +101,8 @@ void TerceraEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM PromedioTotal";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -122,14 +112,13 @@ void TerceraEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Este es el promedio de compra: %s\n", fila[0]);
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); 
 
 
     return;
@@ -139,42 +128,22 @@ void TerceraEstadistica(MYSQL *conexion) {
 
 
 /**
- * Nombre:
+ * Nombre:CuartaEstadistica
  * 
- * Descripcion:
+ * Descripcion: Generamos una consulta con la cual sacamos el top5 de los productos más vendidos estos se mostraran
+ * por medio de un print
+ * Entradas: un puntero a un tipo de dato MYSQL
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void CuartaEstadistica(MYSQL *conexion) {
 
-    // char *consulta = NULL;
-    // int largoConsultaF = asprintf(&consulta, "select * from Top5ProductosVendidos");
-    // if(mysql_query(conexion,consulta)){
-    //     printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-    //     free(consulta);
-    //     return;
-    // }
-    // free(consulta);
-    // MYSQL_RES *resultado = mysql_store_result(conexion);
-    // MYSQL_ROW fila;
-    // for (int i = 0; i < mysql_num_rows(resultado); i++) {
-    //     fila = mysql_fetch_row(resultado);
-    //     if (fila) {
-    //         printf("Este es el producto #%i, su nombre es %s y su cantidad es %s\n", i + 1, fila[0], fila[1]);
-    //     }
-    // }
-    // mysql_free_result(resultado);
-
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM Top5ProductosVendidos";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -185,15 +154,14 @@ void CuartaEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Este es el producto #%i, su nombre es %s y su cantidad es %s\n", count, fila[0], fila[1]);
                     count++;
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); 
 
     return;
 
@@ -202,42 +170,22 @@ void CuartaEstadistica(MYSQL *conexion) {
 
 
 /**
- * Nombre:
+ * Nombre:QuintaEstadistica
  * 
- * Descripcion:
+ * Descripcion: Como tal lo que hace es una consulta con la cual mostraremos el producto top por familia
+ * esto lo haremos por medio de un while el cual realice el proceso de los resultados
+ * Entradas: Un puntero a un tipo de dato MYSQL
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas: No tiene
  * 
  */
 void QuintaEstadistica(MYSQL *conexion) {
 
-    // char *consulta = NULL;
-    // int largoConsultaF = asprintf(&consulta, "select * from TopProductoFamilia");
-    // if(mysql_query(conexion,consulta)){
-    //     printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-    //     free(consulta);
-    //     return;
-    // }
-    // free(consulta);
-    // MYSQL_RES *resultado = mysql_store_result(conexion);
-    // MYSQL_ROW fila;
-    // for (int i = 0; i < mysql_num_rows(resultado); i++) {
-    //     fila = mysql_fetch_row(resultado);
-    //     if (fila) {
-    //         printf("Este es el nombre de la familia %s y su producto mas vendido es %s\n", fila[0], fila[1]);
-    //     }
-    // }
-    // mysql_free_result(resultado);
-
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM TopProductoFamilia";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -248,15 +196,14 @@ void QuintaEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Este es el nombre de la familia %s y su producto mas vendido es %s\n", fila[0], fila[1]);
                     count++;
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); 
 
     return;
 
@@ -264,43 +211,21 @@ void QuintaEstadistica(MYSQL *conexion) {
 
 
 /**
- * Nombre:
+ * Nombre:SextaEstadistica
  * 
- * Descripcion:
+ * Descripcion: Esta lo que hace es por medio de una consulta mostrar los montos mas altos generados por familia
+ * todos estos se hacen igual por medio de un while en caso de que hayan muchos resultados
+ * Entradas:un puntero a un tipo de datos MYSQL
  * 
- * Entradas:
- * 
- * Salidas:
+ * Salidas:No tiene
  * 
  */
 void SextaEstadistica(MYSQL *conexion) {
-
-    // char *consulta = NULL;
-    // int largoConsultaF = asprintf(&consulta, "select * from MontoTopFamilia");
-    // if(mysql_query(conexion,consulta)){
-    //     printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-    //     free(consulta);
-    //     return;
-    // }
-    // free(consulta);
-    // MYSQL_RES *resultado = mysql_store_result(conexion);
-    // MYSQL_ROW fila;
-    // for (int i = 0; i < mysql_num_rows(resultado); i++) {
-    //     fila = mysql_fetch_row(resultado);
-    //     if (fila) {
-    //         printf("Este es el nombre de la familia %s y su monto es de %s\n", fila[0], fila[1]);
-    //     }
-    // }
-    // mysql_free_result(resultado);
-
-
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
-    // Se crea la consulta...
     const char* consulta = "SELECT * FROM MontoTopFamilia";
     
-    //Validamos si se puede hacer .
     if (mysql_query(conexion, consulta)) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
@@ -310,14 +235,13 @@ void SextaEstadistica(MYSQL *conexion) {
         datos_recibidos = mysql_store_result(conexion);
         if (datos_recibidos) {
             
-                // Recorrer los resultados e imprimir cada fila
                 while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
                     printf("Este es el nombre de la familia %s y su monto es de %s\n", fila[0], fila[1]);
                 }
 
-            mysql_free_result(datos_recibidos); // Liberar resultados del conjunto actual
+            mysql_free_result(datos_recibidos); 
         }
-    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+    } while (mysql_next_result(conexion) == 0); 
 
     return;
 

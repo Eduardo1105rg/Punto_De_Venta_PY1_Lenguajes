@@ -59,25 +59,32 @@ create table Factura(
     Total float	not null,
     constraint fk_FIDCotizacion foreign key (IdCotizacion) references Cotizacion(IdCotizacion)
 );
+
+-- En esta parte creamos una vista la cual nos mostrara el catalogo con sus precios correspondientes y sus datos necesarios
+-- Del producto esto de una forma ordenada y utilizando un join para obtener la descripcion
+
 use puntoVenta;
 create view verCatalogo as
 select
 	p.IdProducto,
     p.Nombre,
-	(p.precio -(p.precio *0.13)) as PrecioSinIva,
+	p.precio,
     p.Cantidad,
     fp.Descripcion AS DescripcionFamilia
 from Productos as p
 JOIN FamiliaProductos AS fp ON p.IdFamilia = fp.IdFamilia;	
 
-
+-- Esta es para la primera estadistica en la cual revisamos la cantidad de cotizaciones que esten pendiente esto por medio
+-- De una vista la cual lo que hace es contar estos estados en donde se indique como Pendiente
 use puntoVenta;
 create view CantidadCotizacionesPendientes as
 select
 	count(c.EstadoCotizacion) as cantidadEstados
 from Cotizacion as c
 	where EstadoCotizacion = 'Pendiente';
-    
+  
+ -- De la misma forma esta realiza el mismo procedimiento revisando el estado de la cotizacion y si esta en Facturado
+ -- Lo cuenta y pues este se devuelve
 use puntoVenta;
 create view CantidadCotizacionesFacturadas as
 select
@@ -86,16 +93,17 @@ from Cotizacion as c
 	where EstadoCotizacion = 'Facturado';
     
     
--- Para sacar el promedio lo que hago es sumar todos los totales y dividirlos por la cantidad de facturas que se han creado    
+-- Estadistica, esta la hago por medio de una vista con la cual utilizo todos los totales de la factura y los resto por los que tiene
+-- El id de su factura de esta forma logro sacar el promedio
 use puntoVenta;
 create view PromedioTotal as
 select
 	sum(f.Total / f.IdFactura) as Totalpromedio
 from Factura as f;
 
- -- select * from PromedioTotal 
 
-
+-- Reviso los productos que ya esten facturados y dependiendo de las cantidades de estos pues si coinciden en los mas altos
+-- Se van agregando esto con su nombre y con su cantidad, de forma que le sea más facil al usuario ver
 use puntoVenta;
 create view Top5ProductosVendidos as
 select 
@@ -115,8 +123,10 @@ order by
 	cantidadVendida desc
 limit 5;
 
- -- select * from Top5ProductosVendidos
 
+-- Muestro el producto top por familia si es que hay  por cada fila de estos lo que hago es que el mismo los ponga en un top
+-- Entonces al ordenarlos ya no tengo que recorrerlos si no que el lo hace automaticamente y yo solo utilizo este ranking para
+-- llamarlo
 use puntoVenta;
 create view TopProductoFamilia as
 select
@@ -144,11 +154,11 @@ group by
     p.Nombre
 ) as subquery where ranking = 1;
 
- --   select * from TopProductoFamilia
   
   
   
-  
+-- Creo una vista para ver el monto top por familia de igual forma por cada fila genero un ranking asi es más fácil que la familia
+-- clasifique al que más genero y así solo lo llamo al final en su ordenamiento por el top de ranking
   use puntoVenta;
 create view MontoTopFamilia as
 select
@@ -176,8 +186,7 @@ group by
     f.Total
 ) as subquery where ranking = 1;
 
---  select * from MontoTopFamilia
-   -- select * from CantidadCotizacionesFacturadas
+
 
     
 -- Se crea un trigger para que cuando el usuario en el inventario ingrese una cantidad que haga que la cantidad del producto
@@ -219,6 +228,13 @@ group by
 -- con el que hacemos una union por medio del id de la familia y del id del producto por la pk y fk
 -- que luego comparamos las descripciones en el where y si estan son correctas nos devuelve el select
 -- de aquellos productos que cumplan la condición
+
+
+
+
+-- En esta parte creamos una vista la cual nos mostrara el catalogo con sus precios correspondientes y sus datos necesarios
+-- Del producto esto de una forma ordenada y utilizando un join para obtener la descripcion, solo que utilizamos un where
+-- para cumplir con el filtrado.
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE verCatalogoFiltro(
@@ -228,7 +244,7 @@ BEGIN
     SELECT
         p.IdProducto,
         p.Nombre,
-        (p.Precio - (p.Precio * 0.13)) AS PrecioSinIva,
+        p.Precio AS PrecioSinIva,
         p.Cantidad,
         fp.Descripcion AS DescripcionFamilia
     FROM 
@@ -241,16 +257,10 @@ END $$
 DELIMITER ;
 
 
--- call verCatalogoFiltro('Armas'); un ejemplo de prueba
 
--- Esto se hace porque los archivos que vienen importados desde el txt vienen sucios o sea con un salto de linea o caracter de finalizacion
--- set SQL_SAFE_UPDATES = 0;
--- update FamiliaProductos
--- set Descripcion = trim(REPLACE(REPLACE(Descripcion, CHAR(13), ''), CHAR(10), ''));
--- set SQL_SAFE_UPDATES = 1;
 
     
-    
+ -- Recibo un id en el cual selecciono los datos de un producto especifico para así mostrarlos siempre y cuando su id coincida totalmente   
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE obtenerProductoPorID(
@@ -273,10 +283,10 @@ END $$
 DELIMITER ;
 
 
--- CALL obtenerProductoPorID('Prod1');
 
 
-
+-- Recibo un id de cotizacion en el cual muestro todos los detalles adjuntos con esta misma de forma que al usuario le salen
+-- de forma más ordenada, de igual forma utilice varios join para conectar con otras tablas y que se genere bien la relación
 DELIMITER $$
 use puntoVenta$$
 create procedure mostrarDetalleCotizacion(
@@ -301,8 +311,8 @@ end $$
 DELIMITER ;
 
 
-
--- drop procedure eliminarLineaDetalle
+-- Si me dan el nombre de un producto lo que hago es buscarlo en la cotizacion y por medio del id realizo una confirmacion con su nombre
+-- y si es asi pues lo borramos
 DELIMITER $$
 use puntoVenta$$
 CREATE PROCEDURE eliminarLineaDetalle(
@@ -336,6 +346,8 @@ DELIMITER ;
 -- delimiter;
 
 
+-- Aqui se recibe el id del producto y de la cotizacion, a partir de estos valores buscamos en la tabla cotizacion detalle
+-- Si logramos ver que estos coinciden los borramos pero para esto se deben cumplir ambas condiciones
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE eliminarDetalleCotizacion(
@@ -347,10 +359,9 @@ BEGIN
     where IdProducto = idProdu and IdCotizacion = idCot;
 END $$
 DELIMITER ;
--- call eliminarDetalleCotizacion("Prod1",1)
 
-
-drop procedure facturaFin
+-- Este procedimiento lo utilizo para buscar todos los datos o el cuerpo de lo que viene a ser la factura para así mostrarle aquello
+-- que deseo al usuario además de que esto se recorrera por medio de un while para que sea mejor y se actualice más constante.
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE facturaFin(
@@ -377,22 +388,21 @@ DELIMITER ;
 
 
 
--- SHOW TRIGGERS;
 
- drop PROCEDURE VerificarYRestarStock
-
+-- Esto lo que hace es verificar si se tiene primero la cantidad necesaria de productos una vez confirmado esto procede a restarlos
+-- sin embargo esto lo hacemos por medio de la cotizacion detalle y los productos como tal el stock siempre se resta a la tabla
+-- Productos
 DELIMITER $$
-
 CREATE PROCEDURE VerificarYRestarStock(IN idCotizacion INT)
 BEGIN
-    -- Primero verificamos qué productos no tienen suficiente stock
+
     SELECT cd.IdProducto, cd.Cantidad, p.Cantidad AS StockDisponible
     FROM CotizacionDetalle cd
     LEFT JOIN Productos p ON cd.IdProducto = p.IdProducto
     WHERE cd.IdCotizacion = idCotizacion
     AND p.Cantidad < cd.Cantidad;
 
-    -- Luego, si hay suficiente stock, actualizamos el stock
+    -- si hay suficiente stock actualizamos el stock
     UPDATE Productos p
     JOIN CotizacionDetalle cd ON p.IdProducto = cd.IdProducto
     SET p.Cantidad = p.Cantidad - cd.Cantidad
@@ -404,33 +414,10 @@ END$$
 DELIMITER ;
 
 
+-- Esta es la ultima parte de la factura aqui se van a mostrar todos los gastos finales de manera que el usuario pueda observar
+-- Lo que tendra que pagar o lo que pago por la factura que se le realizo, de igual forma se confirma mediante el cliente
+-- y el id de la cotizacion
 
-
-
-
-
-
-
-
-
- --               UPDATE CotizacionDetalle SET Cantidad = 40 WHERE IdCotizacion = 2 AND IdProducto = 'Prod3'
-
-
--- SELECT IdProducto, Cantidad FROM CotizacionDetalle WHERE IdCotizacion = 2;
--- SELECT IdProducto, Cantidad FROM Productos WHERE IdProducto IN (SELECT IdProducto FROM CotizacionDetalle WHERE IdCotizacion = 2);
--- SELECT IdProducto, Cantidad FROM CotizacionDetalle WHERE IdCotizacion = 2;
-
--- CALL VerificarYRestarStock(2);
-
--- SELECT IdProducto, Cantidad
--- FROM CotizacionDetalle
--- WHERE IdCotizacion = 2 AND IdProducto = 'Prod1';
-
-
-
-	
--- call facturaFin(1,'Edutec');
--- Este seria en caso de querer solo mostrar los totales
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE facturaFinDinero(
@@ -453,7 +440,8 @@ END $$
 DELIMITER ;
 
 
--- Validacion para corroborar si hay algún ID de familia agregado previamente a su inserción
+-- esta se puede ver como la Validacion para corroborar si hay algún ID de familia agregado previamente a su inserción,
+-- si es que existe se envia un mensaje de error para informar al usuario
 delimiter $$
 use puntoVenta$$
 create trigger DuplicadosFamilia
@@ -469,11 +457,11 @@ begin
 end$$
 delimiter ;
 
--- insert into FamiliaProductos(IdFamilia,Descripcion) Values ('Fam1','Enlatados'); prueba
 
 
 
--- Validacion para corroborar si hay algún ID de productos agregado previamente a su inserción
+-- Esta se puede ver como la validacion para corroborar si hay algún ID de productos agregado previamente a su inserción
+-- si es que los hay le informa al usuario por medio de un mensaje
 delimiter $$
 use puntoVenta$$
 create trigger DuplicadosProductos
@@ -489,7 +477,10 @@ begin
 end$$
 delimiter ;
 
--- Esta es la validación para cuando se quiere eliminar un productos ya facturado o cotizado 
+
+-- REVISAR ESTE
+-- Esta es la validación para cuando se quiere eliminar un productos ya facturado o cotizado de forma que revise si el producto
+-- ya fue facturado y que por lo tanto no se pueda eliminar
 delimiter $$
 use puntoVenta$$
 create trigger revisaEliminarProductos
@@ -513,13 +504,10 @@ begin
 	end if;
 end$$
 delimiter ;
--- DELETE FROM Productos WHERE IdProducto = 'Prod3';
--- -- DROP TRIGGER revisaEliminarProductos;
 
 
 
--- >> Vista para ver todas las facturas realizadas.
--- Uso: selec * from verFacturas;
+-- con esta vista podremos observar datos especificos como el id, fecha y hora, subtotal y total
 create view verFacturas as
 select
 	f.IdFactura,
@@ -528,7 +516,8 @@ select
     f.Total
 from Factura as f;
 
--- >> Procedure para optener los datos completos de una facturas (Se excluyen los datos de los productos).
+-- Con este procedimiento recibimos el id de la factura y por medio de este id confirmamos si existe y si es asi mostramos datos
+-- como lo son el id de factura y cotizacion, fecha y hora, subtotal, impuesto y total
 DELIMITER $$
 USE puntoVenta$$
 CREATE PROCEDURE verDatosFacturaEspecifica(
