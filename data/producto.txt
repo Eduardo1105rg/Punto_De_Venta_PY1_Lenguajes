@@ -1,8 +1,8 @@
-Prod1,AtunSuli,Fam1,500.0,655.4,45
+Prod1,Atun Suli,Fam1,500.0,655.4,45
 Prod2,Sardinas,Fam1,600.0,750.5,30
 Prod3,Spam,Fam1,1050.0,1350.0,50
-Prod4,ArrozPelon5kg,Fam2,6500.0,7500.0,30
-Prod5,FrijolesSuli2kg,Fam2,1000.0,1350.0,60
+Prod4,Arroz Pelon5 kg,Fam2,6500.0,7500.0,30
+Prod5,Frijoles Suli 2kg,Fam2,1000.0,1350.0,60
 Prod6,AvenaQuacker1kg,Fam2,1250.5,1500.3,40
 Prod7,OllaMultiuso,Fam3,30000.0,41990.2,20
 Prod8,FreidoraDeAire,Fam3,40000.3,99900.1,45
