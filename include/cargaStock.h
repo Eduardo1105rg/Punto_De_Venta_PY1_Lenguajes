@@ -1,5 +1,6 @@
 #ifndef CARGASTOCK_H
 #define CARGASTOCK_H
+#include <mysql/mysql.h>
 
 
 struct NodoCargaStock;
@@ -24,7 +25,7 @@ typedef struct NodoCargaStock {
 
 int cargarStockDesdeArchivo(char * nombreArchivo, NodoCargaStock** listaCargaStock);
 
-void guardarStockEnDB(NodoCargaStock* head);
+void guardarStockEnDB(MYSQL *conexion, NodoCargaStock* head);
 
 
 // Lo relacionado con la lista dinamica para la carga del stock de un producto desde un archivo.
@@ -35,6 +36,6 @@ void insertarElementoAlFinalCargaStock(NodoCargaStock** head, const char *idProd
 
 void imprimirListaNodosCargaStock(NodoCargaStock* head);
 
-void liberarListaCargaStock(NodoCargaStock* head);
+void liberarListaCargaStock( NodoCargaStock* head);
 
 #endif

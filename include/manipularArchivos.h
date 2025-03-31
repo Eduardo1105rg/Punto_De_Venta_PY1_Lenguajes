@@ -9,5 +9,12 @@ char* leer_lineas(FILE *archivo, int num_linea);
 
 void imprimir_lista_palabras(char** listaPalabras, int numPalabras, int num_linea);
 
+void leerCaracteresDeFormadinamica(char** cadena);
+
+int leerNumeroDinamico();
+
+int leeNumeroDinamicoV2();
+
+void leerPrimerCaracter(char *opcion);
 
 #endif

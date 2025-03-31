@@ -1,5 +1,6 @@
 #ifndef PRODUCTO_H
 #define PRODUCTO_H
+#include <mysql/mysql.h>
 
 struct NodoProducto;
 
@@ -26,7 +27,7 @@ typedef struct NodoProducto {
 
 int cargarProductosDesdeArchivo(char * nombreArchivo, NodoProducto** listaProductos);
 
-void guardarProductosEnDB(NodoProducto* lista_productos);
+void guardarProductosEnDB(MYSQL *conexion, NodoProducto* lista_productos);
 
 
 // Lo relacionado con la lista dinamica para familia:
@@ -37,6 +38,10 @@ void insertarElementoAlFinalProducto(NodoProducto** head, const char *idProducto
 
 void imprimirListaNodosProducto(NodoProducto* head);
 
-void liberarListaProducto(NodoProducto* head);
+void liberarListaProducto( NodoProducto* head);
+
+void eliminarProducto(MYSQL *conexion, const char *idProducto);
+
+int validar_exitencia_producto(MYSQL *conexion, const char *idProducto);
 
 #endif
