@@ -289,11 +289,13 @@ void agregarStock(MYSQL *conexion, const char *id_producto, int cantidad){
     int largo = asprintf(&consulta, "call actualizaStockC('%s', %d);", id_producto, cantidad);
 
     if (mysql_query(conexion, consulta)) {
-        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        //printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         printf("No se pudo agregar el %s pues su cantidad %d excede el stock dejandolo en negativo", id_producto, cantidad);
         free(consulta);
         return;
     }
+    printf("Se ha modificado la cantidad del producto con id:%s.", id_producto);
+    return;
 }
 
 

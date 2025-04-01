@@ -32,7 +32,7 @@ int cantidadCotizaciones = 1;
  * Salidas: No tiene
  * 
  */
-void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
+int  ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
     char *consultaBF = NULL;
 
     int largoConsultaBF = asprintf(&consultaBF, "CALL VerificarYRestarStock(%d)", id_cotizacion);
@@ -41,7 +41,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
         printf("Me caí aquí\n");
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         free(consultaBF);
-        return;
+        return 1;
     }
     printf("Verifiqué el stock\n");
 
@@ -65,7 +65,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
         free(productos);
         free(cantidadesSolicitadas);
         free(cantidadesDisponibles);
-        return;
+        return 1;
     }
     do {
         MYSQL_RES *resultadoBF = mysql_store_result(conexion);
@@ -114,7 +114,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                     }
                 
                     free(consultaBF7);
-                    return;
+                    return 1;
                 }
                 
                 
@@ -135,7 +135,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                     free(productos);
                     free(cantidadesSolicitadas);
                     free(cantidadesDisponibles);
-                    return;
+                    return 1;
                 }
                 if (index >= capacidad) {
                     capacidad *= 2; 
@@ -151,7 +151,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
                         free(productos);
                         free(cantidadesSolicitadas);
                         free(cantidadesDisponibles);
-                        return;
+                        return 1;
                     }
                 }
 
@@ -194,6 +194,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
             printf("Stock ajustado.\n");
         } else {
             printf("No se ajusta el stock de %s.\n", productos[i]);
+            return 1;
         }
         free(productos[i]); 
     }
@@ -203,6 +204,7 @@ void ConsultaOpcional(MYSQL *conexion, int id_cotizacion) {
     free(productos);
     free(cantidadesSolicitadas);
     free(cantidadesDisponibles);
+    return 0;
 }
 
 
@@ -248,10 +250,10 @@ void menu_consulta_catalogo() {
             // ========== Consulta de catalogo.
             case 'a' :
             
-                consultarCatalogo(conexion, 1);
+                consultarCatalogo(conexion, 0);
                 break;
             case 'A':
-                consultarCatalogo(conexion, 1);
+                consultarCatalogo(conexion, 0);
                 break;
 
             // ========== Consulta de catalogo por la descripcion de la familia.
@@ -262,7 +264,7 @@ void menu_consulta_catalogo() {
                 printf("\nIngresa la descripcion de la familia a buscar: ");
                 leerCaracteresDeFormadinamica(&descripcion_familia1);
                 printf("\n");
-                consultarCatalogoPorFamilia(conexion, descripcion_familia1, 1);
+                consultarCatalogoPorFamilia(conexion, descripcion_familia1, 0);
                 free(descripcion_familia1);
                 break;
 
@@ -272,7 +274,7 @@ void menu_consulta_catalogo() {
                 printf("\nIngresa la descripcion de la familia a buscar: ");
                 leerCaracteresDeFormadinamica(&descripcion_familia2);
                 printf("\n");
-                consultarCatalogoPorFamilia(conexion, descripcion_familia2, 1);
+                consultarCatalogoPorFamilia(conexion, descripcion_familia2, 0);
                 free(descripcion_familia2);
 
                 break;
@@ -288,7 +290,7 @@ void menu_consulta_catalogo() {
             default:
                 printf("Opción no válida, intenta de nuevo.\n");
         }
-    } while (opcion != 's');
+    } while (opcion != 's' && opcion != 'S');
 
     cerrarConexion(conexion);
     
@@ -589,6 +591,7 @@ void menu_modificar_cotizacion() {
 
     NodoCotizacionDetalle *lista_productos_en_cotizacion = NULL;
 
+    NodoCotizacionDetalle *lista_productos_eliminados = NULL;
 
     //printf("Por favor escriba el identificador de la cotizacion a modificar:");
     int identificadorCotizacion = ingresar_indentificador_cotizacion();
@@ -699,8 +702,9 @@ void menu_modificar_cotizacion() {
 
                 printf("\n");
 
-                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar1);
+                eliminarCotizacionPorNumFilaV2(&lista_productos_en_cotizacion, num_fila_eliminar1, &lista_productos_eliminados);
                 //eliminarPorIdCotizacionDetalle(&lista_productos_en_cotizacion, id_producto_a_eliminar1);
+                imprimirListaNodosCotizacionDetalle(lista_productos_eliminados);
 
                 //free(id_producto_a_eliminar1);
 
@@ -711,8 +715,8 @@ void menu_modificar_cotizacion() {
                 int num_fila_eliminar2 = leeNumeroDinamicoV2();
                 printf("\n");
 
-                eliminarCotizacionPorNumFila(&lista_productos_en_cotizacion, num_fila_eliminar2);
-
+                eliminarCotizacionPorNumFilaV2(&lista_productos_en_cotizacion, num_fila_eliminar2, &lista_productos_eliminados);
+                imprimirListaNodosCotizacionDetalle(lista_productos_eliminados);
                 break;
 
             // ========== Guardar la cotizacion creada.
@@ -732,47 +736,51 @@ void menu_modificar_cotizacion() {
                 }
                 opcion = 's';
 
+                //printf("\nPass1\n ");
+                
+                pocesar_cambios_cotizacion(conexion, lista_productos_en_cotizacion, lista_productos_eliminados, identificadorCotizacion);
+                //printf("\nPass2\n ");
 
                 //Aqui lo que hacemos es utilizar la lista de los productos más actualizada para así pasar los datos de poco a poco
                 //aunque lo que realmente se termina haciendo es una consulta para insertar estos datos en la base una vez el usuario
                 //Haya decidido guardarlos
-                if(guarda == 1) {
-                    char * consulta3 = NULL;
-                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                    while (actual != NULL) { 
-                        char *IdProd = actual->detallesCotizacion.IdProducto;
-                        int cantidadProdu = actual->detallesCotizacion.cantidad;
-                        float precio = actual->detallesCotizacion.precio;
+                // if(guarda == 1) {
+                //     char * consulta3 = NULL;
+                //     NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                //     while (actual != NULL) { 
+                //         char *IdProd = actual->detallesCotizacion.IdProducto;
+                //         int cantidadProdu = actual->detallesCotizacion.cantidad;
+                //         float precio = actual->detallesCotizacion.precio;
 
-                        printf("%d",identificadorCotizacion);                    
-                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                //         printf("%d",identificadorCotizacion);                    
+                //         printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
                         
-                        int largoConsulta = asprintf(&consulta3, 
-                            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
-                            identificadorCotizacion, IdProd, cantidadProdu, precio);
+                //         int largoConsulta = asprintf(&consulta3, 
+                //             "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
+                //             identificadorCotizacion, IdProd, cantidadProdu, precio);
                     
-                        if (mysql_query(conexion, consulta3)) {
-                            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-                            free(consulta3);
-                            return;
-                        }
-                        free(consulta3);                     
-                        actual = actual->siguiente; 
-                    }
+                //         if (mysql_query(conexion, consulta3)) {
+                //             //printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                //             free(consulta3);
+                            
+                //         }
+                //         free(consulta3);                     
+                //         actual = actual->siguiente; 
+                //     }
                 
 
-                }else { 
-                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                    while (actual != NULL) { 
-                        char *IdProd = actual->detallesCotizacion.IdProducto;  
-                        printf("%d",identificadorCotizacion);                    
-                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                // }else { 
+                //     NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                //     while (actual != NULL) { 
+                //         char *IdProd = actual->detallesCotizacion.IdProducto;  
+                //         printf("%d",identificadorCotizacion);                    
+                //         printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
                         
-                        eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
+                //         eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
                         
-                        actual = actual->siguiente; 
-                    }
-                }
+                //         actual = actual->siguiente; 
+                //     }
+                // }
                 break;
 
             case 'D':
@@ -791,40 +799,42 @@ void menu_modificar_cotizacion() {
                 }
                 opcion = 's';
 
-                if(guarda == 1) {
-                    char * consulta3 = NULL;
-                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                    while (actual != NULL) { 
-                        char *IdProd = actual->detallesCotizacion.IdProducto;
-                        int cantidadProdu = actual->detallesCotizacion.cantidad;
-                        float precio = actual->detallesCotizacion.precio;                   
-                        int largoConsulta = asprintf(&consulta3, 
-                            "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
-                            identificadorCotizacion, IdProd, cantidadProdu, precio);
+                pocesar_cambios_cotizacion(conexion, lista_productos_en_cotizacion, lista_productos_eliminados, identificadorCotizacion);
+
+                // if(guarda == 1) {
+                //     char * consulta3 = NULL;
+                //     NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                //     while (actual != NULL) { 
+                //         char *IdProd = actual->detallesCotizacion.IdProducto;
+                //         int cantidadProdu = actual->detallesCotizacion.cantidad;
+                //         float precio = actual->detallesCotizacion.precio;                   
+                //         int largoConsulta = asprintf(&consulta3, 
+                //             "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto,Cantidad,PrecioXunidad) VALUES (%d,'%s',%d,%f);", 
+                //             identificadorCotizacion, IdProd, cantidadProdu, precio);
                     
-                        if (mysql_query(conexion, consulta3)) {
-                            printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
-                            free(consulta3);
-                            return;
-                        }
-                        free(consulta3);                    
-                        actual = actual->siguiente; 
-                    }
+                //         if (mysql_query(conexion, consulta3)) {
+                //             printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                //             free(consulta3);
+                //             return;
+                //         }
+                //         free(consulta3);                    
+                //         actual = actual->siguiente; 
+                //     }
                 
 
-                }else { 
-                    NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
-                    while (actual != NULL) { 
-                        char *IdProd = actual->detallesCotizacion.IdProducto;  
-                        printf("%d",identificadorCotizacion);                    
-                        printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
+                // }else { 
+                //     NodoCotizacionDetalle *actual = lista_productos_en_cotizacion;
+                //     while (actual != NULL) { 
+                //         char *IdProd = actual->detallesCotizacion.IdProducto;  
+                //         printf("%d",identificadorCotizacion);                    
+                //         printf("ID Producto: %s, Nombre Producto: %d\n", IdProd, identificadorCotizacion);
                         
-                        eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
+                //         eliminarFilaBD(conexion, IdProd, identificadorCotizacion);
                         
-                        actual = actual->siguiente; 
-                    }
-                }
-                break;
+                //         actual = actual->siguiente; 
+                //     }
+                // }
+                // break;
 
             // ========== Salir del menu.
             case 's': 
@@ -872,6 +882,8 @@ void menu_modificar_cotizacion() {
     cerrarConexion(conexion);
     
     liberarListaCotizacionDetalle(lista_productos_en_cotizacion);
+    liberarListaCotizacionDetalle(lista_productos_eliminados);
+
 
     return;
 
@@ -933,6 +945,7 @@ void menu_crear_factura() {
 
     if (mysql_query(conexion, consultaff)) {
         printf("Error al realizar la consulta (Productos): %s\n", mysql_error(conexion));
+        return;
     }
     MYSQL_RES *resultadoff = mysql_store_result(conexion);
     MYSQL_ROW filas = mysql_fetch_row(resultadoff);
@@ -993,7 +1006,13 @@ void menu_crear_factura() {
     printf("\n");
 
     //Aqui realizamos lo de quitar stock
-    ConsultaOpcional(conexion,id_cotizacion);
+    int resultadoProceso = ConsultaOpcional(conexion,id_cotizacion);
+
+    if (resultadoProceso == 1) {
+        printf("\nNo ha sido posible continuar con el proceso de facturacion, por favor intentelo nuevamente, o modifique valores en la cotizacion.\n");
+
+        return;
+    }
 
     //Cambiamos el estado de la cotizacion a Facturado
     char *consultaFC = NULL;

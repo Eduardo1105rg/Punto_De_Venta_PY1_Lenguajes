@@ -189,8 +189,10 @@ void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFil
     if (anterior == NULL)
     {
         *head = actual->siguiente;
+        //insertarElementoAlFinalCotizacionDetalle(lista_elementos_eliminados, actual->siguiente->detallesCotizacion.IdProducto, actual->siguiente->detallesCotizacion.NombreProducto, actual->siguiente->detallesCotizacion.Descripcion, actual->siguiente->detallesCotizacion.precio, actual->siguiente->detallesCotizacion.cantidad );
     } else {
         anterior->siguiente = actual->siguiente;
+        //insertarElementoAlFinalCotizacionDetalle(lista_elementos_eliminados, actual->siguiente->detallesCotizacion.IdProducto, actual->siguiente->detallesCotizacion.NombreProducto, actual->siguiente->detallesCotizacion.Descripcion, actual->siguiente->detallesCotizacion.precio, actual->siguiente->detallesCotizacion.cantidad );
     }
     
     free(actual);
@@ -198,6 +200,59 @@ void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFil
 
 }
 
+
+/**
+ * Nombre: eliminarCotizacionPorNumFilaV2
+ * 
+ * Descripcion: Funcion para eliminar un elementos especifico de la lista de nodos.
+ * 
+ * Entradas:  NodoCotizacionDetalle** head: Puntero a la lista de nodos.
+ *  const int numFila: numero de fila en la que se encuentra el prodcuto a eliminar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
+void eliminarCotizacionPorNumFilaV2(NodoCotizacionDetalle** head, const int numFila, NodoCotizacionDetalle** lista_elementos_eliminados) {
+
+    NodoCotizacionDetalle* actual = *head;
+    NodoCotizacionDetalle* anterior = NULL;
+
+    while (actual != NULL && actual->detallesCotizacion.NumeroFila != numFila)
+    {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    if (actual == NULL) {
+        printf("El producto con el indice %i no ha sido encontrado.", numFila);
+        return;
+    }
+
+    insertarElementoAlFinalCotizacionDetalle(
+        lista_elementos_eliminados,
+        actual->detallesCotizacion.IdProducto,
+        actual->detallesCotizacion.NombreProducto,
+        actual->detallesCotizacion.Descripcion,
+        actual->detallesCotizacion.precio,
+        actual->detallesCotizacion.cantidad
+    );
+
+    if (anterior == NULL)
+    {
+        *head = actual->siguiente;
+        //insertarElementoAlFinalCotizacionDetalle(lista_elementos_eliminados, actual->detallesCotizacion.IdProducto, actual->siguiente->detallesCotizacion.NombreProducto, actual->siguiente->detallesCotizacion.Descripcion, actual->siguiente->detallesCotizacion.precio, actual->siguiente->detallesCotizacion.cantidad );
+    } else {
+        anterior->siguiente = actual->siguiente;
+        //insertarElementoAlFinalCotizacionDetalle(lista_elementos_eliminados, actual->detallesCotizacion.IdProducto, actual->siguiente->detallesCotizacion.NombreProducto, actual->siguiente->detallesCotizacion.Descripcion, actual->siguiente->detallesCotizacion.precio, actual->siguiente->detallesCotizacion.cantidad );
+    }
+    
+    free(actual->detallesCotizacion.IdProducto);
+    free(actual->detallesCotizacion.NombreProducto);
+    free(actual->detallesCotizacion.Descripcion);
+    free(actual);
+    return;
+
+}
 
 /**
  * Nombre: buscarPorIdCotizacionDetalle
@@ -525,7 +580,7 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 
                 if (cantProducto != 0) {
                     
-                    if ((cantidadExitente - (cantProducto + cantidad)) <= 0) {
+                    if ((cantidadExitente - (cantProducto + cantidad)) < 0) {
 
                         printf("\n Error: No contamos con suficiente existencias de este prodcuto par la cantidad ingresada, por favor vuelva a interntarlo. \n");
                     } else {
@@ -535,7 +590,7 @@ void agregar_nuevo_producto(MYSQL *conexion, NodoCotizacionDetalle** head, const
 
                 } else {
 
-                    if ((cantidadExitente - cantidad) <= 0) {
+                    if ((cantidadExitente - cantidad) < 0) {
 
                         printf("\n Error: No contamos con suficiente existencias de este prodcuto par la cantidad ingresada, por favor vuelva a interntarlo. \n");
 
@@ -754,6 +809,150 @@ void mostrar_detalle_cotizacion_facturada(MYSQL *conexion, const int idCotizacio
         MYSQL_RES *res = mysql_store_result(conexion);
         mysql_free_result(res);
     }
+    return;
+}
+
+
+/**
+ * Nombre: validar_existencia_producto_cotizacion
+ * 
+ * Descripcion: Funcion para validar la exitencia de un producto en una cotizacion, esta funcion devuelve un 0 si el producto existe y un 1 si no existe.
+ * 
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  const int idCotizacion: Id de la cotizacion a mostrar.
+ * const char * idProducto: In del producto a validar.
+ * 
+ * Salidas: Int existencia, estados de la existencia de un producto en una cotizacion.
+ * 
+ */
+int validar_existencia_producto_cotizacion(MYSQL *conexion, const int idCotizacion, const char * idProducto) {
+
+    MYSQL_RES *resultado;
+    MYSQL_ROW fila;
+    char consulta[256];
+
+    // Paso 1: Verificar si el producto existe usando el procedimiento almacenado
+    snprintf(consulta, sizeof(consulta), "CALL ObtenerDetalleProductoCotizacion('%d' ,'%s')", idCotizacion , idProducto);
+
+    if (mysql_query(conexion, consulta)) {
+        printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+        return 1;
+    }
+
+    resultado = mysql_store_result(conexion);
+    if (resultado == NULL) {
+        printf("Error al obtener los resultados: %s\n", mysql_error(conexion));
+        return 1;
+    }
+
+    int count = 0;
+
+    fila = mysql_fetch_row(resultado); 
+
+    if (fila == NULL) {
+        //printf("Error: El producto con ID '%s' no existe en la base de datos.\n", idProducto);
+        count++;
+    }
+    
+    do {
+        resultado = mysql_store_result(conexion);
+        if (resultado) {
+            
+                // Recorrer los resultados e imprimir cada fila
+                while ((fila = mysql_fetch_row(resultado)) != NULL) {
+                    if (fila == NULL) {
+                        count++;
+                    }
+                }
+            mysql_free_result(resultado); // Liberar resultados del conjunto actual
+        }
+    } while (mysql_next_result(conexion) == 0); // Procesar los siguientes resultados, si existen
+
+    // if (count != 0) {
+    //     printf("Error: El producto con ID '%s' no es.\n", idProducto);
+    // }
+
+    return count;
+}
+
+
+/**
+ * Nombre: pocesar_cambios_cotizacion
+ * 
+ * Descripcion: Funcion para procesar los cambios de en una cotizacion.
+ * 
+ * Entradas: MYSQL *conexion: Puntero a la instancia de MYSQL.
+ *  NodoCotizacionDetalle *lista: un puntero a la lista de nodos, de la cotizacion actual con sus elementos modificados.
+ *  NodoCotizacionDetalle *lista_eliminados: Un puntero a la lista de nodos de los elementos que fueron eliminados de la cotizacion.
+ * int idCotizacion: Id de la cotizacion a mostrar.
+ * 
+ * Salidas: No posee.
+ * 
+ */
+void pocesar_cambios_cotizacion(MYSQL *conexion, NodoCotizacionDetalle *lista, NodoCotizacionDetalle *lista_eliminados , int idCotizacion) {
+
+    NodoCotizacionDetalle *actual = lista;
+    char *consulta = NULL;
+
+    NodoCotizacionDetalle *eliminados = lista_eliminados;
+    char *consulta2 = NULL;
+
+    // Eliminar los datos de un producto de la base de datos.  
+    while (eliminados != NULL)
+    {
+        char *idProduE = eliminados->detallesCotizacion.IdProducto;
+        printf("\n Datos a eliminar: %s -- %i\n ", idProduE, idCotizacion);
+        
+        eliminarFilaBD(conexion, idProduE, idCotizacion);
+
+        free(consulta2);
+        eliminados = eliminados->siguiente;
+    }
+
+    while (actual != NULL) {
+
+        const char *idProdu = actual->detallesCotizacion.IdProducto;
+        int cantidadProductos = actual->detallesCotizacion.cantidad;
+        float precioProducto = actual->detallesCotizacion.precio;
+
+        int existencia = validar_existencia_producto_cotizacion(conexion, idCotizacion, idProdu);
+        printf("\n Datos de la exitencia: %i \n ", existencia);
+
+        if (existencia == 0) {
+            // Actualizar los datos de un producto de la cotizacion.
+
+            char *consultaUpdate = NULL;
+            asprintf(&consultaUpdate, 
+                     "UPDATE CotizacionDetalle SET Cantidad = %d WHERE IdCotizacion=%d AND IdProducto='%s';", 
+                     cantidadProductos, idCotizacion, idProdu);
+
+            if (mysql_query(conexion, consultaUpdate)) {
+                printf("Error al actualizar el producto: %s\n", mysql_error(conexion));
+            } else {
+                printf("Producto actualizado correctamente.\n");
+            }
+            free(consultaUpdate);
+
+        } else {
+            // Insertar los detalles de la cotización
+            int largoConsulta = asprintf(&consulta, 
+                "INSERT INTO CotizacionDetalle (IdCotizacion, IdProducto, Cantidad, PrecioXunidad) "
+                "VALUES ('%d', '%s', '%d', '%f');", 
+                idCotizacion, idProdu, cantidadProductos, precioProducto);
+
+            if (mysql_query(conexion, consulta)) {
+                printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
+                free(consulta);
+                return;
+            }
+        }
+
+        free(consulta);
+        actual = actual->siguiente;
+    }
+
+
+    
     return;
 }
 

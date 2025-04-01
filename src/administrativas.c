@@ -251,7 +251,7 @@ void menu_modificar_stock() {
     }
     //  imprimirListaNodosCargaStock(lista_carga_stock);
 
-    //  guardarStockEnDB(conexion,lista_carga_stock);
+    guardarStockEnDB(conexion,lista_carga_stock);
 
     liberarListaCargaStock(lista_carga_stock);
 

@@ -55,7 +55,7 @@ void consultarCatalogo(MYSQL *conexion, int modo) {
         }
     
         // Imprimir línea final de tabla
-        printf("+--------------+----------------------+-------------------+-------------+\n\n");
+        printf("+--------------+----------------------+-------------------+----------+----------------------+\n\n");
 
     } else { 
         // esta seria para lo que es la cotizacion
@@ -73,7 +73,7 @@ void consultarCatalogo(MYSQL *conexion, int modo) {
         }
     
         // Imprimir línea final de tabla
-        printf("+--------------+----------------------+-------------------+---------------+\n\n");
+        printf("+--------------+----------------------+-------------------+--------------+\n\n");
 
     }
  
@@ -130,7 +130,7 @@ void consultarCatalogoPorFamilia(MYSQL *conexion, const char* descripcion, int m
                 }
 
                 // Línea final de tabla
-                printf("+--------------+----------------------+-------------------+-------------+\n\n");
+                printf("+--------------+----------------------+-------------------+----------+----------------------\n\n");
             } else {
                 // Consulta para cotización
                 printf("+--------------+----------------------+-------------------+-------------+\n");

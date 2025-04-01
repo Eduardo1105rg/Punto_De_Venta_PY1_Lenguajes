@@ -39,6 +39,9 @@ void eliminarPorIdCotizacionDetalle(NodoCotizacionDetalle** head, char * id);
 
 void eliminarCotizacionPorNumFila(NodoCotizacionDetalle** head, const int numFila);
 
+void eliminarCotizacionPorNumFilaV2(NodoCotizacionDetalle** head, const int numFila, NodoCotizacionDetalle** lista_elementos_eliminados);
+
+
 void modificarValoresNodoCotizacionDetalle(NodoCotizacionDetalle** head, const char * id, const int cantidad);
 
 
@@ -61,5 +64,7 @@ void crearCotizacion(MYSQL *conexion, const char *nombreCliente, int *idCotizaci
 void enviarCotizacionDB(MYSQL *conexion, NodoCotizacionDetalle *lista, int idCotizacion);
 
 void mostrar_detalle_cotizacion_facturada(MYSQL *conexion, const int idCotizacion);
+
+void pocesar_cambios_cotizacion(MYSQL *conexion, NodoCotizacionDetalle *lista, NodoCotizacionDetalle *lista_eliminados , int idCotizacion);
 
 #endif

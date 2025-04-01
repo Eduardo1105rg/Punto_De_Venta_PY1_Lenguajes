@@ -4,7 +4,9 @@
 #include "../include/db.h"
 
 #include <mysql/mysql.h>
-#define HOST "192.168.50.136"
+
+// Modificar estos datos con lo datos del MySQL al que se requiera conectar.
+#define HOST "172.22.112.1"
 #define PORT 3307
 #define USERNAME "root"
 #define PASSWORD "root"

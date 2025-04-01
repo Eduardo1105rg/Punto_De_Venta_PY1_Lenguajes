@@ -530,7 +530,7 @@ begin
         SELECT 1
         FROM CotizacionDetalle AS cd
         JOIN Cotizacion AS c ON cd.IdCotizacion = c.IdCotizacion
-        WHERE cd.IdProducto = nuevoID AND c.EstadoCotizacion = 'Pendiente'
+        WHERE cd.IdProducto = nuevoID AND c.EstadoCotizacion = 'Pendiente' AND c.EstadoCotizacion = 'Facturado'
     
     ) then 
 		signal sqlstate '45000'
@@ -538,7 +538,7 @@ begin
 	end if;
 end$$
 delimiter ;
-
+-- DROP TRIGGER revisaEliminarProductos;
 
 
 -- con esta vista podremos observar datos especificos como el id, fecha y hora, subtotal y total
@@ -574,4 +574,25 @@ BEGIN
 END$$
 DELIMITER ;
 
-show triggers
+-- show triggers
+
+DELIMITER $$
+USE puntoVenta$$
+CREATE PROCEDURE ObtenerDetalleProductoCotizacion(
+    IN inputIdCotizacion INT,
+    IN inputIdProducto VARCHAR(10)
+)
+BEGIN
+    SELECT
+        IdCotizacion,
+        IdProducto,
+        Cantidad,
+        PrecioXunidad
+    FROM CotizacionDetalle
+    WHERE IdCotizacion = inputIdCotizacion
+      AND IdProducto = inputIdProducto;
+END$$
+DELIMITER ;
+
+
+

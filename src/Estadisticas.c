@@ -96,8 +96,7 @@ void SegundaEstadistica(MYSQL *conexion) {
  * Salidas:No tienes
  * 
  */
-void TerceraEstadistica(MYSQL *conexion) {
-
+ void TerceraEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
@@ -108,27 +107,25 @@ void TerceraEstadistica(MYSQL *conexion) {
         return;
     }
 
-    do {
-        datos_recibidos = mysql_store_result(conexion);
-        if (datos_recibidos) {
-            
-                while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    if (fila[0] == NULL) {
-                        printf("Actualmente no han habido compras realizadas\n");
-                        break;
-                    }
-                    printf("Este es el promedio de compra: %s\n", fila[0]);
-                }
-
-            mysql_free_result(datos_recibidos); 
-        }
-    } while (mysql_next_result(conexion) == 0); 
-
-
-    return;
-
+    datos_recibidos = mysql_store_result(conexion);
     
+    if (!datos_recibidos) {
+        printf("Error al obtener los datos: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    if (mysql_num_rows(datos_recibidos) == 0) {
+        printf("Actualmente no han habido compras realizadas\n");
+    } else {
+        while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
+            printf("Este es el promedio de compra: %s\n", fila[0]);
+        }
+    }
+
+    mysql_free_result(datos_recibidos);
+    return;
 }
+
 
 
 /**
@@ -141,8 +138,7 @@ void TerceraEstadistica(MYSQL *conexion) {
  * Salidas:No tiene
  * 
  */
-void CuartaEstadistica(MYSQL *conexion) {
-
+ void CuartaEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
@@ -152,25 +148,28 @@ void CuartaEstadistica(MYSQL *conexion) {
         printf("Error al realizar la consulta: %s\n", mysql_error(conexion));
         return;
     }
+
+    datos_recibidos = mysql_store_result(conexion);
+    
+    if (!datos_recibidos) {
+        printf("Actualmente no tenemos datos para esta estadística\n");
+        return;
+    }
+
     int count = 1;
-    do {
-        datos_recibidos = mysql_store_result(conexion);
-        if (datos_recibidos) {
-            
-                while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    printf("Este es el producto #%i, su nombre es %s y su cantidad es %s\n", count, fila[0], fila[1]);
-                    count++;
-                }
-                printf("Actualmente no tenemos datos para esta estadistica\n");
-
-            mysql_free_result(datos_recibidos); 
+    if (mysql_num_rows(datos_recibidos) == 0) {
+        printf("Actualmente no tenemos datos para esta estadística\n");
+    } else {
+        while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
+            printf("Este es el producto #%i, su nombre es %s y su cantidad es %s\n", count, fila[0], fila[1]);
+            count++;
         }
-    } while (mysql_next_result(conexion) == 0); 
+    }
 
+    mysql_free_result(datos_recibidos);
     return;
-
-
 }
+
 
 
 /**
@@ -183,8 +182,7 @@ void CuartaEstadistica(MYSQL *conexion) {
  * Salidas: No tiene
  * 
  */
-void QuintaEstadistica(MYSQL *conexion) {
-
+ void QuintaEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
@@ -195,24 +193,25 @@ void QuintaEstadistica(MYSQL *conexion) {
         return;
     }
 
-    int count = 1;
-    do {
-        datos_recibidos = mysql_store_result(conexion);
-        if (datos_recibidos) {
-            
-                while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    printf("Este es el nombre de la familia %s y su producto mas vendido es %s\n", fila[0], fila[1]);
-                    count++;
-                }
-                printf("Actualmente no tenemos datos para esta estadistica\n");
+    datos_recibidos = mysql_store_result(conexion);
 
-            mysql_free_result(datos_recibidos); 
+    if (!datos_recibidos) {
+        printf("Error al obtener los datos: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    if (mysql_num_rows(datos_recibidos) == 0) {
+        printf("Actualmente no tenemos datos para esta estadística\n");
+    } else {
+        while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
+            printf("Este es el nombre de la familia %s y su producto más vendido es %s\n", fila[0], fila[1]);
         }
-    } while (mysql_next_result(conexion) == 0); 
+    }
 
+    mysql_free_result(datos_recibidos);
     return;
-
 }
+
 
 
 /**
@@ -225,7 +224,7 @@ void QuintaEstadistica(MYSQL *conexion) {
  * Salidas:No tiene
  * 
  */
-void SextaEstadistica(MYSQL *conexion) {
+ void SextaEstadistica(MYSQL *conexion) {
     MYSQL_RES *datos_recibidos;
     MYSQL_ROW fila;
 
@@ -236,19 +235,22 @@ void SextaEstadistica(MYSQL *conexion) {
         return;
     }
 
-    do {
-        datos_recibidos = mysql_store_result(conexion);
-        if (datos_recibidos) {
-            
-                while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
-                    printf("Este es el nombre de la familia %s y su monto es de %s\n", fila[0], fila[1]);
-                }
-                printf("Actualmente no tenemos datos para esta estadistica\n");
+    datos_recibidos = mysql_store_result(conexion);
 
-            mysql_free_result(datos_recibidos); 
+    if (!datos_recibidos) {
+        printf("Error al obtener los datos: %s\n", mysql_error(conexion));
+        return;
+    }
+
+    if (mysql_num_rows(datos_recibidos) == 0) {
+        printf("Actualmente no tenemos datos para esta estadística\n");
+    } else {
+        while ((fila = mysql_fetch_row(datos_recibidos)) != NULL) {
+            printf("Este es el nombre de la familia %s y su monto es de %s\n", fila[0], fila[1]);
         }
-    } while (mysql_next_result(conexion) == 0); 
+    }
 
+    mysql_free_result(datos_recibidos);
     return;
-
 }
+
