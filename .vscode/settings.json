@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "familia.h": "c",
+        "cargastock.h": "c",
+        "mysql.h": "c",
+        "generales.h": "c",
+        "db.h": "c",
+        "producto.h": "c",
+        "manipulararchivos.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "ctype.h": "c",
+        "estadisticas.h": "c",
+        "cotizacion.h": "c",
+        "consultacatalogo.h": "c",
+        "administrativas.h": "c"
+    }
+}
