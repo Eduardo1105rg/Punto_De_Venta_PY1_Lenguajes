@@ -239,9 +239,9 @@ CREATE PROCEDURE actualizaStockC(
     IN cantidad INT
 )
 BEGIN
-    UPDATE Productos
-    SET Cantidad = Cantidad + cantidad
-    WHERE IdProducto = idProd;
+    UPDATE Productos AS p
+    SET p.Cantidad = p.Cantidad + cantidad
+    WHERE p.IdProducto = idProd;
 END$$
 
 DELIMITER ;
