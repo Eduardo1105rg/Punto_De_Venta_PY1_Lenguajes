@@ -1,0 +1,13 @@
+Prod10,Pan blanco,Fam9,200.0,270.0,35
+Prod11,Galletas,Fam10,450.0,580.0,50
+Prod12,Té frío,Fam3,430.0,580.0,20
+Prod13,Queso crema,Fam4,650.0,800.0,10
+Prod14,Desinfectante,Fam5,1200.0,1500.0,12
+Prod15,Carne molida,Fam6,1700.0,2300.0,18
+Prod16,Banana,Fam7,500.0,650.0,25
+Prod17,Brócoli,Fam8,480.0,600.0,22
+Prod18,Pan integral,Fam9,220.0,300.0,30
+Prod19,Papitas,Snacks,Fam10,400.0,550.0,45
+Prod20,Refresco cola,Fam3,600.0,750.0,70
+ProdError1,Refresco cola,Fam3,600.0,750.0,70
+ProdError2,Refresco cola,Fam3,-600.0,-750.0,70
